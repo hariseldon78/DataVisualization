@@ -1,0 +1,6 @@
+framework module DataVisualization {
+  umbrella header "DataVisualization-umbrella.h"
+
+  export *
+  module * { export * }
+}
