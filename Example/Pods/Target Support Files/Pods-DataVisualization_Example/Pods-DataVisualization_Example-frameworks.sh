@@ -85,7 +85,11 @@ strip_invalid_archs() {
 
 if [[ "$CONFIGURATION" == "Debug" ]]; then
   install_framework "Pods-DataVisualization_Example/DataVisualization.framework"
+  install_framework "Pods-DataVisualization_Example/RxCocoa.framework"
+  install_framework "Pods-DataVisualization_Example/RxSwift.framework"
 fi
 if [[ "$CONFIGURATION" == "Release" ]]; then
   install_framework "Pods-DataVisualization_Example/DataVisualization.framework"
+  install_framework "Pods-DataVisualization_Example/RxCocoa.framework"
+  install_framework "Pods-DataVisualization_Example/RxSwift.framework"
 fi

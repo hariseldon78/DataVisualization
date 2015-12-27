@@ -1,5 +1,7 @@
 PODS:
-  - DataVisualization (0.1.0)
+  - DataVisualization (0.1.0):
+    - RxCocoa (~> 2.0.0-beta)
+    - RxSwift (~> 2.0.0-beta)
   - FBSnapshotTestCase (2.0.7):
     - FBSnapshotTestCase/SwiftSupport (= 2.0.7)
   - FBSnapshotTestCase/Core (2.0.7)
@@ -11,6 +13,9 @@ PODS:
     - Nimble
     - Quick
   - Quick (0.8.0)
+  - RxCocoa (2.0.0-beta.4):
+    - RxSwift (~> 2.0.0-beta)
+  - RxSwift (2.0.0-beta.4)
 
 DEPENDENCIES:
   - DataVisualization (from `../`)
@@ -18,16 +23,20 @@ DEPENDENCIES:
   - Nimble (= 3.0.0)
   - Nimble-Snapshots
   - Quick (~> 0.8.0)
+  - RxCocoa
+  - RxSwift
 
 EXTERNAL SOURCES:
   DataVisualization:
     :path: "../"
 
 SPEC CHECKSUMS:
-  DataVisualization: 0e84855ea8fafe10999ccf597b610621957c81e2
+  DataVisualization: 3b63cf1e83aa24c98142ccd6a09e3ec45dd6fab9
   FBSnapshotTestCase: 7e85180d0d141a0cf472352edda7e80d7eaeb547
   Nimble: 4c353d43735b38b545cbb4cb91504588eb5de926
   Nimble-Snapshots: ab41dd737dcd33a0b0cb005a30465fef70b7207a
   Quick: 563d0f6ec5f72e394645adb377708639b7dd38ab
+  RxCocoa: 4a3e433e6dfe116362ff54423c841cc0f209e009
+  RxSwift: 191c6b06da783a8671433cf35a54d2ad2fd2d9de
 
 COCOAPODS: 0.39.0

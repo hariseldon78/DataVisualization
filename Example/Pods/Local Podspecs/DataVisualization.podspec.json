@@ -1,15 +1,15 @@
 {
   "name": "DataVisualization",
   "version": "0.1.0",
-  "summary": "A short description of DataVisualization.",
-  "description": "",
-  "homepage": "https://github.com/<GITHUB_USERNAME>/DataVisualization",
-  "license": "MIT",
+  "summary": "Tools to automate and facilitate data visualizations in table/collection views.",
+  "description": "\"Tools to automate and facilitate data visualizations in table/collection views.\"",
+  "homepage": "https://bitbucket.org/robertoprevidi/datavisualization",
+  "license": "private",
   "authors": {
     "Roberto Previdi": "hariseldon78@gmail.com"
   },
   "source": {
-    "git": "https://github.com/<GITHUB_USERNAME>/DataVisualization.git",
+    "git": "https://robertoprevidi@bitbucket.org/robertoprevidi/datavisualization.git",
     "tag": "0.1.0"
   },
   "platforms": {
@@ -20,6 +20,14 @@
   "resource_bundles": {
     "DataVisualization": [
       "Pod/Assets/*.png"
+    ]
+  },
+  "dependencies": {
+    "RxSwift": [
+      "~> 2.0.0-beta"
+    ],
+    "RxCocoa": [
+      "~> 2.0.0-beta"
     ]
   }
 }

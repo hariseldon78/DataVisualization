@@ -16,6 +16,9 @@
 		607FACEC1AFB9204008FA782 /* Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACEB1AFB9204008FA782 /* Tests.swift */; };
 		F528EAA80C63A1F18D1FEA5B /* Pods_DataVisualization_Example.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4084C463CBC6596CE9B5800B /* Pods_DataVisualization_Example.framework */; };
 		FB908CBD1C2F831C008C6CCD /* DataVisualization.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB908CBC1C2F831C008C6CCD /* DataVisualization.swift */; };
+		FBC024DD1C303BAF00F4700D /* Model.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBC024DC1C303BAF00F4700D /* Model.swift */; };
+		FBC024E21C304C2A00F4700D /* TitleCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBC024E01C304C2A00F4700D /* TitleCell.swift */; };
+		FBC024E31C304C2A00F4700D /* TitleCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = FBC024E11C304C2A00F4700D /* TitleCell.xib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -39,7 +42,7 @@
 		607FACDA1AFB9204008FA782 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		607FACDC1AFB9204008FA782 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		607FACDF1AFB9204008FA782 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
-		607FACE51AFB9204008FA782 /* Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; name = Tests.xctest; path = DataVisualization_Tests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		607FACE51AFB9204008FA782 /* DataVisualization_Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DataVisualization_Tests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		607FACEA1AFB9204008FA782 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		607FACEB1AFB9204008FA782 /* Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tests.swift; sourceTree = "<group>"; };
 		626B6FB975A3DF11107F4302 /* Pods_DataVisualization_Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_DataVisualization_Tests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -49,6 +52,9 @@
 		BFF5DB6776F4C292FCB50856 /* Pods-DataVisualization_Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DataVisualization_Tests.release.xcconfig"; path = "Pods/Target Support Files/Pods-DataVisualization_Tests/Pods-DataVisualization_Tests.release.xcconfig"; sourceTree = "<group>"; };
 		CDF8262716909198AB40C7A4 /* DataVisualization.podspec */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = DataVisualization.podspec; path = ../DataVisualization.podspec; sourceTree = "<group>"; };
 		FB908CBC1C2F831C008C6CCD /* DataVisualization.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = DataVisualization.swift; path = ../Pod/Classes/DataVisualization.swift; sourceTree = "<group>"; };
+		FBC024DC1C303BAF00F4700D /* Model.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Model.swift; sourceTree = "<group>"; };
+		FBC024E01C304C2A00F4700D /* TitleCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TitleCell.swift; sourceTree = "<group>"; };
+		FBC024E11C304C2A00F4700D /* TitleCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TitleCell.xib; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -88,7 +94,7 @@
 			isa = PBXGroup;
 			children = (
 				607FACD01AFB9204008FA782 /* DataVisualization_Example.app */,
-				607FACE51AFB9204008FA782 /* Tests.xctest */,
+				607FACE51AFB9204008FA782 /* DataVisualization_Tests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -102,6 +108,9 @@
 				607FACDC1AFB9204008FA782 /* Images.xcassets */,
 				607FACDE1AFB9204008FA782 /* LaunchScreen.xib */,
 				607FACD31AFB9204008FA782 /* Supporting Files */,
+				FBC024DC1C303BAF00F4700D /* Model.swift */,
+				FBC024E01C304C2A00F4700D /* TitleCell.swift */,
+				FBC024E11C304C2A00F4700D /* TitleCell.xib */,
 			);
 			name = "Example for DataVisualization";
 			path = DataVisualization;
@@ -211,7 +220,7 @@
 			);
 			name = DataVisualization_Tests;
 			productName = Tests;
-			productReference = 607FACE51AFB9204008FA782 /* Tests.xctest */;
+			productReference = 607FACE51AFB9204008FA782 /* DataVisualization_Tests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
 /* End PBXNativeTarget section */
@@ -257,6 +266,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FBC024E31C304C2A00F4700D /* TitleCell.xib in Resources */,
 				607FACDB1AFB9204008FA782 /* Main.storyboard in Resources */,
 				607FACE01AFB9204008FA782 /* LaunchScreen.xib in Resources */,
 				607FACDD1AFB9204008FA782 /* Images.xcassets in Resources */,
@@ -372,7 +382,9 @@
 			files = (
 				607FACD81AFB9204008FA782 /* ViewController.swift in Sources */,
 				607FACD61AFB9204008FA782 /* AppDelegate.swift in Sources */,
+				FBC024E21C304C2A00F4700D /* TitleCell.swift in Sources */,
 				FB908CBD1C2F831C008C6CCD /* DataVisualization.swift in Sources */,
+				FBC024DD1C303BAF00F4700D /* Model.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

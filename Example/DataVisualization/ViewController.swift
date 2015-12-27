@@ -7,18 +7,29 @@
 //
 
 import UIKit
+import RxSwift
+import RxCocoa
 
-class ViewController: UIViewController {
+class ViewController: UIViewController,AutoSingleLevelTableView {
 
-    override func viewDidLoad() {
+	@IBOutlet weak var tableView: UITableView!
+	
+	typealias Data=Worker
+	typealias Cell=TitleCell
+//	let disposeBag=DisposeBag()
+	func data()->Observable<[Worker]>
+	{
+		return Worker.api()
+	}
+
+	func cellFactory(item: Data, cell: Cell) {
+		cell.textLabel?.text=item.name
+	}
+	override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view, typically from a nib.
+		setupTableView(tableView)
     }
 
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }
 
 }
 

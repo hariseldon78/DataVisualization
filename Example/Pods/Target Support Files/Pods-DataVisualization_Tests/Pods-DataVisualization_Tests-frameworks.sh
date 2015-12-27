@@ -85,6 +85,8 @@ strip_invalid_archs() {
 
 if [[ "$CONFIGURATION" == "Debug" ]]; then
   install_framework "Pods-DataVisualization_Tests/DataVisualization.framework"
+  install_framework "Pods-DataVisualization_Tests/RxCocoa.framework"
+  install_framework "Pods-DataVisualization_Tests/RxSwift.framework"
   install_framework "Pods-DataVisualization_Tests/FBSnapshotTestCase.framework"
   install_framework "Pods-DataVisualization_Tests/Nimble.framework"
   install_framework "Pods-DataVisualization_Tests/Nimble_Snapshots.framework"
@@ -92,6 +94,8 @@ if [[ "$CONFIGURATION" == "Debug" ]]; then
 fi
 if [[ "$CONFIGURATION" == "Release" ]]; then
   install_framework "Pods-DataVisualization_Tests/DataVisualization.framework"
+  install_framework "Pods-DataVisualization_Tests/RxCocoa.framework"
+  install_framework "Pods-DataVisualization_Tests/RxSwift.framework"
   install_framework "Pods-DataVisualization_Tests/FBSnapshotTestCase.framework"
   install_framework "Pods-DataVisualization_Tests/Nimble.framework"
   install_framework "Pods-DataVisualization_Tests/Nimble_Snapshots.framework"

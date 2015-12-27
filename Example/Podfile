@@ -12,4 +12,7 @@ target 'DataVisualization_Tests', :exclusive => true do
   pod 'Nimble', '3.0.0'
   pod 'FBSnapshotTestCase'
   pod 'Nimble-Snapshots'
+  
+  pod 'RxSwift'
+  pod 'RxCocoa'
 end
