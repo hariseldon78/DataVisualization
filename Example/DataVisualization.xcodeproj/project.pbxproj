@@ -15,6 +15,7 @@
 		607FACE01AFB9204008FA782 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 607FACDE1AFB9204008FA782 /* LaunchScreen.xib */; };
 		607FACEC1AFB9204008FA782 /* Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACEB1AFB9204008FA782 /* Tests.swift */; };
 		F528EAA80C63A1F18D1FEA5B /* Pods_DataVisualization_Example.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4084C463CBC6596CE9B5800B /* Pods_DataVisualization_Example.framework */; };
+		FB908CBD1C2F831C008C6CCD /* DataVisualization.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB908CBC1C2F831C008C6CCD /* DataVisualization.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -47,6 +48,7 @@
 		9D21436E0454C3FA1306C436 /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../README.md; sourceTree = "<group>"; };
 		BFF5DB6776F4C292FCB50856 /* Pods-DataVisualization_Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DataVisualization_Tests.release.xcconfig"; path = "Pods/Target Support Files/Pods-DataVisualization_Tests/Pods-DataVisualization_Tests.release.xcconfig"; sourceTree = "<group>"; };
 		CDF8262716909198AB40C7A4 /* DataVisualization.podspec */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = DataVisualization.podspec; path = ../DataVisualization.podspec; sourceTree = "<group>"; };
+		FB908CBC1C2F831C008C6CCD /* DataVisualization.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = DataVisualization.swift; path = ../Pod/Classes/DataVisualization.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -72,6 +74,7 @@
 		607FACC71AFB9204008FA782 = {
 			isa = PBXGroup;
 			children = (
+				FB908CBB1C2F81C8008C6CCD /* lib */,
 				607FACF51AFB993E008FA782 /* Podspec Metadata */,
 				607FACD21AFB9204008FA782 /* Example for DataVisualization */,
 				607FACE81AFB9204008FA782 /* Tests */,
@@ -157,6 +160,14 @@
 				BFF5DB6776F4C292FCB50856 /* Pods-DataVisualization_Tests.release.xcconfig */,
 			);
 			name = Pods;
+			sourceTree = "<group>";
+		};
+		FB908CBB1C2F81C8008C6CCD /* lib */ = {
+			isa = PBXGroup;
+			children = (
+				FB908CBC1C2F831C008C6CCD /* DataVisualization.swift */,
+			);
+			name = lib;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -361,6 +372,7 @@
 			files = (
 				607FACD81AFB9204008FA782 /* ViewController.swift in Sources */,
 				607FACD61AFB9204008FA782 /* AppDelegate.swift in Sources */,
+				FB908CBD1C2F831C008C6CCD /* DataVisualization.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
