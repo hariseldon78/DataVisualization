@@ -13,6 +13,7 @@ import RxCocoa
 protocol ViewModel {
 	typealias Data
 	typealias Cell:UITableViewCell
+	static var cellNib:UINib {get}
 	func cellFactory(index:Int,item:Data,cell:Cell)->Void
 
 }
@@ -37,7 +38,7 @@ extension AutoSingleLevelTableView {
 	func setupTableView(tableView:UITableView)
 	{
 		
-		tableView.registerClass(Data.AViewModel.Cell.self, forCellReuseIdentifier: "cell")
+		tableView.registerNib(Data.AViewModel.cellNib, forCellReuseIdentifier: "cell")
 		data()
 			.bindTo(tableView.rx_itemsWithCellIdentifier("cell")) {
 				(index:Int,item,cell)->Void in

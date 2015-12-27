@@ -10,6 +10,22 @@ import UIKit
 
 class TitleCell: UITableViewCell {
 
+	@IBOutlet weak var title: UILabel!
+	
+	override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
+		super.init(style: style, reuseIdentifier: reuseIdentifier)
+		print("init(style: style, reuseIdentifier: reuseIdentifier)")
+	}
+	
+	init(){
+		super.init(style: UITableViewCellStyle.Default, reuseIdentifier: "cell")
+		print("init()")
+	}
+	required init?(coder aDecoder: NSCoder) {
+		super.init(coder: aDecoder)
+		print("init?(coder aDecoder: NSCoder)")
+	}
+	
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code
