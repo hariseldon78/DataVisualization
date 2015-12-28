@@ -9,46 +9,55 @@
 import Foundation
 import RxSwift
 import RxCocoa
+class ViewModel {
+	var cellNib:UINib! = nil
+	func cellFactory(index:Int,item:Any,cell:UITableViewCell)->Void {}
+}
 
-protocol ViewModel {
-	typealias Data
-	typealias Cell:UITableViewCell
-	static var cellNib:UINib {get}
-	func cellFactory(index:Int,item:Data,cell:Cell)->Void
-
+class ConcreteViewModel<Data,Cell>:ViewModel
+{
+	var cellFactoryClosure:(index:Int,item:Data,cell:Cell)->Void
+	init(cellName:String,cellFactory:(index:Int,item:Data,cell:Cell)->Void) {
+		self.cellFactoryClosure=cellFactory
+		super.init()
+		cellNib=UINib(nibName: cellName, bundle: nil)
+	}
+	override func cellFactory(index: Int, item: Any, cell: UITableViewCell) {
+		guard let item=item as? Data,
+			cell=cell as? Cell
+			else {fatalError("ViewModel used with wrong data type or cell")}
+		self.cellFactoryClosure(index: index, item: item, cell: cell)
+	}
 }
 
 protocol Visualizable {
-	typealias AViewModel:ViewModel
-	static func defaultViewModel()->AViewModel
+	static func defaultViewModel()->ViewModel
 }
 
 protocol AutoSingleLevelTableView {
 	typealias Data:Visualizable
-	func viewModel()->Data.AViewModel
+	func viewModel()->ViewModel
 	var disposeBag:DisposeBag {get}
-	func data()->Observable<[Data]>
+	var data:Observable<[Data]> {get}
 	func setupTableView(tableView:UITableView)
 }
 extension AutoSingleLevelTableView {
-	func viewModel()->Data.AViewModel
+	func viewModel()->ViewModel
 	{
 		return Data.defaultViewModel()
 	}
 	func setupTableView(tableView:UITableView)
 	{
-		
-		tableView.registerNib(Data.AViewModel.cellNib, forCellReuseIdentifier: "cell")
-		data()
-			.bindTo(tableView.rx_itemsWithCellIdentifier("cell")) {
-				(index:Int,item,cell)->Void in
-				guard let item=item as? Data.AViewModel.Data,
-					cell=cell as? Data.AViewModel.Cell
-					else
-				{fatalError()}
-				self.viewModel().cellFactory(index,item: item,cell: cell)
-			}
-			.addDisposableTo(disposeBag)
+		guard let nib=viewModel().cellNib else {fatalError("No cellNib defined: are you using ConcreteViewModel properly?")}
+		tableView.registerNib(nib, forCellReuseIdentifier: "cell")
+		NSOperationQueue.mainQueue().addOperationWithBlock { () -> Void in
+			self.data
+				.bindTo(tableView.rx_itemsWithCellIdentifier("cell")) {
+					(index,item,cell)->Void in
+					self.viewModel().cellFactory(index,item: item,cell: cell)
+				}
+				.addDisposableTo(self.disposeBag)
+		}
 	}
 }
 

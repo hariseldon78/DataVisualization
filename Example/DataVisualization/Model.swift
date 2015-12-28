@@ -10,22 +10,12 @@ import Foundation
 import RxSwift
 import RxCocoa
 
-
-class WorkerViewModel:ViewModel
-{
-	typealias Data=Worker
-	typealias Cell=TitleCell
-	static let cellNib=UINib(nibName: "TitleCell", bundle: nil)
-	func cellFactory(index: Int, item: Data, cell: Cell) {
-		cell.title.text=item.name
-	}
-}
-
 struct Worker: Visualizable
 {
-	typealias AViewModel=WorkerViewModel
-	static func defaultViewModel() -> AViewModel {
-		return WorkerViewModel()
+	static func defaultViewModel() -> ViewModel {
+		return ConcreteViewModel<Worker,TitleCell>(cellName: "TitleCell") { (index, item, cell) -> Void in
+			cell.title.text=item.name
+		}
 	}
 	
 	let id:UInt

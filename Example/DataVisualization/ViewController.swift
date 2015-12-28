@@ -10,24 +10,38 @@ import UIKit
 import RxSwift
 import RxCocoa
 
-class ViewController: UIViewController,AutoSingleLevelTableView {
+class PlainViewController: UIViewController,AutoSingleLevelTableView {
 
 	@IBOutlet weak var tableView: UITableView!
 	
 	let disposeBag=DisposeBag()
 	typealias Data=Worker
-	typealias Cell=TitleCell
 
-	func data()->Observable<[Worker]>
-	{
-		return Worker.api()
-	}
+	let data=Worker.api()
 
 	override func viewDidLoad() {
         super.viewDidLoad()
 		setupTableView(tableView)
     }
+}
 
-
+class FunkyViewController: UIViewController,AutoSingleLevelTableView {
+	
+	@IBOutlet weak var tableView: UITableView!
+	
+	let disposeBag=DisposeBag()
+	typealias Data=Worker
+	func viewModel()->ViewModel {
+		return ConcreteViewModel<Worker,FunkyCell>(cellName: "FunkyCell") { (index, item, cell) -> Void in
+			cell.title.text=item.name
+			cell.subtitle.text="salary: €\(item.salary)"
+		}
+	}
+	let data=Worker.api()
+	
+	override func viewDidLoad() {
+		super.viewDidLoad()
+		setupTableView(tableView)
+	}
 }
 

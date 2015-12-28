@@ -1,5 +1,5 @@
 //
-//  TitleCell.swift
+//  FunkyCell.swift
 //  DataVisualization
 //
 //  Created by Roberto Previdi on 27/12/15.
@@ -8,6 +8,7 @@
 
 import UIKit
 
-class TitleCell: UITableViewCell {
+class FunkyCell: UITableViewCell {
 	@IBOutlet weak var title: UILabel!
+	@IBOutlet weak var subtitle: UILabel!
 }
