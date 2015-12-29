@@ -10,38 +10,35 @@ import UIKit
 import RxSwift
 import RxCocoa
 
-class PlainViewController: UIViewController,AutoSingleLevelTableView {
-
+class PlainViewController:UIViewController
+{
 	@IBOutlet weak var tableView: UITableView!
-	
-	let disposeBag=DisposeBag()
-	typealias Data=Worker
-
-	let data=Worker.api()
-
+	let tvManager=AutoSingleLevelTableViewManager<Worker>()
 	override func viewDidLoad() {
-        super.viewDidLoad()
-		setupTableView(tableView)
-    }
+		super.viewDidLoad()
+		tvManager.setupTableView(tableView)
+	}
 }
 
-class FunkyViewController: UIViewController,AutoSingleLevelTableView {
-	
+class FunkyViewController:UIViewController {
 	@IBOutlet weak var tableView: UITableView!
-	
-	let disposeBag=DisposeBag()
-	typealias Data=Worker
-	func viewModel()->ViewModel {
-		return ConcreteViewModel<Worker,FunkyCell>(cellName: "FunkyCell") { (index, item, cell) -> Void in
+	let tvManager=AutoSingleLevelTableViewManager<Worker>()
+	override func viewDidLoad() {
+		super.viewDidLoad()
+		tvManager.viewModel=ConcreteViewModel<Worker,FunkyCell>(cellName: "FunkyCell") { (index, item, cell) -> Void in
 			cell.title.text=item.name
 			cell.subtitle.text="salary: €\(item.salary)"
 		}
-	}
-	let data=Worker.api()
-	
-	override func viewDidLoad() {
-		super.viewDidLoad()
-		setupTableView(tableView)
+		
+		tvManager.setupTableView(tableView)
 	}
 }
 
+class PlainSectionedViewController:UIViewController {
+	@IBOutlet weak var tableView: UITableView!
+	let tvManager=AutoSingleLevelTableViewManager<Worker>()
+	override func viewDidLoad() {
+		super.viewDidLoad()
+		tvManager.setupTableView(tableView)
+	}
+}

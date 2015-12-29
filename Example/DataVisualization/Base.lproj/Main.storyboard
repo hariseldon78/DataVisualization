@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="9531" systemVersion="15C50" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="CRB-TI-ot4">
     <dependencies>
-        <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9529"/>
     </dependencies>
     <scenes>
@@ -32,7 +31,7 @@
                     </view>
                     <navigationItem key="navigationItem" id="swO-Aa-sqZ"/>
                     <connections>
-                        <outlet property="tableView" destination="EPd-PU-pHf" id="R8d-8Y-E2T"/>
+                        <outlet property="tableView" destination="EPd-PU-pHf" id="tQn-mv-CAs"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="x5A-6p-PRh" sceneMemberID="firstResponder"/>
@@ -119,7 +118,7 @@
                     </view>
                     <navigationItem key="navigationItem" id="DfY-Zn-cDU"/>
                     <connections>
-                        <outlet property="tableView" destination="e9g-GU-4OD" id="uzC-2v-WtY"/>
+                        <outlet property="tableView" destination="e9g-GU-4OD" id="Fvx-B7-XDj"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Vhz-TI-9ah" sceneMemberID="firstResponder"/>

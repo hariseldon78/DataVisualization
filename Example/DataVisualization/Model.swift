@@ -11,7 +11,7 @@ import RxSwift
 import RxCocoa
 
 struct Worker: Visualizable
-{
+{ 
 	static func defaultViewModel() -> ViewModel {
 		return ConcreteViewModel<Worker,TitleCell>(cellName: "TitleCell") { (index, item, cell) -> Void in
 			cell.title.text=item.name
