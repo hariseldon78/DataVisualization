@@ -99,7 +99,7 @@ class AutoSectionedTableViewManager<
 			else {fatalError("why no section cell?")}
 		let s=sections.value[section].model
 		sectionViewModel.cellFactory(section, item: s, cell: hv)
-		return nil
+		return hv
 	}
 	func tableView(tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
 		guard let hv=tableView.dequeueReusableHeaderFooterViewWithIdentifier("section")
