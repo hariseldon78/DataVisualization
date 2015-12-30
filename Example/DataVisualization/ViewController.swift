@@ -25,7 +25,8 @@ class FunkyViewController:UIViewController {
 	let tvManager=AutoSingleLevelTableViewManager<Worker>()
 	override func viewDidLoad() {
 		super.viewDidLoad()
-		tvManager.viewModel=ConcreteViewModel<Worker,FunkyCell>(cellName: "FunkyCell") { (index, item, cell) -> Void in
+		tvManager.viewModel=ConcreteViewModel<Worker,FunkyCell>(cellName: "FunkyCell") {
+			(index, item, cell) -> Void in
 			cell.title.text=item.name
 			cell.subtitle.text="salary: €\(item.salary)"
 		}
@@ -36,9 +37,10 @@ class FunkyViewController:UIViewController {
 
 class PlainSectionedViewController:UIViewController {
 	@IBOutlet weak var tableView: UITableView!
-	let tvManager=AutoSingleLevelTableViewManager<Worker>()
+	let tvManager=AutoSectionedTableViewManager<Worker,Department,WorkerSectioner>()
 	override func viewDidLoad() {
 		super.viewDidLoad()
 		tvManager.setupTableView(tableView)
+		
 	}
 }

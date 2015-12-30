@@ -10,7 +10,7 @@ import Foundation
 import RxSwift
 import RxCocoa
 
-struct Worker: Visualizable
+struct Worker: Visualizable,WithApi
 { 
 	static func defaultViewModel() -> ViewModel {
 		return ConcreteViewModel<Worker,TitleCell>(cellName: "TitleCell") { (index, item, cell) -> Void in
@@ -62,8 +62,42 @@ struct Worker: Visualizable
 	
 }
 
-struct Department {
+struct Department:Visualizable {
+	static func defaultViewModel() -> ViewModel {
+		return ConcreteViewModel<Department,TitleHeader>(cellName: "TitleHeader") { (index, item, cell) -> Void in
+			cell.title.text=item.name
+		}
+	}
+	
 	let id:UInt
 	let name:String
 }
 
+func +<T>(array:[T],element:T)->[T]
+{
+	var copy=array
+	copy.append(element)
+	return copy
+}
+
+struct WorkerSectioner:Sectioner
+{
+	typealias Data=Worker
+	typealias Section=Department
+	typealias SectionAndData=(Section,[Data])
+	var _sections=Variable([SectionAndData]())
+	var sections:Observable<[SectionAndData]> { return _sections.asObservable() }
+	let disposeBag=DisposeBag()
+	init() {
+		Data.api().subscribeNext { (w:[Worker]) -> Void in
+			self._sections.value=w
+				.map{ $0.departmentId }
+				.reduce([]) { (deps:[UInt], dep) in
+					deps.contains(dep) ? deps : deps+dep
+				}.map{ dep in
+					(Department(id: dep, name: "dep n°\(dep)"),
+					w.filter{ $0.departmentId==dep })
+			}
+		}.addDisposableTo(disposeBag)
+	}
+}

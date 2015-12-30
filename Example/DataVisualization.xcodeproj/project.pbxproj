@@ -21,6 +21,8 @@
 		FBC024DD1C303BAF00F4700D /* Model.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBC024DC1C303BAF00F4700D /* Model.swift */; };
 		FBC024E21C304C2A00F4700D /* TitleCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBC024E01C304C2A00F4700D /* TitleCell.swift */; };
 		FBC024E31C304C2A00F4700D /* TitleCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = FBC024E11C304C2A00F4700D /* TitleCell.xib */; };
+		FBC2827B1C33778F00FE50FE /* TitleHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBC282791C33778F00FE50FE /* TitleHeader.swift */; };
+		FBC2827C1C33778F00FE50FE /* TitleHeader.xib in Resources */ = {isa = PBXBuildFile; fileRef = FBC2827A1C33778F00FE50FE /* TitleHeader.xib */; };
 		FBFE84B11C31338A008A0868 /* SingleLevelTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBFE84B01C31338A008A0868 /* SingleLevelTableView.swift */; };
 		FBFE84B31C3133D9008A0868 /* ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBFE84B21C3133D9008A0868 /* ViewModel.swift */; };
 		FBFE84B51C313757008A0868 /* SectionedTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBFE84B41C313757008A0868 /* SectionedTableView.swift */; };
@@ -75,6 +77,8 @@
 		FBC024DC1C303BAF00F4700D /* Model.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Model.swift; sourceTree = "<group>"; };
 		FBC024E01C304C2A00F4700D /* TitleCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TitleCell.swift; sourceTree = "<group>"; };
 		FBC024E11C304C2A00F4700D /* TitleCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TitleCell.xib; sourceTree = "<group>"; };
+		FBC282791C33778F00FE50FE /* TitleHeader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TitleHeader.swift; sourceTree = "<group>"; };
+		FBC2827A1C33778F00FE50FE /* TitleHeader.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TitleHeader.xib; sourceTree = "<group>"; };
 		FBFE84B01C31338A008A0868 /* SingleLevelTableView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SingleLevelTableView.swift; sourceTree = "<group>"; };
 		FBFE84B21C3133D9008A0868 /* ViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewModel.swift; sourceTree = "<group>"; };
 		FBFE84B41C313757008A0868 /* SectionedTableView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SectionedTableView.swift; sourceTree = "<group>"; };
@@ -149,6 +153,8 @@
 				FBC024E11C304C2A00F4700D /* TitleCell.xib */,
 				FBBE17981C307FE3005E1E5C /* FunkyCell.swift */,
 				FBBE17991C307FE3005E1E5C /* FunkyCell.xib */,
+				FBC282791C33778F00FE50FE /* TitleHeader.swift */,
+				FBC2827A1C33778F00FE50FE /* TitleHeader.xib */,
 			);
 			name = "Example for DataVisualization";
 			path = DataVisualization;
@@ -331,6 +337,7 @@
 				FBC024E31C304C2A00F4700D /* TitleCell.xib in Resources */,
 				607FACDB1AFB9204008FA782 /* Main.storyboard in Resources */,
 				FBBE179B1C307FE3005E1E5C /* FunkyCell.xib in Resources */,
+				FBC2827C1C33778F00FE50FE /* TitleHeader.xib in Resources */,
 				607FACE01AFB9204008FA782 /* LaunchScreen.xib in Resources */,
 				607FACDD1AFB9204008FA782 /* Images.xcassets in Resources */,
 			);
@@ -452,6 +459,7 @@
 				FBFE84C61C3192A2008A0868 /* RxTableViewSectionedAnimatedDataSource.swift in Sources */,
 				FBFE84C51C3192A2008A0868 /* RxCollectionViewSectionedReloadDataSource.swift in Sources */,
 				FBFE84C91C3192A2008A0868 /* Differentiator.swift in Sources */,
+				FBC2827B1C33778F00FE50FE /* TitleHeader.swift in Sources */,
 				FBFE84B11C31338A008A0868 /* SingleLevelTableView.swift in Sources */,
 				FBFE84CB1C3192A2008A0868 /* RxDataSourceStarterKit.swift in Sources */,
 				FBC024E21C304C2A00F4700D /* TitleCell.swift in Sources */,

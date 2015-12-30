@@ -13,6 +13,9 @@ import RxCocoa
 protocol Sectioner
 {
 	init()
+	typealias Data
+	typealias Section
+	var sections:Observable<[(Section,[Data])]> {get}
 }
 //class Sectioner<Data:Visualizable,Section:Visualizable>
 //{
@@ -33,8 +36,8 @@ protocol AutoSectionedTableView:Disposer {
 class AutoSectionedTableViewManager<
 	DataType:Visualizable,
 	SectionType:Visualizable,
-	_SectionerType:Sectioner
-	>:AutoSectionedTableView
+	_SectionerType:Sectioner where _SectionerType.Data==DataType,_SectionerType.Section==SectionType
+	>:NSObject,AutoSectionedTableView,UITableViewDelegate
 {
 	@IBOutlet weak var tableView: UITableView!
 	let disposeBag=DisposeBag()
@@ -55,22 +58,53 @@ class AutoSectionedTableViewManager<
 		guard let dataNib=dataViewModel.cellNib,
 			sectionNib=sectionViewModel.cellNib
 		else {fatalError("No cellNib defined: are you using ConcreteViewModel properly?")}
-		tableView.registerNib(dataNib, forCellReuseIdentifier: "cell")
-		tableView.registerNib(sectionNib, forHeaderFooterViewReuseIdentifier: "section")
-//		data.subscribe
 		
-//				.bindTo(tableView.rx_itemsWithCellIdentifier("cell")) {
-//					(index,item,cell)->Void in
-//					self.viewModel().cellFactory(index,item: item,cell: cell)
-//				}
-//				.addDisposableTo(self.disposeBag)
+		switch dataNib
+		{
+		case .First(let nib):
+			tableView.registerNib(nib, forCellReuseIdentifier: "cell")
+		case .Second(let clazz):
+			tableView.registerClass(clazz, forCellReuseIdentifier: "cell")
+		}
+			
+		switch sectionNib
+		{
+		case .First(let nib):
+			tableView.registerNib(nib, forHeaderFooterViewReuseIdentifier: "section")
+		case .Second(let clazz):
+			tableView.registerClass(clazz, forHeaderFooterViewReuseIdentifier: "section")
+		}
+		tableView.delegate=self
+		sectioner.sections.subscribeNext { (secs:[(Section, [Data])]) -> Void in
+			self.sections.value=secs.map{ (s,d) in
+				RxSectionModel(model: s, items: d)
+			}
+		}.addDisposableTo(disposeBag)
+		dataSource.cellFactory={
+			(tableView,indexPath,item:Data) in
+			guard let cell=tableView.dequeueReusableCellWithIdentifier("cell")
+				else {fatalError("why no cell?")}
+			self.dataViewModel.cellFactory(indexPath.row, item: item, cell: cell)
+			return cell
+		}
 		
+		sections.bindTo(tableView.rx_itemsWithDataSource(dataSource))
+			.addDisposableTo(disposeBag)
+	
 	}
 	func tableView(tableView: UITableView,
 		viewForHeaderInSection section: Int) -> UIView?
 	{
-		let hv:UIView?=tableView.dequeueReusableCellWithIdentifier("section")
+		guard let hv=tableView.dequeueReusableHeaderFooterViewWithIdentifier("section")
+			else {fatalError("why no section cell?")}
+		let s=sections.value[section].model
+		sectionViewModel.cellFactory(section, item: s, cell: hv)
 		return nil
+	}
+	func tableView(tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+		guard let hv=tableView.dequeueReusableHeaderFooterViewWithIdentifier("section")
+			else {fatalError("why no section cell?")}
+		return hv.bounds.height
 	}
 }
 

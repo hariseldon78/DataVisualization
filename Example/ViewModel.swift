@@ -10,20 +10,31 @@ import Foundation
 import RxSwift
 import RxCocoa
 
-class ViewModel {
-	var cellNib:UINib! = nil
-	func cellFactory(index:Int,item:Any,cell:UITableViewCell)->Void {}
+enum Either<T1,T2>
+{
+	case First(T1)
+	case Second(T2)
 }
 
-class ConcreteViewModel<Data,Cell>:ViewModel
+class ViewModel {
+	var cellNib:Either<UINib,UIView.Type>?
+	func cellFactory(index:Int,item:Any,cell:UIView)->Void {}
+}
+
+class ConcreteViewModel<Data,Cell:UIView>:ViewModel
 {
 	var cellFactoryClosure:(index:Int,item:Data,cell:Cell)->Void
 	init(cellName:String,cellFactory:(index:Int,item:Data,cell:Cell)->Void) {
 		self.cellFactoryClosure=cellFactory
 		super.init()
-		cellNib=UINib(nibName: cellName, bundle: nil)
+		cellNib = .First(UINib(nibName: cellName, bundle: nil))
 	}
-	override func cellFactory(index: Int, item: Any, cell: UITableViewCell) {
+	init(cellFactory:(index:Int,item:Data,cell:Cell)->Void) {
+		self.cellFactoryClosure=cellFactory
+		super.init()
+		cellNib = Either.Second(Cell.self)
+	}
+	override func cellFactory(index: Int, item: Any, cell: UIView) {
 		guard let item=item as? Data,
 			cell=cell as? Cell
 			else {fatalError("ViewModel used with wrong data type or cell")}
@@ -33,5 +44,7 @@ class ConcreteViewModel<Data,Cell>:ViewModel
 
 protocol Visualizable {
 	static func defaultViewModel()->ViewModel
+}
+protocol WithApi {
 	static func api()->Observable<[Self]>
 }
