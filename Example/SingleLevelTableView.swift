@@ -34,7 +34,7 @@ class DetailManager<Data>:DetailManagerType
 	let disposeBag=DisposeBag()
 	var objObs:Variable<Data>!
 	var object:Any? {didSet{
-		guard let w=object as? Data else {return}
+		guard let w=object as? Data else {fatalError("wrong type passed to detailManager")}
 		if objObs==nil { objObs=Variable(w) }
 		else { objObs.value=w }
 		}
