@@ -10,10 +10,10 @@ import Foundation
 import RxSwift
 import RxCocoa
 
-protocol Disposer {
+public protocol Disposer {
 	var disposeBag:DisposeBag {get}
 }
-protocol AutoSingleLevelTableView:Disposer {
+public protocol AutoSingleLevelTableView:Disposer {
 	typealias Data:Visualizable,WithApi
 	
 	var viewModel:ViewModel {get}
@@ -21,44 +21,46 @@ protocol AutoSingleLevelTableView:Disposer {
 	func setupTableView(tableView:UITableView,vc:UIViewController)
 }
 
-protocol DetailView {
+public protocol DetailView {
 	var detailManager:DetailManagerType {get set}
 }
-protocol DetailManagerType
+public protocol DetailManagerType
 {
 	var object:Any? {get set}
 	func viewDidLoad()
 }
-class DetailManager<Data>:DetailManagerType
+public class DetailManager<Data>:DetailManagerType
 {
+	public init(){}
 	let disposeBag=DisposeBag()
 	var objObs:Variable<Data>!
-	var object:Any? {didSet{
+	public var object:Any? {didSet{
 		guard let w=object as? Data else {fatalError("wrong type passed to detailManager")}
 		if objObs==nil { objObs=Variable(w) }
 		else { objObs.value=w }
 		}
 	}
-	typealias Binder=(obj:Observable<Data>,disposeBag:DisposeBag)->()
-	var binder:Binder?
-	func viewDidLoad() {
+	public typealias Binder=(obj:Observable<Data>,disposeBag:DisposeBag)->()
+	public var binder:Binder?
+	public func viewDidLoad() {
 		let obj=objObs.observeOn(MainScheduler.sharedInstance)
 		binder?(obj:obj,disposeBag:disposeBag)
 	}
 
 }
-class AutoSingleLevelTableViewManager<DataType where DataType:Visualizable,DataType:WithApi>:AutoSingleLevelTableView
+public class AutoSingleLevelTableViewManager<DataType where DataType:Visualizable,DataType:WithApi>:AutoSingleLevelTableView
 {
-	typealias Data=DataType
-	let data=Data.api()
-	let disposeBag=DisposeBag()
-	var viewModel=Data.defaultViewModel()
+	public typealias Data=DataType
+	public let data=Data.api()
+	public let disposeBag=DisposeBag()
+	public var viewModel=Data.defaultViewModel()
 	var vc:UIViewController!
 
 	var onClick:((row:Data)->())?=nil
 	var clickedObj:Data?
 	
-	func setupTableView(tableView:UITableView,vc:UIViewController)
+	public init(){}
+	public func setupTableView(tableView:UITableView,vc:UIViewController)
 	{
 		guard let nib=viewModel.cellNib else {
 			fatalError("No cellNib defined: are you using ConcreteViewModel properly?")
@@ -83,19 +85,19 @@ class AutoSingleLevelTableViewManager<DataType where DataType:Visualizable,DataT
 			.rx_modelSelected(Data.self)
 			.subscribeNext { (obj) -> Void in
 				self.clickedObj=obj
-				self.onClick!(row: obj)
+				self.onClick?(row: obj)
 		}.addDisposableTo(disposeBag)
 	}
 	
 	var detailSegue:String?=nil
-	func setupDetail(segue:String)
+	public func setupDetail(segue:String)
 	{
 		detailSegue=segue
 		onClick={ row in
 			self.vc.performSegueWithIdentifier(segue, sender: nil)
 		}
 	}
-	func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+	public func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
 		if segue.identifier==detailSegue
 		{
 			if var dest=segue.destinationViewController as? DetailView

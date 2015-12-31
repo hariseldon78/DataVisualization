@@ -10,7 +10,7 @@ import Foundation
 import RxSwift
 import RxCocoa
 
-protocol Sectioner
+public protocol Sectioner
 {
 	init()
 	typealias Data
@@ -18,7 +18,7 @@ protocol Sectioner
 	var sections:Observable<[(Section,[Data])]> {get}
 }
 
-protocol AutoSectionedTableView:Disposer {
+public protocol AutoSectionedTableView:Disposer {
 	typealias Data:Visualizable
 	typealias Section:Visualizable
 	typealias SectionerType:Sectioner
@@ -29,27 +29,27 @@ protocol AutoSectionedTableView:Disposer {
 	var sectioner:SectionerType {get}
 }
 
-class AutoSectionedTableViewManager<
+public class AutoSectionedTableViewManager<
 	DataType:Visualizable,
 	SectionType:Visualizable,
 	_SectionerType:Sectioner where _SectionerType.Data==DataType,_SectionerType.Section==SectionType
 	>:NSObject,AutoSectionedTableView,UITableViewDelegate
 {
 	@IBOutlet weak var tableView: UITableView!
-	let disposeBag=DisposeBag()
-	typealias Data=DataType
-	typealias Section=SectionType
-	typealias SectionerType=_SectionerType
+	public let disposeBag=DisposeBag()
+	public typealias Data=DataType
+	public typealias Section=SectionType
+	public typealias SectionerType=_SectionerType
 	
 	typealias RxSectionModel=SectionModel<Section,Data>
 	let dataSource=RxTableViewSectionedReloadDataSource<RxSectionModel>()
 	var sections=Variable([RxSectionModel]())
 	
-	var dataViewModel=Data.defaultViewModel()
-	var sectionViewModel=Section.defaultViewModel()
-	var sectioner=SectionerType()
-	
-	func setupTableView(tableView:UITableView,vc:UIViewController)
+	public var dataViewModel=Data.defaultViewModel()
+	public var sectionViewModel=Section.defaultViewModel()
+	public var sectioner=SectionerType()
+	public override init() {super.init()}
+	public func setupTableView(tableView:UITableView,vc:UIViewController)
 	{
 		guard let dataNib=dataViewModel.cellNib,
 			sectionNib=sectionViewModel.cellNib
@@ -88,7 +88,7 @@ class AutoSectionedTableViewManager<
 			.addDisposableTo(disposeBag)
 	
 	}
-	func tableView(tableView: UITableView,
+	public func tableView(tableView: UITableView,
 		viewForHeaderInSection section: Int) -> UIView?
 	{
 		guard let hv=tableView.dequeueReusableHeaderFooterViewWithIdentifier("section")
@@ -97,7 +97,7 @@ class AutoSectionedTableViewManager<
 		sectionViewModel.cellFactory(section, item: s, cell: hv)
 		return hv
 	}
-	func tableView(tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+	public func tableView(tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
 		guard let hv=tableView.dequeueReusableHeaderFooterViewWithIdentifier("section")
 			else {fatalError("why no section cell?")}
 		return hv.bounds.height

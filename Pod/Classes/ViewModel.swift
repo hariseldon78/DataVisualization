@@ -10,26 +10,26 @@ import Foundation
 import RxSwift
 import RxCocoa
 
-enum Either<T1,T2>
+public enum Either<T1,T2>
 {
 	case First(T1)
 	case Second(T2)
 }
 
-class ViewModel {
-	var cellNib:Either<UINib,UIView.Type>?
+public class ViewModel {
+	public var cellNib:Either<UINib,UIView.Type>?
 	func cellFactory(index:Int,item:Any,cell:UIView)->Void {}
 }
 
-class ConcreteViewModel<Data,Cell:UIView>:ViewModel
+public class ConcreteViewModel<Data,Cell:UIView>:ViewModel
 {
 	var cellFactoryClosure:(index:Int,item:Data,cell:Cell)->Void
-	init(cellName:String,cellFactory:(index:Int,item:Data,cell:Cell)->Void) {
+	public init(cellName:String,cellFactory:(index:Int,item:Data,cell:Cell)->Void) {
 		self.cellFactoryClosure=cellFactory
 		super.init()
 		cellNib = .First(UINib(nibName: cellName, bundle: nil))
 	}
-	init(cellFactory:(index:Int,item:Data,cell:Cell)->Void) {
+	public init(cellFactory:(index:Int,item:Data,cell:Cell)->Void) {
 		self.cellFactoryClosure=cellFactory
 		super.init()
 		cellNib = Either.Second(Cell.self)
@@ -42,9 +42,9 @@ class ConcreteViewModel<Data,Cell:UIView>:ViewModel
 	}
 }
 
-protocol Visualizable {
+public protocol Visualizable {
 	static func defaultViewModel()->ViewModel
 }
-protocol WithApi {
+public protocol WithApi {
 	static func api()->Observable<[Self]>
 }

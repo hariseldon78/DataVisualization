@@ -9,6 +9,7 @@
 import Foundation
 import RxSwift
 import RxCocoa
+import DataVisualization
 
 struct Worker: Visualizable,WithApi
 { 

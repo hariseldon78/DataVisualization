@@ -15,7 +15,6 @@
 		607FACE01AFB9204008FA782 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 607FACDE1AFB9204008FA782 /* LaunchScreen.xib */; };
 		607FACEC1AFB9204008FA782 /* Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACEB1AFB9204008FA782 /* Tests.swift */; };
 		F528EAA80C63A1F18D1FEA5B /* Pods_DataVisualization_Example.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4084C463CBC6596CE9B5800B /* Pods_DataVisualization_Example.framework */; };
-		FB908CBD1C2F831C008C6CCD /* DataVisualization.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB908CBC1C2F831C008C6CCD /* DataVisualization.swift */; };
 		FBBE179A1C307FE3005E1E5C /* FunkyCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBBE17981C307FE3005E1E5C /* FunkyCell.swift */; };
 		FBBE179B1C307FE3005E1E5C /* FunkyCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = FBBE17991C307FE3005E1E5C /* FunkyCell.xib */; };
 		FBC024DD1C303BAF00F4700D /* Model.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBC024DC1C303BAF00F4700D /* Model.swift */; };
@@ -23,22 +22,6 @@
 		FBC024E31C304C2A00F4700D /* TitleCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = FBC024E11C304C2A00F4700D /* TitleCell.xib */; };
 		FBC2827B1C33778F00FE50FE /* TitleHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBC282791C33778F00FE50FE /* TitleHeader.swift */; };
 		FBC2827C1C33778F00FE50FE /* TitleHeader.xib in Resources */ = {isa = PBXBuildFile; fileRef = FBC2827A1C33778F00FE50FE /* TitleHeader.xib */; };
-		FBFE84B11C31338A008A0868 /* SingleLevelTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBFE84B01C31338A008A0868 /* SingleLevelTableView.swift */; };
-		FBFE84B31C3133D9008A0868 /* ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBFE84B21C3133D9008A0868 /* ViewModel.swift */; };
-		FBFE84B51C313757008A0868 /* SectionedTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBFE84B41C313757008A0868 /* SectionedTableView.swift */; };
-		FBFE84C31C3192A2008A0868 /* RxCollectionViewSectionedAnimatedDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBFE84B71C3192A2008A0868 /* RxCollectionViewSectionedAnimatedDataSource.swift */; };
-		FBFE84C41C3192A2008A0868 /* RxCollectionViewSectionedDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBFE84B81C3192A2008A0868 /* RxCollectionViewSectionedDataSource.swift */; };
-		FBFE84C51C3192A2008A0868 /* RxCollectionViewSectionedReloadDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBFE84B91C3192A2008A0868 /* RxCollectionViewSectionedReloadDataSource.swift */; };
-		FBFE84C61C3192A2008A0868 /* RxTableViewSectionedAnimatedDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBFE84BA1C3192A2008A0868 /* RxTableViewSectionedAnimatedDataSource.swift */; };
-		FBFE84C71C3192A2008A0868 /* RxTableViewSectionedDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBFE84BB1C3192A2008A0868 /* RxTableViewSectionedDataSource.swift */; };
-		FBFE84C81C3192A2008A0868 /* RxTableViewSectionedReloadDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBFE84BC1C3192A2008A0868 /* RxTableViewSectionedReloadDataSource.swift */; };
-		FBFE84C91C3192A2008A0868 /* Differentiator.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBFE84BD1C3192A2008A0868 /* Differentiator.swift */; };
-		FBFE84CA1C3192A2008A0868 /* README.md in Sources */ = {isa = PBXBuildFile; fileRef = FBFE84BE1C3192A2008A0868 /* README.md */; };
-		FBFE84CB1C3192A2008A0868 /* RxDataSourceStarterKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBFE84BF1C3192A2008A0868 /* RxDataSourceStarterKit.swift */; };
-		FBFE84CC1C3192A2008A0868 /* SectionedViewType.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBFE84C01C3192A2008A0868 /* SectionedViewType.swift */; };
-		FBFE84CD1C3192A2008A0868 /* SectionModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBFE84C11C3192A2008A0868 /* SectionModel.swift */; };
-		FBFE84CE1C3192A2008A0868 /* SectionModelType.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBFE84C21C3192A2008A0868 /* SectionModelType.swift */; };
-		FBFE84D01C3192B4008A0868 /* Changeset.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBFE84CF1C3192B4008A0868 /* Changeset.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -71,7 +54,6 @@
 		9D21436E0454C3FA1306C436 /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../README.md; sourceTree = "<group>"; };
 		BFF5DB6776F4C292FCB50856 /* Pods-DataVisualization_Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DataVisualization_Tests.release.xcconfig"; path = "Pods/Target Support Files/Pods-DataVisualization_Tests/Pods-DataVisualization_Tests.release.xcconfig"; sourceTree = "<group>"; };
 		CDF8262716909198AB40C7A4 /* DataVisualization.podspec */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = DataVisualization.podspec; path = ../DataVisualization.podspec; sourceTree = "<group>"; };
-		FB908CBC1C2F831C008C6CCD /* DataVisualization.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = DataVisualization.swift; path = ../Pod/Classes/DataVisualization.swift; sourceTree = "<group>"; };
 		FBBE17981C307FE3005E1E5C /* FunkyCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FunkyCell.swift; sourceTree = "<group>"; };
 		FBBE17991C307FE3005E1E5C /* FunkyCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = FunkyCell.xib; sourceTree = "<group>"; };
 		FBC024DC1C303BAF00F4700D /* Model.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Model.swift; sourceTree = "<group>"; };
@@ -79,22 +61,6 @@
 		FBC024E11C304C2A00F4700D /* TitleCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TitleCell.xib; sourceTree = "<group>"; };
 		FBC282791C33778F00FE50FE /* TitleHeader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TitleHeader.swift; sourceTree = "<group>"; };
 		FBC2827A1C33778F00FE50FE /* TitleHeader.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TitleHeader.xib; sourceTree = "<group>"; };
-		FBFE84B01C31338A008A0868 /* SingleLevelTableView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SingleLevelTableView.swift; sourceTree = "<group>"; };
-		FBFE84B21C3133D9008A0868 /* ViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewModel.swift; sourceTree = "<group>"; };
-		FBFE84B41C313757008A0868 /* SectionedTableView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SectionedTableView.swift; sourceTree = "<group>"; };
-		FBFE84B71C3192A2008A0868 /* RxCollectionViewSectionedAnimatedDataSource.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RxCollectionViewSectionedAnimatedDataSource.swift; sourceTree = "<group>"; };
-		FBFE84B81C3192A2008A0868 /* RxCollectionViewSectionedDataSource.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RxCollectionViewSectionedDataSource.swift; sourceTree = "<group>"; };
-		FBFE84B91C3192A2008A0868 /* RxCollectionViewSectionedReloadDataSource.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RxCollectionViewSectionedReloadDataSource.swift; sourceTree = "<group>"; };
-		FBFE84BA1C3192A2008A0868 /* RxTableViewSectionedAnimatedDataSource.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RxTableViewSectionedAnimatedDataSource.swift; sourceTree = "<group>"; };
-		FBFE84BB1C3192A2008A0868 /* RxTableViewSectionedDataSource.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RxTableViewSectionedDataSource.swift; sourceTree = "<group>"; };
-		FBFE84BC1C3192A2008A0868 /* RxTableViewSectionedReloadDataSource.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RxTableViewSectionedReloadDataSource.swift; sourceTree = "<group>"; };
-		FBFE84BD1C3192A2008A0868 /* Differentiator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Differentiator.swift; sourceTree = "<group>"; };
-		FBFE84BE1C3192A2008A0868 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
-		FBFE84BF1C3192A2008A0868 /* RxDataSourceStarterKit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RxDataSourceStarterKit.swift; sourceTree = "<group>"; };
-		FBFE84C01C3192A2008A0868 /* SectionedViewType.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SectionedViewType.swift; sourceTree = "<group>"; };
-		FBFE84C11C3192A2008A0868 /* SectionModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SectionModel.swift; sourceTree = "<group>"; };
-		FBFE84C21C3192A2008A0868 /* SectionModelType.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SectionModelType.swift; sourceTree = "<group>"; };
-		FBFE84CF1C3192B4008A0868 /* Changeset.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Changeset.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -120,7 +86,6 @@
 		607FACC71AFB9204008FA782 = {
 			isa = PBXGroup;
 			children = (
-				FB908CBB1C2F81C8008C6CCD /* lib */,
 				607FACF51AFB993E008FA782 /* Podspec Metadata */,
 				607FACD21AFB9204008FA782 /* Example for DataVisualization */,
 				607FACE81AFB9204008FA782 /* Tests */,
@@ -213,38 +178,6 @@
 				BFF5DB6776F4C292FCB50856 /* Pods-DataVisualization_Tests.release.xcconfig */,
 			);
 			name = Pods;
-			sourceTree = "<group>";
-		};
-		FB908CBB1C2F81C8008C6CCD /* lib */ = {
-			isa = PBXGroup;
-			children = (
-				FBFE84B61C31927F008A0868 /* rx */,
-				FB908CBC1C2F831C008C6CCD /* DataVisualization.swift */,
-				FBFE84B01C31338A008A0868 /* SingleLevelTableView.swift */,
-				FBFE84B21C3133D9008A0868 /* ViewModel.swift */,
-				FBFE84B41C313757008A0868 /* SectionedTableView.swift */,
-			);
-			name = lib;
-			sourceTree = "<group>";
-		};
-		FBFE84B61C31927F008A0868 /* rx */ = {
-			isa = PBXGroup;
-			children = (
-				FBFE84CF1C3192B4008A0868 /* Changeset.swift */,
-				FBFE84B71C3192A2008A0868 /* RxCollectionViewSectionedAnimatedDataSource.swift */,
-				FBFE84B81C3192A2008A0868 /* RxCollectionViewSectionedDataSource.swift */,
-				FBFE84B91C3192A2008A0868 /* RxCollectionViewSectionedReloadDataSource.swift */,
-				FBFE84BA1C3192A2008A0868 /* RxTableViewSectionedAnimatedDataSource.swift */,
-				FBFE84BB1C3192A2008A0868 /* RxTableViewSectionedDataSource.swift */,
-				FBFE84BC1C3192A2008A0868 /* RxTableViewSectionedReloadDataSource.swift */,
-				FBFE84BD1C3192A2008A0868 /* Differentiator.swift */,
-				FBFE84BE1C3192A2008A0868 /* README.md */,
-				FBFE84BF1C3192A2008A0868 /* RxDataSourceStarterKit.swift */,
-				FBFE84C01C3192A2008A0868 /* SectionedViewType.swift */,
-				FBFE84C11C3192A2008A0868 /* SectionModel.swift */,
-				FBFE84C21C3192A2008A0868 /* SectionModelType.swift */,
-			);
-			name = rx;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -450,28 +383,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				FBFE84CE1C3192A2008A0868 /* SectionModelType.swift in Sources */,
 				607FACD81AFB9204008FA782 /* ViewController.swift in Sources */,
-				FBFE84D01C3192B4008A0868 /* Changeset.swift in Sources */,
 				FBBE179A1C307FE3005E1E5C /* FunkyCell.swift in Sources */,
 				607FACD61AFB9204008FA782 /* AppDelegate.swift in Sources */,
-				FBFE84CD1C3192A2008A0868 /* SectionModel.swift in Sources */,
-				FBFE84C61C3192A2008A0868 /* RxTableViewSectionedAnimatedDataSource.swift in Sources */,
-				FBFE84C51C3192A2008A0868 /* RxCollectionViewSectionedReloadDataSource.swift in Sources */,
-				FBFE84C91C3192A2008A0868 /* Differentiator.swift in Sources */,
 				FBC2827B1C33778F00FE50FE /* TitleHeader.swift in Sources */,
-				FBFE84B11C31338A008A0868 /* SingleLevelTableView.swift in Sources */,
-				FBFE84CB1C3192A2008A0868 /* RxDataSourceStarterKit.swift in Sources */,
 				FBC024E21C304C2A00F4700D /* TitleCell.swift in Sources */,
-				FBFE84C41C3192A2008A0868 /* RxCollectionViewSectionedDataSource.swift in Sources */,
-				FBFE84B51C313757008A0868 /* SectionedTableView.swift in Sources */,
-				FBFE84CC1C3192A2008A0868 /* SectionedViewType.swift in Sources */,
-				FBFE84C81C3192A2008A0868 /* RxTableViewSectionedReloadDataSource.swift in Sources */,
-				FBFE84CA1C3192A2008A0868 /* README.md in Sources */,
-				FB908CBD1C2F831C008C6CCD /* DataVisualization.swift in Sources */,
-				FBFE84C31C3192A2008A0868 /* RxCollectionViewSectionedAnimatedDataSource.swift in Sources */,
-				FBFE84C71C3192A2008A0868 /* RxTableViewSectionedDataSource.swift in Sources */,
-				FBFE84B31C3133D9008A0868 /* ViewModel.swift in Sources */,
 				FBC024DD1C303BAF00F4700D /* Model.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
