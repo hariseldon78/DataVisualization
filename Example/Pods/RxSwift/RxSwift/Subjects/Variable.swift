@@ -43,7 +43,7 @@ public class Variable<Element> : ObservableType {
             _subject.on(.Next(newValue))
         }
     }
-    
+	
     /**
     Initializes variable with initial value.
     

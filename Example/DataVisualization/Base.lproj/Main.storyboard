@@ -32,6 +32,7 @@
                     <navigationItem key="navigationItem" id="swO-Aa-sqZ"/>
                     <connections>
                         <outlet property="tableView" destination="EPd-PU-pHf" id="tQn-mv-CAs"/>
+                        <segue destination="bda-FG-fWT" kind="showDetail" identifier="detail" action="showViewController:sender:" id="bq7-cn-0fa"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="x5A-6p-PRh" sceneMemberID="firstResponder"/>
@@ -74,10 +75,10 @@
             </objects>
             <point key="canvasLocation" x="-1332" y="990"/>
         </scene>
-        <!--View Controller-->
+        <!--Worker Detail1-->
         <scene sceneID="clI-t1-IlC">
             <objects>
-                <viewController id="bda-FG-fWT" sceneMemberID="viewController">
+                <viewController id="bda-FG-fWT" customClass="WorkerDetail1" customModule="DataVisualization_Example" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="j66-M0-hhC"/>
                         <viewControllerLayoutGuide type="bottom" id="AJa-IA-WUk"/>
@@ -85,12 +86,82 @@
                     <view key="view" contentMode="scaleToFill" id="eeX-6T-lVo">
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="el0-3w-Yrg">
+                                <rect key="frame" x="279" y="28" width="42" height="63"/>
+                                <subviews>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="diF-ho-T5w">
+                                        <rect key="frame" x="0.0" y="0.0" width="42" height="21"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                        <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="R8w-mB-I3N">
+                                        <rect key="frame" x="0.0" y="21" width="42" height="21"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                        <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="B8Q-Ja-QGz">
+                                        <rect key="frame" x="0.0" y="42" width="42" height="21"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                        <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                </subviews>
+                            </stackView>
+                        </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="el0-3w-Yrg" firstAttribute="centerX" secondItem="eeX-6T-lVo" secondAttribute="centerX" id="Byd-wj-bpg"/>
+                            <constraint firstItem="el0-3w-Yrg" firstAttribute="top" secondItem="j66-M0-hhC" secondAttribute="bottom" constant="8" symbolic="YES" id="Rql-Id-sqo"/>
+                        </constraints>
                     </view>
+                    <connections>
+                        <outlet property="label1" destination="diF-ho-T5w" id="wi6-Oo-1d1"/>
+                        <outlet property="label2" destination="R8w-mB-I3N" id="iZb-eK-HK0"/>
+                        <outlet property="label3" destination="B8Q-Ja-QGz" id="gcc-Bb-GHy"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="lNW-tR-Zur" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1595" y="126"/>
+            <point key="canvasLocation" x="1503" y="190"/>
+        </scene>
+        <!--Worker Detail2-->
+        <scene sceneID="lrb-r1-suw">
+            <objects>
+                <viewController id="y6S-9n-iS8" customClass="WorkerDetail2" customModule="DataVisualization_Example" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="feH-3g-DN1"/>
+                        <viewControllerLayoutGuide type="bottom" id="liq-CG-YgN"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="uD5-ID-09T">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Dga-T1-mUA" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1503" y="1142"/>
+        </scene>
+        <!--Department Detail1-->
+        <scene sceneID="sWg-VX-9aO">
+            <objects>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="1R2-lc-yIx" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <viewController id="Hto-bm-dic" customClass="DepartmentDetail1" customModule="DataVisualization_Example" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="NLJ-A3-yvC"/>
+                        <viewControllerLayoutGuide type="bottom" id="W15-dy-26J"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="yAz-Kl-dRR">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    </view>
+                </viewController>
+            </objects>
+            <point key="canvasLocation" x="1543" y="2086"/>
         </scene>
         <!--Funky View Controller-->
         <scene sceneID="jLL-Ck-bNk">
@@ -120,6 +191,7 @@
                     <navigationItem key="navigationItem" id="DfY-Zn-cDU"/>
                     <connections>
                         <outlet property="tableView" destination="e9g-GU-4OD" id="Fvx-B7-XDj"/>
+                        <segue destination="y6S-9n-iS8" kind="show" identifier="workerDetail" id="cnL-x7-rLl"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Vhz-TI-9ah" sceneMemberID="firstResponder"/>
@@ -171,6 +243,7 @@
                     <navigationItem key="navigationItem" id="WYl-oi-S42"/>
                     <connections>
                         <outlet property="tableView" destination="UXb-Pm-0Mx" id="zLP-Lc-s77"/>
+                        <segue destination="Hto-bm-dic" kind="show" identifier="departmentDetail" id="Fbp-Ym-Xcz"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="EE5-pT-vst" sceneMemberID="firstResponder"/>

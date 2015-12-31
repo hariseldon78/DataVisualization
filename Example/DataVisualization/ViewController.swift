@@ -16,8 +16,13 @@ class PlainViewController:UIViewController
 	let tvManager=AutoSingleLevelTableViewManager<Worker>()
 	override func viewDidLoad() {
 		super.viewDidLoad()
-		tvManager.setupTableView(tableView)
+		tvManager.setupTableView(tableView,vc:self)
+		tvManager.setupDetail("detail")
 	}
+	override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+		tvManager.prepareForSegue(segue,sender:sender)
+	}
+	
 }
 
 class FunkyViewController:UIViewController {
@@ -31,7 +36,7 @@ class FunkyViewController:UIViewController {
 			cell.subtitle.text="salary: €\(item.salary)"
 		}
 		
-		tvManager.setupTableView(tableView)
+		tvManager.setupTableView(tableView,vc:self)
 	}
 }
 
@@ -40,7 +45,43 @@ class PlainSectionedViewController:UIViewController {
 	let tvManager=AutoSectionedTableViewManager<Worker,Department,WorkerSectioner>()
 	override func viewDidLoad() {
 		super.viewDidLoad()
-		tvManager.setupTableView(tableView)
-		
+		tvManager.setupTableView(tableView,vc:self)
 	}
 }
+
+class WorkerDetail1:UIViewController,DetailView
+{
+	@IBOutlet weak var label1: UILabel!
+	@IBOutlet weak var label2: UILabel!
+	@IBOutlet weak var label3: UILabel!
+	let disposeBag=DisposeBag()
+	var objObs=Variable((nil as Worker!))
+	var object:Any? {didSet{
+		guard let w=object as? Worker else {return}
+		objObs.value=w
+		}
+	}
+	override func viewDidLoad() {
+		let obj=objObs.observeOn(MainScheduler.sharedInstance)
+		
+		obj.map { $0.name }.bindTo(label1.rx_text).addDisposableTo(disposeBag)
+		obj.map { "salary: €\($0.salary)" }.bindTo(label2.rx_text).addDisposableTo(disposeBag)
+		obj.map { "dep: \($0.departmentId)" }.bindTo(label3.rx_text).addDisposableTo(disposeBag)
+	}
+
+}
+
+class WorkerDetail2:UIViewController
+{
+	
+}
+
+class DepartmentDetail1:UIViewController
+{
+	
+}
+
+
+
+
+

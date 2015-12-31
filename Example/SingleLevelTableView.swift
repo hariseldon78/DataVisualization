@@ -18,21 +18,30 @@ protocol AutoSingleLevelTableView:Disposer {
 	
 	var viewModel:ViewModel {get}
 	var data:Observable<[Data]> {get}
-	func setupTableView(tableView:UITableView)
+	func setupTableView(tableView:UITableView,vc:UIViewController)
 }
 
+protocol DetailView {
+	var object:Any? {get set}
+}
 class AutoSingleLevelTableViewManager<DataType where DataType:Visualizable,DataType:WithApi>:AutoSingleLevelTableView
 {
 	typealias Data=DataType
 	let data=Data.api()
 	let disposeBag=DisposeBag()
 	var viewModel=Data.defaultViewModel()
+	var vc:UIViewController!
 
-	func setupTableView(tableView:UITableView)
+	var onClick:((row:Data)->())?=nil
+	var clickedObj:Data?
+	
+	func setupTableView(tableView:UITableView,vc:UIViewController)
 	{
 		guard let nib=viewModel.cellNib else {
 			fatalError("No cellNib defined: are you using ConcreteViewModel properly?")
 		}
+		
+		self.vc=vc
 		
 		switch nib
 		{
@@ -47,5 +56,35 @@ class AutoSingleLevelTableViewManager<DataType where DataType:Visualizable,DataT
 				self.viewModel.cellFactory(index,item: item,cell: cell)
 			}
 			.addDisposableTo(self.disposeBag)
+		tableView
+			.rx_modelSelected(Data.self)
+			.subscribeNext { (obj) -> Void in
+				self.clickedObj=obj
+				self.onClick!(row: obj)
+		}.addDisposableTo(disposeBag)
 	}
+	
+	var detailSegue:String?=nil
+	func setupDetail(segue:String)
+	{
+		detailSegue=segue
+		onClick={ row in
+			self.vc.performSegueWithIdentifier(segue, sender: nil)
+		}
+	}
+	func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+		if segue.identifier==detailSegue
+		{
+			if var dest=segue.destinationViewController as? DetailView
+			{
+				dest.object=clickedObj
+			}
+		}
+	}
+	
 }
+
+
+
+
+

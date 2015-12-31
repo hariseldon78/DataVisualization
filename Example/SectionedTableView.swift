@@ -17,10 +17,6 @@ protocol Sectioner
 	typealias Section
 	var sections:Observable<[(Section,[Data])]> {get}
 }
-//class Sectioner<Data:Visualizable,Section:Visualizable>
-//{
-//	required init(){}
-//}
 
 protocol AutoSectionedTableView:Disposer {
 	typealias Data:Visualizable
@@ -29,7 +25,7 @@ protocol AutoSectionedTableView:Disposer {
 	var dataViewModel:ViewModel {get}
 	var sectionViewModel:ViewModel {get}
 	
-	func setupTableView(tableView:UITableView)
+	func setupTableView(tableView:UITableView,vc:UIViewController)
 	var sectioner:SectionerType {get}
 }
 
@@ -53,7 +49,7 @@ class AutoSectionedTableViewManager<
 	var sectionViewModel=Section.defaultViewModel()
 	var sectioner=SectionerType()
 	
-	func setupTableView(tableView:UITableView)
+	func setupTableView(tableView:UITableView,vc:UIViewController)
 	{
 		guard let dataNib=dataViewModel.cellNib,
 			sectionNib=sectionViewModel.cellNib
