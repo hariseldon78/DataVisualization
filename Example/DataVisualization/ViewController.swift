@@ -54,21 +54,17 @@ class WorkerDetail1:UIViewController,DetailView
 	@IBOutlet weak var label1: UILabel!
 	@IBOutlet weak var label2: UILabel!
 	@IBOutlet weak var label3: UILabel!
-	let disposeBag=DisposeBag()
-	var objObs=Variable((nil as Worker!))
-	var object:Any? {didSet{
-		guard let w=object as? Worker else {return}
-		objObs.value=w
-		}
-	}
+	
+	var detailManager:DetailManagerType=DetailManager<Worker>()
+	
 	override func viewDidLoad() {
-		let obj=objObs.observeOn(MainScheduler.sharedInstance)
-		
-		obj.map { $0.name }.bindTo(label1.rx_text).addDisposableTo(disposeBag)
-		obj.map { "salary: €\($0.salary)" }.bindTo(label2.rx_text).addDisposableTo(disposeBag)
-		obj.map { "dep: \($0.departmentId)" }.bindTo(label3.rx_text).addDisposableTo(disposeBag)
+		(detailManager as! DetailManager<Worker>).binder={ (obj:Observable<Worker>, disposeBag:DisposeBag) -> () in
+			obj.map { $0.name }.bindTo(self.label1.rx_text).addDisposableTo(disposeBag)
+			obj.map { "salary: €\($0.salary)" }.bindTo(self.label2.rx_text).addDisposableTo(disposeBag)
+			obj.map { "dep: \($0.departmentId)" }.bindTo(self.label3.rx_text).addDisposableTo(disposeBag)
+		}
+		detailManager.viewDidLoad()
 	}
-
 }
 
 class WorkerDetail2:UIViewController

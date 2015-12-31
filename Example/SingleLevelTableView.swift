@@ -22,7 +22,30 @@ protocol AutoSingleLevelTableView:Disposer {
 }
 
 protocol DetailView {
+	var detailManager:DetailManagerType {get set}
+}
+protocol DetailManagerType
+{
 	var object:Any? {get set}
+	func viewDidLoad()
+}
+class DetailManager<Data>:DetailManagerType
+{
+	let disposeBag=DisposeBag()
+	var objObs:Variable<Data>!
+	var object:Any? {didSet{
+		guard let w=object as? Data else {return}
+		if objObs==nil { objObs=Variable(w) }
+		else { objObs.value=w }
+		}
+	}
+	typealias Binder=(obj:Observable<Data>,disposeBag:DisposeBag)->()
+	var binder:Binder?
+	func viewDidLoad() {
+		let obj=objObs.observeOn(MainScheduler.sharedInstance)
+		binder?(obj:obj,disposeBag:disposeBag)
+	}
+
 }
 class AutoSingleLevelTableViewManager<DataType where DataType:Visualizable,DataType:WithApi>:AutoSingleLevelTableView
 {
@@ -77,7 +100,7 @@ class AutoSingleLevelTableViewManager<DataType where DataType:Visualizable,DataT
 		{
 			if var dest=segue.destinationViewController as? DetailView
 			{
-				dest.object=clickedObj
+				dest.detailManager.object=clickedObj
 			}
 		}
 	}
