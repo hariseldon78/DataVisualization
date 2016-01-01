@@ -28,14 +28,20 @@ public protocol AutoSectionedTableView:Disposer {
 	func setupTableView(tableView:UITableView,vc:UIViewController)
 	var sectioner:SectionerType {get}
 }
-
+class EnrichedTapGestureRecognizer<T>:UITapGestureRecognizer
+{
+	var obj:T
+	init(target: AnyObject?, action: Selector,obj:T) {
+		self.obj=obj
+		super.init(target: target, action: action)
+	}
+}
 public class AutoSectionedTableViewManager<
 	DataType:Visualizable,
 	SectionType:Visualizable,
 	_SectionerType:Sectioner where _SectionerType.Data==DataType,_SectionerType.Section==SectionType
 	>:NSObject,AutoSectionedTableView,UITableViewDelegate
 {
-	@IBOutlet weak var tableView: UITableView!
 	public let disposeBag=DisposeBag()
 	public typealias Data=DataType
 	public typealias Section=SectionType
@@ -45,15 +51,28 @@ public class AutoSectionedTableViewManager<
 	let dataSource=RxTableViewSectionedReloadDataSource<RxSectionModel>()
 	var sections=Variable([RxSectionModel]())
 	
+	var onDataClick:((row:Data)->())?=nil
+	var clickedDataObj:Data?
+
+	var onSectionClick:((section:Section)->())?=nil
+	var clickedSectionObj:Section?
+
 	public var dataViewModel=Data.defaultViewModel()
 	public var sectionViewModel=Section.defaultViewModel()
 	public var sectioner=SectionerType()
+	var vc:UIViewController!
+
+	
+	
 	public override init() {super.init()}
 	public func setupTableView(tableView:UITableView,vc:UIViewController)
 	{
 		guard let dataNib=dataViewModel.cellNib,
 			sectionNib=sectionViewModel.cellNib
 		else {fatalError("No cellNib defined: are you using ConcreteViewModel properly?")}
+		
+		self.vc=vc
+
 		
 		switch dataNib
 		{
@@ -81,6 +100,10 @@ public class AutoSectionedTableViewManager<
 			guard let cell=tableView.dequeueReusableCellWithIdentifier("cell")
 				else {fatalError("why no cell?")}
 			self.dataViewModel.cellFactory(indexPath.row, item: item, cell: cell)
+			if self.onDataClick != nil
+			{
+				cell.accessoryType=UITableViewCellAccessoryType.DisclosureIndicator
+			}
 			return cell
 		}
 		
@@ -95,12 +118,62 @@ public class AutoSectionedTableViewManager<
 			else {fatalError("why no section cell?")}
 		let s=sections.value[section].model
 		sectionViewModel.cellFactory(section, item: s, cell: hv)
+		if onSectionClick != nil
+		{
+			let gestRec=EnrichedTapGestureRecognizer(target: self, action: "sectionTitleTapped:",obj:s)
+			hv.addGestureRecognizer(gestRec)
+		}
+
 		return hv
+	}
+	func sectionTitleTapped(gr:UITapGestureRecognizer)
+	{
+		guard let gr=gr as? EnrichedTapGestureRecognizer<Section> else {return}
+		clickedSectionObj=gr.obj
+		onSectionClick?(section:gr.obj)
 	}
 	public func tableView(tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
 		guard let hv=tableView.dequeueReusableHeaderFooterViewWithIdentifier("section")
 			else {fatalError("why no section cell?")}
 		return hv.bounds.height
+	}
+	public func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+		dump(indexPath)
+		let item=dataSource.itemAtIndexPath(indexPath)
+		clickedDataObj=item
+		onDataClick?(row:item)
+	}
+	
+	var dataDetailSegue:String?=nil
+	public func setupDataDetail(segue:String)
+	{
+		dataDetailSegue=segue
+		onDataClick={ row in
+			self.vc.performSegueWithIdentifier(segue, sender: nil)
+		}
+	}
+	
+	var sectionDetailSegue:String?=nil
+	public func setupSectionDetail(segue:String)
+	{
+		sectionDetailSegue=segue
+		onSectionClick={ row in
+			self.vc.performSegueWithIdentifier(segue, sender: nil)
+		}
+	}
+	
+	public func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+		guard var dest=segue.destinationViewController as? DetailView,
+			let identifier=segue.identifier else {return}
+		switch identifier
+		{
+		case dataDetailSegue! where dataDetailSegue != nil:
+			dest.detailManager.object=clickedDataObj
+		case sectionDetailSegue! where sectionDetailSegue != nil:
+			dest.detailManager.object=clickedSectionObj
+		default:
+			_=0
+		}
 	}
 }
 

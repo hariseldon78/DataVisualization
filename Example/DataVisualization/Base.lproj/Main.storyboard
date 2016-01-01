@@ -88,7 +88,7 @@
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="el0-3w-Yrg">
+                            <stackView opaque="NO" contentMode="scaleToFill" misplaced="YES" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="el0-3w-Yrg">
                                 <rect key="frame" x="279" y="28" width="42" height="63"/>
                                 <subviews>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="diF-ho-T5w">
@@ -179,8 +179,32 @@
                     <view key="view" contentMode="scaleToFill" id="yAz-Kl-dRR">
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="yOX-2g-fMH">
+                                <rect key="frame" x="279" y="72" width="42" height="21"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="JK0-xE-iIg">
+                                <rect key="frame" x="279" y="522" width="42" height="21"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                        </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="JK0-xE-iIg" firstAttribute="leading" secondItem="yOX-2g-fMH" secondAttribute="leading" id="JCm-5F-ec5"/>
+                            <constraint firstItem="yOX-2g-fMH" firstAttribute="top" secondItem="NLJ-A3-yvC" secondAttribute="bottom" constant="8" symbolic="YES" id="ciC-cj-ikY"/>
+                            <constraint firstItem="W15-dy-26J" firstAttribute="top" secondItem="JK0-xE-iIg" secondAttribute="bottom" constant="8" symbolic="YES" id="sl1-5a-kGv"/>
+                            <constraint firstItem="yOX-2g-fMH" firstAttribute="centerX" secondItem="yAz-Kl-dRR" secondAttribute="centerX" id="yqj-uc-SAu"/>
+                        </constraints>
                     </view>
+                    <connections>
+                        <outlet property="label1" destination="yOX-2g-fMH" id="MbL-YQ-Eb7"/>
+                        <outlet property="label2" destination="JK0-xE-iIg" id="NmD-xL-iid"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="1R2-lc-yIx" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>

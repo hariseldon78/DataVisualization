@@ -102,12 +102,12 @@ public class AutoSingleLevelTableViewManager<DataType where DataType:Visualizabl
 		}
 	}
 	public func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-		if segue.identifier==detailSegue
+		guard var dest=segue.destinationViewController as? DetailView,
+			let identifier=segue.identifier,
+			let detailSegue=detailSegue else {return}
+		if identifier==detailSegue
 		{
-			if var dest=segue.destinationViewController as? DetailView
-			{
-				dest.detailManager.object=clickedObj
-			}
+			dest.detailManager.object=clickedObj
 		}
 	}
 	

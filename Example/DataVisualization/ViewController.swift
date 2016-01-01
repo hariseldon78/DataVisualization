@@ -51,6 +51,11 @@ class PlainSectionedViewController:UIViewController {
 	override func viewDidLoad() {
 		super.viewDidLoad()
 		tvManager.setupTableView(tableView,vc:self)
+		tvManager.setupDataDetail("workerDetail")
+		tvManager.setupSectionDetail("departmentDetail")
+	}
+	override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+		tvManager.prepareForSegue(segue,sender:sender)
 	}
 }
 
@@ -92,9 +97,21 @@ class WorkerDetail2:UIViewController,DetailView
 	
 }
 
-class DepartmentDetail1:UIViewController
+class DepartmentDetail1:UIViewController,DetailView
 {
+	@IBOutlet weak var label1: UILabel!
+	@IBOutlet weak var label2: UILabel!
 	
+	var detailManager:DetailManagerType=DetailManager<Department>()
+	
+	override func viewDidLoad() {
+		super.viewDidLoad()
+		(detailManager as! DetailManager<Department>).binder={ (obj:Observable<Department>, disposeBag:DisposeBag) -> () in
+			obj.map { $0.name }.bindTo(self.label1.rx_text).addDisposableTo(disposeBag)
+			obj.map { "\($0.id)" }.bindTo(self.label2.rx_text).addDisposableTo(disposeBag)
+		}
+		detailManager.viewDidLoad()
+	}
 }
 
 
