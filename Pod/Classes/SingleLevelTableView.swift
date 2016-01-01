@@ -79,6 +79,10 @@ public class AutoSingleLevelTableViewManager<DataType where DataType:Visualizabl
 			.bindTo(tableView.rx_itemsWithCellIdentifier("cell")) {
 				(index,item,cell)->Void in
 				self.viewModel.cellFactory(index,item: item,cell: cell)
+				if self.onClick != nil
+				{
+					cell.accessoryType=UITableViewCellAccessoryType.DisclosureIndicator
+				}
 			}
 			.addDisposableTo(self.disposeBag)
 		tableView
