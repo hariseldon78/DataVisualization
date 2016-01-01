@@ -38,6 +38,10 @@ class FunkyViewController:UIViewController {
 		}
 		
 		tvManager.setupTableView(tableView,vc:self)
+		tvManager.setupDetail("detail")
+	}
+	override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+		tvManager.prepareForSegue(segue,sender:sender)
 	}
 }
 
@@ -59,6 +63,7 @@ class WorkerDetail1:UIViewController,DetailView
 	var detailManager:DetailManagerType=DetailManager<Worker>()
 	
 	override func viewDidLoad() {
+		super.viewDidLoad()
 		(detailManager as! DetailManager<Worker>).binder={ (obj:Observable<Worker>, disposeBag:DisposeBag) -> () in
 			obj.map { $0.name }.bindTo(self.label1.rx_text).addDisposableTo(disposeBag)
 			obj.map { "salary: €\($0.salary)" }.bindTo(self.label2.rx_text).addDisposableTo(disposeBag)
@@ -68,8 +73,22 @@ class WorkerDetail1:UIViewController,DetailView
 	}
 }
 
-class WorkerDetail2:UIViewController
+class WorkerDetail2:UIViewController,DetailView
 {
+	@IBOutlet weak var label1: UILabel!
+	@IBOutlet weak var slider1: UISlider!
+	
+	var detailManager:DetailManagerType=DetailManager<Worker>()
+	
+	override func viewDidLoad() {
+		super.viewDidLoad()
+		(detailManager as! DetailManager<Worker>).binder={ (obj:Observable<Worker>, disposeBag:DisposeBag) -> () in
+			obj.map { $0.name }.bindTo(self.label1.rx_text).addDisposableTo(disposeBag)
+			obj.map { Float($0.salary) }.bindTo(self.slider1.rx_value).addDisposableTo(disposeBag)
+		}
+		detailManager.viewDidLoad()
+
+	}
 	
 }
 

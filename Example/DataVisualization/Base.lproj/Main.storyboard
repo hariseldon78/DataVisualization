@@ -2,6 +2,7 @@
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="9531" systemVersion="15C50" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="CRB-TI-ot4">
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9529"/>
+        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
     </dependencies>
     <scenes>
         <!--Plain View Controller-->
@@ -32,7 +33,7 @@
                     <navigationItem key="navigationItem" id="swO-Aa-sqZ"/>
                     <connections>
                         <outlet property="tableView" destination="EPd-PU-pHf" id="tQn-mv-CAs"/>
-                        <segue destination="bda-FG-fWT" kind="showDetail" identifier="detail" action="showViewController:sender:" id="bq7-cn-0fa"/>
+                        <segue destination="bda-FG-fWT" kind="show" identifier="detail" id="bq7-cn-0fa"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="x5A-6p-PRh" sceneMemberID="firstResponder"/>
@@ -93,19 +94,19 @@
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="diF-ho-T5w">
                                         <rect key="frame" x="0.0" y="0.0" width="42" height="21"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                        <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                        <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="R8w-mB-I3N">
                                         <rect key="frame" x="0.0" y="21" width="42" height="21"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                        <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                        <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="B8Q-Ja-QGz">
                                         <rect key="frame" x="0.0" y="42" width="42" height="21"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                        <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                        <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                         <nil key="highlightedColor"/>
                                     </label>
                                 </subviews>
@@ -138,8 +139,30 @@
                     <view key="view" contentMode="scaleToFill" id="uD5-ID-09T">
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="jRW-St-qRI">
+                                <rect key="frame" x="279" y="289" width="42" height="21"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="500" minValue="0.0" maxValue="2000" translatesAutoresizingMaskIntoConstraints="NO" id="nRY-gP-A3y">
+                                <rect key="frame" x="18" y="318" width="564" height="31"/>
+                            </slider>
+                        </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="nRY-gP-A3y" firstAttribute="leading" secondItem="uD5-ID-09T" secondAttribute="leadingMargin" id="0uu-wI-pMx"/>
+                            <constraint firstItem="jRW-St-qRI" firstAttribute="centerY" secondItem="uD5-ID-09T" secondAttribute="centerY" id="GFL-1i-fyz"/>
+                            <constraint firstItem="nRY-gP-A3y" firstAttribute="top" secondItem="jRW-St-qRI" secondAttribute="bottom" constant="8" symbolic="YES" id="JWI-2e-LOk"/>
+                            <constraint firstItem="jRW-St-qRI" firstAttribute="centerX" secondItem="nRY-gP-A3y" secondAttribute="centerX" id="WEU-Cg-tg9"/>
+                            <constraint firstItem="nRY-gP-A3y" firstAttribute="trailing" secondItem="uD5-ID-09T" secondAttribute="trailingMargin" id="x1y-2B-kq2"/>
+                        </constraints>
                     </view>
+                    <connections>
+                        <outlet property="label1" destination="jRW-St-qRI" id="jyO-Rd-UT8"/>
+                        <outlet property="slider1" destination="nRY-gP-A3y" id="E6I-Dl-Pah"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Dga-T1-mUA" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
@@ -148,7 +171,6 @@
         <!--Department Detail1-->
         <scene sceneID="sWg-VX-9aO">
             <objects>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="1R2-lc-yIx" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <viewController id="Hto-bm-dic" customClass="DepartmentDetail1" customModule="DataVisualization_Example" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="NLJ-A3-yvC"/>
@@ -160,6 +182,7 @@
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
                 </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="1R2-lc-yIx" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="1543" y="2086"/>
         </scene>
@@ -191,7 +214,7 @@
                     <navigationItem key="navigationItem" id="DfY-Zn-cDU"/>
                     <connections>
                         <outlet property="tableView" destination="e9g-GU-4OD" id="Fvx-B7-XDj"/>
-                        <segue destination="y6S-9n-iS8" kind="show" identifier="workerDetail" id="cnL-x7-rLl"/>
+                        <segue destination="y6S-9n-iS8" kind="show" identifier="detail" id="cnL-x7-rLl"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Vhz-TI-9ah" sceneMemberID="firstResponder"/>
@@ -244,6 +267,7 @@
                     <connections>
                         <outlet property="tableView" destination="UXb-Pm-0Mx" id="zLP-Lc-s77"/>
                         <segue destination="Hto-bm-dic" kind="show" identifier="departmentDetail" id="Fbp-Ym-Xcz"/>
+                        <segue destination="bda-FG-fWT" kind="show" identifier="workerDetail" id="geh-Tr-npM"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="EE5-pT-vst" sceneMemberID="firstResponder"/>
@@ -268,4 +292,7 @@
             <point key="canvasLocation" x="-326" y="2178"/>
         </scene>
     </scenes>
+    <inferredMetricsTieBreakers>
+        <segue reference="bq7-cn-0fa"/>
+    </inferredMetricsTieBreakers>
 </document>
