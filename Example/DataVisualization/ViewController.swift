@@ -20,9 +20,6 @@ class PlainViewController:UIViewController
 		tvManager.setupTableView(tableView,vc:self)
 		tvManager.setupDetail("detail")
 	}
-	override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-		tvManager.prepareForSegue(segue,sender:sender)
-	}
 	
 }
 
@@ -40,9 +37,7 @@ class FunkyViewController:UIViewController {
 		tvManager.setupTableView(tableView,vc:self)
 		tvManager.setupDetail("detail")
 	}
-	override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-		tvManager.prepareForSegue(segue,sender:sender)
-	}
+
 }
 
 class PlainSectionedViewController:UIViewController {
@@ -53,9 +48,6 @@ class PlainSectionedViewController:UIViewController {
 		tvManager.setupTableView(tableView,vc:self)
 		tvManager.setupDataDetail("workerDetail")
 		tvManager.setupSectionDetail("departmentDetail")
-	}
-	override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-		tvManager.prepareForSegue(segue,sender:sender)
 	}
 }
 

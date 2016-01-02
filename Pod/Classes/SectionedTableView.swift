@@ -61,6 +61,7 @@ public class AutoSectionedTableViewManager<
 	public var sectionViewModel=Section.defaultViewModel()
 	public var sectioner=SectionerType()
 	var vc:UIViewController!
+	var tableView:UITableView!
 
 	
 	
@@ -72,6 +73,7 @@ public class AutoSectionedTableViewManager<
 		else {fatalError("No cellNib defined: are you using ConcreteViewModel properly?")}
 		
 		self.vc=vc
+		self.tableView=tableView
 
 		
 		switch dataNib
@@ -107,7 +109,7 @@ public class AutoSectionedTableViewManager<
 			return cell
 		}
 		
-		sections.bindTo(tableView.rx_itemsWithDataSource(dataSource))
+		sections.asObservable().bindTo(tableView.rx_itemsWithDataSource(dataSource))
 			.addDisposableTo(disposeBag)
 	
 	}
