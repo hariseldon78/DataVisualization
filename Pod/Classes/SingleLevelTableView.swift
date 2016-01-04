@@ -14,10 +14,10 @@ public protocol Disposer {
 	var disposeBag:DisposeBag {get}
 }
 
-public protocol TableViewManager
+public protocol ControllerWithTableView
 {
-	var vc:UIViewController! {get}
 	var tableView:UITableView! {get}
+	var vc:UIViewController! {get}
 }
 
 public protocol AutoSingleLevelTableView:Disposer {
@@ -28,53 +28,43 @@ public protocol AutoSingleLevelTableView:Disposer {
 	func setupTableView(tableView:UITableView,vc:UIViewController)
 }
 
-protocol SearchableViewController:UISearchBarDelegate,TableViewManager,UISearchResultsUpdating
+public protocol Searchable:class,ControllerWithTableView,Disposer
 {
 	var searchController:UISearchController! {get set}
-	var isSearching:Bool {get}
 	func setupSearchController()
-	func tearDownSearchController()
-	
 }
 
-extension SearchableViewController
+public extension Searchable
 {
+	
 	/// To be called in viewDidLoad
 	func setupSearchController()
 	{
 		searchController=({
 			let sc=UISearchController(searchResultsController: nil)
-			sc.searchResultsUpdater=self
 			sc.hidesNavigationBarDuringPresentation=false
 			sc.dimsBackgroundDuringPresentation=false
 			sc.searchBar.searchBarStyle=UISearchBarStyle.Minimal
 			sc.searchBar.sizeToFit()
-			sc.searchBar.delegate=self
 			return sc
 			}())
+		vc.rx_viewWillAppear.subscribeNext { _ in
+			self.tableView.tableHeaderView=self.searchController.searchBar
+			}.addDisposableTo(disposeBag)
+		vc.rx_viewWillDisappear.subscribeNext{ _ in
+			self.searchController.active=false
+			self.searchController.searchBar.endEditing(true)
+			if self.isSearching
+			{
+				// senno si comportava male...
+				self.searchController.searchBar.removeFromSuperview()
+			}
+			}.addDisposableTo(disposeBag)
 	}
 	
 	var isSearching:Bool {
 		return (searchController.searchBar.text ?? "") != ""
 	}
-	
-	/// To be called in viewWillAppear
-	func showSearchController()
-	{
-		tableView.tableHeaderView=searchController.searchBar
-	}
-	/// To be called in viewWillDisappear
-	func unshowSearchController()
-	{
-		searchController.active=false
-		searchController.searchBar.endEditing(true)
-		if isSearching
-		{
-			// senno si comportava male...
-			searchController.searchBar.removeFromSuperview()
-		}
-	}
-	
 }
 
 public class AutoSingleLevelTableViewManager<DataType where DataType:Visualizable,DataType:WithApi>:AutoSingleLevelTableView
@@ -83,9 +73,9 @@ public class AutoSingleLevelTableViewManager<DataType where DataType:Visualizabl
 	public let data=Data.api()
 	public let disposeBag=DisposeBag()
 	public var viewModel=Data.defaultViewModel()
-	var vc:UIViewController!
-	var tableView:UITableView!
-
+	public var vc:UIViewController!
+	public var tableView:UITableView!
+	
 	var onClick:((row:Data)->())?=nil
 	var clickedObj:Data?
 	
@@ -95,11 +85,11 @@ public class AutoSingleLevelTableViewManager<DataType where DataType:Visualizabl
 		guard let nib=viewModel.cellNib else {
 			fatalError("No cellNib defined: are you using ConcreteViewModel properly?")
 		}
-	
+		
 		self.vc=vc
 		self.tableView=tableView
-
-	
+		
+		
 		switch nib
 		{
 		case .First(let nib):
@@ -107,6 +97,16 @@ public class AutoSingleLevelTableViewManager<DataType where DataType:Visualizabl
 		case .Second(let clazz):
 			tableView.registerClass(clazz, forCellReuseIdentifier: "cell")
 		}
+		bindData()
+		tableView
+			.rx_modelSelected(Data.self)
+			.subscribeNext { (obj) -> Void in
+				self.clickedObj=obj
+				self.onClick?(row: obj)
+			}.addDisposableTo(disposeBag)
+	}
+	
+	func bindData(){
 		data
 			.bindTo(tableView.rx_itemsWithCellIdentifier("cell")) {
 				(index,item,cell)->Void in
@@ -117,14 +117,7 @@ public class AutoSingleLevelTableViewManager<DataType where DataType:Visualizabl
 				}
 			}
 			.addDisposableTo(self.disposeBag)
-		tableView
-			.rx_modelSelected(Data.self)
-			.subscribeNext { (obj) -> Void in
-				self.clickedObj=obj
-				self.onClick?(row: obj)
-		}.addDisposableTo(disposeBag)
 	}
-	
 	var detailSegue:String?=nil
 	public func setupDetail(segue:String)
 	{
@@ -140,13 +133,51 @@ public class AutoSingleLevelTableViewManager<DataType where DataType:Visualizabl
 			{
 				dest.detailManager.object=self.clickedObj
 			}
-		}.addDisposableTo(disposeBag)
+			}.addDisposableTo(disposeBag)
 	}
-
+	
 	
 }
 
+public class AutoSearchableSingleLevelTableViewManager<DataType where DataType:Visualizable,DataType:WithApi>:AutoSingleLevelTableViewManager<DataType>,Searchable
+{
+	public var searchController:UISearchController!
+	
+	public typealias FilteringClosure=(d:DataType,s:String)->Bool
+	/// default closure don't filter anything
+	public var filteringClosure:FilteringClosure
+	public init(filteringClosure:FilteringClosure) {
+		self.filteringClosure=filteringClosure
+		super.init()
+	}
+	override func bindData() {
+		setupSearchController()
 
+		dump(self)
+		
+		let ob1:Observable<[Data]>=data
+		let ob2:Observable<String>=searchController.searchBar.rx_text.asObservable()
+		
+		Observable.combineLatest(ob1,ob2 ) {
+			(d:[Data],s:String)->[Data] in
+			switch s {
+			case "": return d
+			default:
+				return d.filter {elem in self.filteringClosure(d:elem,s:s)}
+			}
+			}
+			.bindTo(tableView.rx_itemsWithCellIdentifier("cell")) {
+				(index,item,cell)->Void in
+				self.viewModel.cellFactory(index,item: item,cell: cell)
+				if self.onClick != nil
+				{
+					cell.accessoryType=UITableViewCellAccessoryType.DisclosureIndicator
+				}
+			}
+			.addDisposableTo(self.disposeBag)
+		
+	}
+}
 
 
 

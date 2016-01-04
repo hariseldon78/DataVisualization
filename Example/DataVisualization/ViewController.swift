@@ -14,13 +14,14 @@ import DataVisualization
 class PlainViewController:UIViewController
 {
 	@IBOutlet weak var tableView: UITableView!
-	let tvManager=AutoSingleLevelTableViewManager<Worker>()
+	var tvManager=AutoSearchableSingleLevelTableViewManager<Worker> (filteringClosure: { (d:Worker, s:String) -> Bool in
+		return d.name.uppercaseString.containsString(s.uppercaseString)
+	})
 	override func viewDidLoad() {
 		super.viewDidLoad()
 		tvManager.setupTableView(tableView,vc:self)
 		tvManager.setupDetail("detail")
 	}
-	
 }
 
 class FunkyViewController:UIViewController {

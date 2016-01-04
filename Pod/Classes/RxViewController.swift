@@ -24,8 +24,35 @@ extension UIViewController
 	var rx_raw_viewWillDisappear:Observable<[AnyObject]> {return rx_sentMessage("viewWillDisappear:")}
 	var rx_raw_viewDidDisappear:Observable<[AnyObject]> {return rx_sentMessage("viewDidDisappear:")}
 
-	var rx_raw_performSegueWithIdentifier:Observable<[AnyObject]> {return rx_sentMessage("performSegueWithIdentifier:sender:")}
+//	var rx_raw_performSegueWithIdentifier:Observable<[AnyObject]> {return rx_sentMessage("performSegueWithIdentifier:sender:")}
 	var rx_raw_prepareForSegue:Observable<[AnyObject]> {return rx_sentMessage("prepareForSegue:sender:")}
+	
+	var rx_viewWillAppear:Observable<Bool> {
+		return rx_raw_viewWillAppear.map{ (args)in
+			return args[0] as! Bool
+		}
+	}
+	var rx_viewDidAppear:Observable<Bool> {
+		return rx_raw_viewDidAppear.map{ (args)in
+			return args[0] as! Bool
+		}
+	}
+	var rx_viewWillDisappear:Observable<Bool> {
+		return rx_raw_viewWillDisappear.map{ (args)in
+			return args[0] as! Bool
+		}
+	}
+	var rx_viewDidDisappear:Observable<Bool> {
+		return rx_raw_viewDidDisappear.map{ (args)in
+			return args[0] as! Bool
+		}
+	}
+	
+	var rx_viewDidLoad:Observable<Void> {
+		return rx_raw_viewDidLoad.map{ (_) -> Void in
+			_=0
+		}
+	}
 	
 	var rx_prepareForSegue:Observable<(segue:UIStoryboardSegue,sender:AnyObject?)> {
 		return rx_raw_prepareForSegue.map{ (args) in

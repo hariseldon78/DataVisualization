@@ -153,6 +153,8 @@ public class AutoSectionedTableViewManager<
 		onDataClick={ row in
 			self.vc.performSegueWithIdentifier(segue, sender: nil)
 		}
+		listenForSegue()
+
 	}
 	
 	var sectionDetailSegue:String?=nil
@@ -162,20 +164,23 @@ public class AutoSectionedTableViewManager<
 		onSectionClick={ row in
 			self.vc.performSegueWithIdentifier(segue, sender: nil)
 		}
+		listenForSegue()
 	}
 	
-	public func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-		guard var dest=segue.destinationViewController as? DetailView,
-			let identifier=segue.identifier else {return}
-		switch identifier
-		{
-		case dataDetailSegue! where dataDetailSegue != nil:
-			dest.detailManager.object=clickedDataObj
-		case sectionDetailSegue! where sectionDetailSegue != nil:
-			dest.detailManager.object=clickedSectionObj
-		default:
-			_=0
-		}
+	public func listenForSegue() {
+		vc.rx_prepareForSegue.subscribeNext { (segue,_) in
+			guard var dest=segue.destinationViewController as? DetailView,
+				let identifier=segue.identifier else {return}
+			switch identifier
+			{
+			case self.dataDetailSegue! where self.dataDetailSegue != nil:
+				dest.detailManager.object=self.clickedDataObj
+			case self.sectionDetailSegue! where self.sectionDetailSegue != nil:
+				dest.detailManager.object=self.clickedSectionObj
+			default:
+				_=0
+			}
+			}.addDisposableTo(disposeBag)
 	}
 }
 
