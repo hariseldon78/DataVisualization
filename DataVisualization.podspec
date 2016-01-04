@@ -20,7 +20,7 @@ Pod::Spec.new do |s|
 							"Tools to automate and facilitate data visualizations in table/collection views."
                        DESC
 
-  s.homepage         = "https://bitbucket.org/robertoprevidi/datavisualization"
+  s.homepage         = "https://bitbucket.org/municipiumteam/datavisualization"
   # s.screenshots     = "www.example.com/screenshots_1", "www.example.com/screenshots_2"
   s.license          = 'private'
   s.author           = { "Roberto Previdi" => "hariseldon78@gmail.com" }
@@ -39,7 +39,7 @@ Pod::Spec.new do |s|
   # s.public_header_files = 'Pod/Classes/**/*.h'
   # s.frameworks = 'UIKit', 'MapKit'
 
-  s.dependency 'RxSwift', '~> 2.0.0-beta'
-  s.dependency 'RxCocoa', '~> 2.0.0-beta'
+  s.dependency 'RxSwift', '~> 2.0.0'
+  s.dependency 'RxCocoa', '~> 2.0.0'
 
 end
