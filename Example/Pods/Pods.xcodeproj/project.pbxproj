@@ -1403,22 +1403,10 @@
 		976A218AD459D621AE4B5E907ACE4BD9 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
-				38CDC3D6AEFFAE008302FF55B2C59D2C /* Changeset.swift */,
 				27CC4BB64523628BFEA544C78A3B52F5 /* DetailManager.swift */,
-				1AE00E314D33C9616CF5934579467000 /* Differentiator.swift */,
-				F58BA759E31C387A4E992E16BB609C07 /* RxCollectionViewSectionedAnimatedDataSource.swift */,
-				21B300F4EE366393B57011D084826517 /* RxCollectionViewSectionedDataSource.swift */,
-				A1723A99C6843E1A9A8A5950513F77B8 /* RxCollectionViewSectionedReloadDataSource.swift */,
-				3120D8CFD7A860B197C0B9D8BC1F7278 /* RxDataSourceStarterKit.swift */,
-				355B6ECE1A06A750FCE2399CFE8F6B06 /* RxDSSK-README.md */,
-				D58493319D2E88D62E8860E41816EAF7 /* RxTableViewSectionedAnimatedDataSource.swift */,
-				C74908D9946E07D059E16831FC9E0A29 /* RxTableViewSectionedDataSource.swift */,
-				7795DB7A0C117F47A337C7FB2C8E6B17 /* RxTableViewSectionedReloadDataSource.swift */,
+				FB6229DD1C3ABB0A00E90FFD /* rxDatasource */,
 				18D729924543A6DE50EA75471B8B82D5 /* RxViewController.swift */,
 				F6C009B59925DDEE59535B6FA755B206 /* SectionedTableView.swift */,
-				65A2044E3E1767B7FCE35294790D4972 /* SectionedViewType.swift */,
-				0101C425EB21EF1642AB1F245D8FE7A7 /* SectionModel.swift */,
-				040F4F99589A53155A102C2D49501558 /* SectionModelType.swift */,
 				96E710008CBDC965FDA00C66BED3D219 /* SingleLevelTableView.swift */,
 				E25F01AEF002C78C6D4D30E1F6B33556 /* ViewModel.swift */,
 			);
@@ -1589,6 +1577,26 @@
 				7D0919794D46C7C428E8767DEC7C8730 /* Support Files */,
 			);
 			path = RxCocoa;
+			sourceTree = "<group>";
+		};
+		FB6229DD1C3ABB0A00E90FFD /* rxDatasource */ = {
+			isa = PBXGroup;
+			children = (
+				0101C425EB21EF1642AB1F245D8FE7A7 /* SectionModel.swift */,
+				040F4F99589A53155A102C2D49501558 /* SectionModelType.swift */,
+				65A2044E3E1767B7FCE35294790D4972 /* SectionedViewType.swift */,
+				38CDC3D6AEFFAE008302FF55B2C59D2C /* Changeset.swift */,
+				1AE00E314D33C9616CF5934579467000 /* Differentiator.swift */,
+				F58BA759E31C387A4E992E16BB609C07 /* RxCollectionViewSectionedAnimatedDataSource.swift */,
+				21B300F4EE366393B57011D084826517 /* RxCollectionViewSectionedDataSource.swift */,
+				A1723A99C6843E1A9A8A5950513F77B8 /* RxCollectionViewSectionedReloadDataSource.swift */,
+				3120D8CFD7A860B197C0B9D8BC1F7278 /* RxDataSourceStarterKit.swift */,
+				355B6ECE1A06A750FCE2399CFE8F6B06 /* RxDSSK-README.md */,
+				D58493319D2E88D62E8860E41816EAF7 /* RxTableViewSectionedAnimatedDataSource.swift */,
+				C74908D9946E07D059E16831FC9E0A29 /* RxTableViewSectionedDataSource.swift */,
+				7795DB7A0C117F47A337C7FB2C8E6B17 /* RxTableViewSectionedReloadDataSource.swift */,
+			);
+			name = rxDatasource;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */

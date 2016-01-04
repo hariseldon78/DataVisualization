@@ -23,8 +23,7 @@ struct Worker: Visualizable,WithApi
 	let name:String
 	let salary:Double
 	let departmentId:UInt
-	static func api()->Observable<[Worker]>
-	{
+	static func api(viewForActivityIndicator: UIView?) -> Observable<[Worker]> {
 		return [
 			[
 				"id":0,
@@ -90,7 +89,7 @@ struct WorkerSectioner:Sectioner
 	var sections:Observable<[SectionAndData]> { return _sections.asObservable() }
 	let disposeBag=DisposeBag()
 	init() {
-		Data.api().subscribeNext { (w:[Worker]) -> Void in
+		Data.api(nil).subscribeNext { (w:[Worker]) -> Void in
 			self._sections.value=w
 				.map{ $0.departmentId }
 				.reduce([]) { (deps:[UInt], dep) in

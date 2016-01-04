@@ -24,7 +24,7 @@ public protocol AutoSingleLevelTableView:Disposer {
 	typealias Data:Visualizable,WithApi
 	
 	var viewModel:ViewModel {get}
-	var data:Observable<[Data]> {get}
+	var data:Observable<[Data]>! {get}
 	func setupTableView(tableView:UITableView,vc:UIViewController)
 }
 
@@ -70,7 +70,7 @@ public extension Searchable
 public class AutoSingleLevelTableViewManager<DataType where DataType:Visualizable,DataType:WithApi>:AutoSingleLevelTableView
 {
 	public typealias Data=DataType
-	public let data=Data.api()
+	public var data:Observable<[Data]>!
 	public let disposeBag=DisposeBag()
 	public var viewModel=Data.defaultViewModel()
 	public var vc:UIViewController!
@@ -79,7 +79,8 @@ public class AutoSingleLevelTableViewManager<DataType where DataType:Visualizabl
 	var onClick:((row:Data)->())?=nil
 	var clickedObj:Data?
 	
-	public init(){}
+	public init(){
+	}
 	public func setupTableView(tableView:UITableView,vc:UIViewController)
 	{
 		guard let nib=viewModel.cellNib else {
@@ -89,6 +90,8 @@ public class AutoSingleLevelTableViewManager<DataType where DataType:Visualizabl
 		self.vc=vc
 		self.tableView=tableView
 		
+		data=DataType.api(tableView)
+
 		
 		switch nib
 		{

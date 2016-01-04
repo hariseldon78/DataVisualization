@@ -46,5 +46,5 @@ public protocol Visualizable {
 	static func defaultViewModel()->ViewModel
 }
 public protocol WithApi {
-	static func api()->Observable<[Self]>
+	static func api(viewForActivityIndicator:UIView?)->Observable<[Self]>
 }
