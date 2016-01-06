@@ -20,10 +20,22 @@ class PlainViewController:UIViewController
 	override func viewDidLoad() {
 		super.viewDidLoad()
 		tvManager.setupTableView(tableView,vc:self)
-		tvManager.setupDetail("detail")
+		tvManager.setupOnSelect(.Detail(segue:"detail"))
 	}
 }
 
+class PlainNoDetViewController:UIViewController
+{
+	@IBOutlet weak var tableView: UITableView!
+	var tvManager=AutoSingleLevelTableViewManager<Worker>()
+	override func viewDidLoad() {
+		super.viewDidLoad()
+		tvManager.setupTableView(tableView,vc:self)
+		tvManager.setupOnSelect(.Action(action: { (d:Worker) -> () in
+			dump(d)
+		}))
+	}
+}
 class FunkyViewController:UIViewController {
 	@IBOutlet weak var tableView: UITableView!
 	let tvManager=AutoSingleLevelTableViewManager<Worker>()
@@ -36,7 +48,7 @@ class FunkyViewController:UIViewController {
 		}
 		
 		tvManager.setupTableView(tableView,vc:self)
-		tvManager.setupDetail("detail")
+		tvManager.setupOnSelect(.Detail(segue:"detail"))
 	}
 
 }

@@ -66,7 +66,12 @@ public extension Searchable
 		return (searchController.searchBar.text ?? "") != ""
 	}
 }
-
+public enum OnSelectBehaviour<DataType>
+{
+	
+	case Detail(segue:String)
+	case Action(action:(d:DataType)->())
+}
 public class AutoSingleLevelTableViewManager<DataType where DataType:Visualizable,DataType:WithApi>:AutoSingleLevelTableView
 {
 	public typealias Data=DataType
@@ -114,29 +119,39 @@ public class AutoSingleLevelTableViewManager<DataType where DataType:Visualizabl
 			.bindTo(tableView.rx_itemsWithCellIdentifier("cell")) {
 				(index,item,cell)->Void in
 				self.viewModel.cellFactory(index,item: item,cell: cell)
-				if self.onClick != nil
-				{
-					cell.accessoryType=UITableViewCellAccessoryType.DisclosureIndicator
-				}
+				self.cellDecorators.forEach({ dec in
+					dec(cell: cell)
+				})
 			}
 			.addDisposableTo(self.disposeBag)
 	}
-	var detailSegue:String?=nil
-	public func setupDetail(segue:String)
+	public typealias CellDecorator=(cell:UITableViewCell)->()
+	public var cellDecorators:[CellDecorator]=[]
+	
+	public func setupOnSelect(onSelect:OnSelectBehaviour<Data>)
 	{
-		detailSegue=segue
-		onClick={ row in
-			self.vc.performSegueWithIdentifier(segue, sender: nil)
-		}
-		vc.rx_prepareForSegue.subscribeNext { (segue,_) in
-			guard var dest=segue.destinationViewController as? DetailView,
-				let identifier=segue.identifier,
-				let detailSegue=self.detailSegue else {return}
-			if identifier==detailSegue
-			{
-				dest.detailManager.object=self.clickedObj
+		switch onSelect
+		{
+		case .Detail(let segue):
+			let detailSegue=segue
+			onClick={ row in
+				self.vc.performSegueWithIdentifier(segue, sender: nil)
 			}
-			}.addDisposableTo(disposeBag)
+			let dec:CellDecorator={ (cell:UITableViewCell) in
+				cell.accessoryType=UITableViewCellAccessoryType.DisclosureIndicator
+			}
+			cellDecorators.append(dec)
+			vc.rx_prepareForSegue.subscribeNext { (segue,_) in
+				guard var dest=segue.destinationViewController as? DetailView,
+					let identifier=segue.identifier else {return}
+				if identifier==detailSegue
+				{
+					dest.detailManager.object=self.clickedObj
+				}
+				}.addDisposableTo(disposeBag)
+		case .Action(let closure):
+			self.onClick=closure
+		}
 	}
 	
 	
