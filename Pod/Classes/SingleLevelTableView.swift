@@ -105,19 +105,23 @@ public class AutoSingleLevelTableViewManager<DataType where DataType:Visualizabl
 			tableView.registerClass(clazz, forCellReuseIdentifier: "cell")
 		}
 		bindData()
-
+		
 		if let Cached=Data.self as? WithCachedApi.Type
 		{
+			// devo usare un tvc dummy perchè altrimenti RefreshControl si comporta male, il frame non è impostato correttamente.
 			let rc=UIRefreshControl()
-			tableView.addSubview(rc)
+			let dummyTvc=UITableViewController()
+			vc.addChildViewController(dummyTvc)
+			dummyTvc.tableView=tableView
+			dummyTvc.refreshControl=rc
 			rc.rx_controlEvent(UIControlEvents.ValueChanged).subscribeNext{ _ in
 				Cached.invalidateCache()
 				self.dataBindDisposeBag=DisposeBag() // butto via la vecchia subscription
 				self.bindData() // rifaccio la subscription
 				rc.endRefreshing()
-				}.addDisposableTo(disposeBag)
+			}.addDisposableTo(disposeBag)
 		}
-
+		
 		tableView
 			.rx_modelSelected(Data.self)
 			.subscribeNext { (obj) -> Void in
