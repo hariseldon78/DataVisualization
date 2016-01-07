@@ -28,6 +28,7 @@ public protocol AutoSingleLevelTableView:Disposer {
 	func setupTableView(tableView:UITableView,vc:UIViewController)
 }
 
+// non dovrebbe essere pubblico
 public protocol Searchable:class,ControllerWithTableView,Disposer
 {
 	var searchController:UISearchController! {get set}

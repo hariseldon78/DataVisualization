@@ -24,6 +24,25 @@ class PlainViewController:UIViewController
 	}
 }
 
+class NoStoryboardViewController:UIViewController
+{
+	@IBOutlet weak var tableView: UITableView!
+	var tvManager=AutoSearchableSingleLevelTableViewManager<Worker> (filteringClosure: { (d:Worker, s:String) -> Bool in
+		return d.name.uppercaseString.containsString(s.uppercaseString)
+	})
+	init(){
+		super.init(nibName:"NibVC",bundle:NSBundle.mainBundle())
+	}
+
+	required init?(coder aDecoder: NSCoder) {
+		super.init(coder:aDecoder)
+	}
+	override func viewDidLoad() {
+		super.viewDidLoad()
+		tvManager.setupTableView(tableView,vc:self)
+	}
+}
+
 class PlainNoDetViewController:UIViewController
 {
 	@IBOutlet weak var tableView: UITableView!
@@ -33,6 +52,8 @@ class PlainNoDetViewController:UIViewController
 		tvManager.setupTableView(tableView,vc:self)
 		tvManager.setupOnSelect(.Action(action: { (d:Worker) -> () in
 			dump(d)
+			let vc=NoStoryboardViewController()
+			self.presentViewController(vc, animated: true, completion: nil)
 		}))
 	}
 }
