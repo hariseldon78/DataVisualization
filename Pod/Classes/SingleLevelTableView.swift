@@ -188,10 +188,9 @@ public class AutoSearchableSingleLevelTableViewManager<DataType where DataType:V
 			.bindTo(tableView.rx_itemsWithCellIdentifier("cell")) {
 				(index,item,cell)->Void in
 				self.viewModel.cellFactory(index,item: item,cell: cell)
-				if self.onClick != nil
-				{
-					cell.accessoryType=UITableViewCellAccessoryType.DisclosureIndicator
-				}
+				self.cellDecorators.forEach({ dec in
+					dec(cell: cell)
+				})
 			}
 			.addDisposableTo(self.disposeBag)
 		
