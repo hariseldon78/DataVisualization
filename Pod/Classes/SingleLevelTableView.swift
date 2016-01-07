@@ -78,6 +78,7 @@ public class AutoSingleLevelTableViewManager<DataType where DataType:Visualizabl
 	public typealias Data=DataType
 	public var data:Observable<[Data]>!
 	public let disposeBag=DisposeBag()
+	public var dataBindDisposeBag=DisposeBag()
 	public var viewModel=Data.defaultViewModel()
 	public var vc:UIViewController!
 	public var tableView:UITableView!
@@ -96,9 +97,6 @@ public class AutoSingleLevelTableViewManager<DataType where DataType:Visualizabl
 		self.vc=vc
 		self.tableView=tableView
 		
-		data=DataType.api(tableView).shareReplayLatestWhileConnected()
-
-		
 		switch nib
 		{
 		case .First(let nib):
@@ -107,6 +105,19 @@ public class AutoSingleLevelTableViewManager<DataType where DataType:Visualizabl
 			tableView.registerClass(clazz, forCellReuseIdentifier: "cell")
 		}
 		bindData()
+
+		if let Cached=Data.self as? WithCachedApi.Type
+		{
+			let rc=UIRefreshControl()
+			tableView.addSubview(rc)
+			rc.rx_controlEvent(UIControlEvents.ValueChanged).subscribeNext{ _ in
+				Cached.invalidateCache()
+				self.dataBindDisposeBag=DisposeBag() // butto via la vecchia subscription
+				self.bindData() // rifaccio la subscription
+				rc.endRefreshing()
+				}.addDisposableTo(disposeBag)
+		}
+
 		tableView
 			.rx_modelSelected(Data.self)
 			.subscribeNext { (obj) -> Void in
@@ -116,6 +127,9 @@ public class AutoSingleLevelTableViewManager<DataType where DataType:Visualizabl
 	}
 	
 	func bindData(){
+		
+		data=DataType.api(tableView).shareReplayLatestWhileConnected()
+		
 		data
 			.bindTo(tableView.rx_itemsWithCellIdentifier("cell")) {
 				(index,item,cell)->Void in
@@ -124,7 +138,8 @@ public class AutoSingleLevelTableViewManager<DataType where DataType:Visualizabl
 					dec(cell: cell)
 				})
 			}
-			.addDisposableTo(self.disposeBag)
+			.addDisposableTo(dataBindDisposeBag)
+		
 		data
 			.map { array in
 				array.isEmpty
@@ -137,7 +152,7 @@ public class AutoSingleLevelTableViewManager<DataType where DataType:Visualizabl
 				{
 					self.tableView.backgroundView=nil
 				}
-		}.addDisposableTo(disposeBag)
+		}.addDisposableTo(dataBindDisposeBag)
 		
 	}
 	public typealias CellDecorator=(cell:UITableViewCell)->()
@@ -183,15 +198,18 @@ public class AutoSearchableSingleLevelTableViewManager<DataType where DataType:V
 		self.filteringClosure=filteringClosure
 		super.init()
 	}
-	override func bindData() {
+	public override func setupTableView(tableView:UITableView,vc:UIViewController)
+	{
+		self.vc=vc
+		self.tableView=tableView
 		setupSearchController()
-
-		dump(self)
+		super.setupTableView(tableView, vc:vc)
+	}
+	override func bindData() {
+		data=DataType.api(tableView).shareReplayLatestWhileConnected()
+		let search=searchController.searchBar.rx_text.asObservable()
 		
-		let ob1:Observable<[Data]>=data
-		let ob2:Observable<String>=searchController.searchBar.rx_text.asObservable()
-		
-		let dataOrSearch=Observable.combineLatest(ob1,ob2 ) {
+		let dataOrSearch=Observable.combineLatest(data,search) {
 			(d:[Data],s:String)->[Data] in
 			switch s {
 			case "": return d
@@ -199,6 +217,7 @@ public class AutoSearchableSingleLevelTableViewManager<DataType where DataType:V
 				return d.filter {elem in self.filteringClosure(d:elem,s:s)}
 			}
 			}.shareReplayLatestWhileConnected()
+		
 		dataOrSearch
 			.bindTo(tableView.rx_itemsWithCellIdentifier("cell")) {
 				(index,item,cell)->Void in
@@ -207,7 +226,7 @@ public class AutoSearchableSingleLevelTableViewManager<DataType where DataType:V
 					dec(cell: cell)
 				})
 			}
-			.addDisposableTo(self.disposeBag)
+			.addDisposableTo(dataBindDisposeBag)
 		
 		dataOrSearch
 			.map { array in
@@ -224,7 +243,8 @@ public class AutoSearchableSingleLevelTableViewManager<DataType where DataType:V
 				default:
 					self.tableView.backgroundView=nil
 				}
-		}.addDisposableTo(disposeBag)
+		}.addDisposableTo(dataBindDisposeBag)
+		
 	}
 }
 

@@ -63,3 +63,7 @@ public protocol Visualizable {
 public protocol WithApi {
 	static func api(viewForActivityIndicator:UIView?)->Observable<[Self]>
 }
+public protocol WithCachedApi:WithApi {
+	static func invalidateCache()
+}
+

@@ -11,7 +11,9 @@ import RxSwift
 import RxCocoa
 import DataVisualization
 
-struct Worker: Visualizable,WithApi
+var cached=true
+
+struct Worker: Visualizable,WithCachedApi
 { 
 	static func defaultViewModel() -> ViewModel {
 		return ConcreteViewModel<Worker,TitleCell>(cellName: "TitleCell") { (index, item, cell) -> Void in
@@ -24,8 +26,7 @@ struct Worker: Visualizable,WithApi
 	let salary:Double
 	let departmentId:UInt
 	static func api(viewForActivityIndicator: UIView?) -> Observable<[Worker]> {
-		return [].toObservable().toArray()
-		return [
+		var array=[
 			[
 				"id":0,
 				"name":"Gianni",
@@ -50,7 +51,17 @@ struct Worker: Visualizable,WithApi
 				"salary":1100.0,
 				"departmentId":0
 			]
-			].map{ w->Worker in
+		]
+		if !cached {
+			array.append([
+				"id":4,
+				"name":"Carletta",
+				"salary":1700.0,
+				"departmentId":1
+				])
+		}
+		return array
+			.map{ w->Worker in
 				guard let id:UInt=w["id"] as? UInt,
 					name:String=w["name"] as? String,
 					salary:Double=w["salary"] as? Double,
@@ -60,7 +71,9 @@ struct Worker: Visualizable,WithApi
 				return Worker(id: id , name: name, salary: salary, departmentId: dep)
 			}.toObservable().toArray()
 	}
-	
+	static func invalidateCache() {
+		cached=false
+	}
 }
 
 struct Department:Visualizable {
