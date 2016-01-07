@@ -96,7 +96,7 @@ public class AutoSingleLevelTableViewManager<DataType where DataType:Visualizabl
 		self.vc=vc
 		self.tableView=tableView
 		
-		data=DataType.api(tableView)
+		data=DataType.api(tableView).shareReplayLatestWhileConnected()
 
 		
 		switch nib
@@ -125,6 +125,20 @@ public class AutoSingleLevelTableViewManager<DataType where DataType:Visualizabl
 				})
 			}
 			.addDisposableTo(self.disposeBag)
+		data
+			.map { array in
+				array.isEmpty
+			}
+			.subscribeNext { empty in
+				if empty {
+					self.tableView.backgroundView=self.viewModel.viewForEmptyList
+				}
+				else
+				{
+					self.tableView.backgroundView=nil
+				}
+		}.addDisposableTo(disposeBag)
+		
 	}
 	public typealias CellDecorator=(cell:UITableViewCell)->()
 	public var cellDecorators:[CellDecorator]=[]
@@ -177,14 +191,15 @@ public class AutoSearchableSingleLevelTableViewManager<DataType where DataType:V
 		let ob1:Observable<[Data]>=data
 		let ob2:Observable<String>=searchController.searchBar.rx_text.asObservable()
 		
-		Observable.combineLatest(ob1,ob2 ) {
+		let dataOrSearch=Observable.combineLatest(ob1,ob2 ) {
 			(d:[Data],s:String)->[Data] in
 			switch s {
 			case "": return d
 			default:
 				return d.filter {elem in self.filteringClosure(d:elem,s:s)}
 			}
-			}
+			}.shareReplayLatestWhileConnected()
+		dataOrSearch
 			.bindTo(tableView.rx_itemsWithCellIdentifier("cell")) {
 				(index,item,cell)->Void in
 				self.viewModel.cellFactory(index,item: item,cell: cell)
@@ -194,6 +209,22 @@ public class AutoSearchableSingleLevelTableViewManager<DataType where DataType:V
 			}
 			.addDisposableTo(self.disposeBag)
 		
+		dataOrSearch
+			.map { array in
+				array.isEmpty
+			}
+			.subscribeNext { empty in
+				
+				switch (empty,self.searchController.searchBar.text)
+				{
+				case (true,let s) where s==nil || s=="":
+					self.tableView.backgroundView=self.viewModel.viewForEmptyList
+				case (true,_):
+					self.tableView.backgroundView=self.viewModel.viewForEmptySearch
+				default:
+					self.tableView.backgroundView=nil
+				}
+		}.addDisposableTo(disposeBag)
 	}
 }
 

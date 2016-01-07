@@ -24,6 +24,7 @@ struct Worker: Visualizable,WithApi
 	let salary:Double
 	let departmentId:UInt
 	static func api(viewForActivityIndicator: UIView?) -> Observable<[Worker]> {
+		return [].toObservable().toArray()
 		return [
 			[
 				"id":0,
