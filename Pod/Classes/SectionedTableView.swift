@@ -12,7 +12,7 @@ import RxCocoa
 
 public protocol Sectioner
 {
-	init()
+	init(viewForActivityIndicator:UIView?)
 	typealias Data
 	typealias Section
 	var sections:Observable<[(Section,[Data])]> {get}
@@ -26,7 +26,7 @@ public protocol AutoSectionedTableView:Disposer {
 	var sectionViewModel:ViewModel {get}
 	
 	func setupTableView(tableView:UITableView,vc:UIViewController)
-	var sectioner:SectionerType {get}
+	var sectioner:SectionerType! {get}
 }
 class EnrichedTapGestureRecognizer<T>:UITapGestureRecognizer
 {
@@ -59,7 +59,7 @@ public class AutoSectionedTableViewManager<
 
 	public var dataViewModel=Data.defaultViewModel()
 	public var sectionViewModel=Section.defaultViewModel()
-	public var sectioner=SectionerType()
+	public var sectioner:SectionerType!
 	var vc:UIViewController!
 	var tableView:UITableView!
 
@@ -75,6 +75,7 @@ public class AutoSectionedTableViewManager<
 		self.vc=vc
 		self.tableView=tableView
 
+		sectioner=SectionerType(viewForActivityIndicator: self.tableView)
 		
 		switch dataNib
 		{

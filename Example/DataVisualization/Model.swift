@@ -102,8 +102,8 @@ struct WorkerSectioner:Sectioner
 	var _sections=Variable([SectionAndData]())
 	var sections:Observable<[SectionAndData]> { return _sections.asObservable() }
 	let disposeBag=DisposeBag()
-	init() {
-		Data.api(nil).subscribeNext { (w:[Worker]) -> Void in
+	init(viewForActivityIndicator: UIView?) {
+		Data.api(viewForActivityIndicator).subscribeNext { (w:[Worker]) -> Void in
 			self._sections.value=w
 				.map{ $0.departmentId }
 				.reduce([]) { (deps:[UInt], dep) in
