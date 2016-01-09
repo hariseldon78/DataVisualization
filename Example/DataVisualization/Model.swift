@@ -76,8 +76,8 @@ struct Worker: Visualizable,WithCachedApi
 	}
 }
 
-struct Department:Visualizable {
-	static func defaultViewModel() -> ViewModel {
+struct Department:SectionVisualizable {
+	static func defaultSectionViewModel() -> ViewModel {
 		return ConcreteViewModel<Department,TitleHeader>(cellName: "TitleHeader") { (index, item, cell) -> Void in
 			cell.title.text=item.name
 		}

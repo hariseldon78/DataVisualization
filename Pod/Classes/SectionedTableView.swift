@@ -20,7 +20,7 @@ public protocol Sectioner
 
 public protocol AutoSectionedTableView:Disposer {
 	typealias Data:Visualizable
-	typealias Section:Visualizable
+	typealias Section:SectionVisualizable
 	typealias SectionerType:Sectioner
 	var dataViewModel:ViewModel {get}
 	var sectionViewModel:ViewModel {get}
@@ -38,7 +38,7 @@ class EnrichedTapGestureRecognizer<T>:UITapGestureRecognizer
 }
 public class AutoSectionedTableViewManager<
 	DataType:Visualizable,
-	SectionType:Visualizable,
+	SectionType:SectionVisualizable,
 	_SectionerType:Sectioner where _SectionerType.Data==DataType,_SectionerType.Section==SectionType
 	>:NSObject,AutoSectionedTableView,UITableViewDelegate
 {
@@ -58,7 +58,7 @@ public class AutoSectionedTableViewManager<
 	var clickedSectionObj:Section?
 
 	public var dataViewModel=Data.defaultViewModel()
-	public var sectionViewModel=Section.defaultViewModel()
+	public var sectionViewModel=Section.defaultSectionViewModel()
 	public var sectioner:SectionerType!
 	var vc:UIViewController!
 	var tableView:UITableView!

@@ -60,6 +60,9 @@ public class ConcreteViewModel<Data,Cell:UIView>:ViewModel
 public protocol Visualizable {
 	static func defaultViewModel()->ViewModel
 }
+public protocol SectionVisualizable {
+	static func defaultSectionViewModel()->ViewModel
+}
 public protocol WithApi {
 	static func api(viewForActivityIndicator:UIView?)->Observable<[Self]>
 }
