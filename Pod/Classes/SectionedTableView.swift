@@ -36,6 +36,12 @@ class EnrichedTapGestureRecognizer<T>:UITapGestureRecognizer
 		super.init(target: target, action: action)
 	}
 }
+public enum OnSelectSectionedBehaviour<T>
+{
+	case Detail(segue:String)
+	case SectionDetail(segue:String) // shows the detail of the section, even if starting from a data cell
+	case Action(action:(d:T)->())
+}
 public class AutoSectionedTableViewManager<
 	DataType:Visualizable,
 	SectionType:SectionVisualizable,
@@ -93,6 +99,10 @@ public class AutoSectionedTableViewManager<
 			tableView.registerClass(clazz, forHeaderFooterViewReuseIdentifier: "section")
 		}
 		tableView.delegate=self
+		bindData()
+	}
+	func bindData()
+	{
 		sectioner.sections.subscribeNext { (secs:[(Section, [Data])]) -> Void in
 			self.sections.value=secs.map{ (s,d) in
 				RxSectionModel(model: s, items: d)
@@ -103,16 +113,15 @@ public class AutoSectionedTableViewManager<
 			guard let cell=tableView.dequeueReusableCellWithIdentifier("cell")
 				else {fatalError("why no cell?")}
 			self.dataViewModel.cellFactory(indexPath.row, item: item, cell: cell)
-			if self.onDataClick != nil
-			{
-				cell.accessoryType=UITableViewCellAccessoryType.DisclosureIndicator
-			}
+			self.cellDecorators.forEach({ dec in
+				dec(cell: cell)
+			})
 			return cell
 		}
 		
 		sections.asObservable().bindTo(tableView.rx_itemsWithDataSource(dataSource))
 			.addDisposableTo(disposeBag)
-	
+		
 	}
 	public func tableView(tableView: UITableView,
 		viewForHeaderInSection section: Int) -> UIView?
@@ -135,6 +144,7 @@ public class AutoSectionedTableViewManager<
 		clickedSectionObj=gr.obj
 		onSectionClick?(section:gr.obj)
 	}
+	public var cellDecorators:[CellDecorator]=[]
 	public func tableView(tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
 		guard let hv=tableView.dequeueReusableHeaderFooterViewWithIdentifier("section")
 			else {fatalError("why no section cell?")}
@@ -144,39 +154,75 @@ public class AutoSectionedTableViewManager<
 		dump(indexPath)
 		let item=dataSource.itemAtIndexPath(indexPath)
 		clickedDataObj=item
+		clickedSectionObj=sections.value[indexPath.section].model
 		onDataClick?(row:item)
 	}
 	
 	var dataDetailSegue:String?=nil
-	public func setupDataDetail(segue:String)
+	var dataDetailSectionSegue:String?=nil
+	public func setupDataOnSelect(onSelect:OnSelectSectionedBehaviour<Data>)
 	{
-		dataDetailSegue=segue
-		onDataClick={ row in
-			self.vc.performSegueWithIdentifier(segue, sender: nil)
+		switch onSelect
+		{
+		case .Detail(let segue):
+			dataDetailSegue=segue
+			onDataClick = { row in
+				self.vc.performSegueWithIdentifier(segue, sender: nil)
+			}
+		case .SectionDetail(let segue):
+			dataDetailSectionSegue=segue
+			onDataClick = { row in
+				self.vc.performSegueWithIdentifier(segue, sender: nil)
+			}
+			
+		case .Action(let closure):
+			self.onDataClick=closure
 		}
-		listenForSegue()
-
+		
+		switch onSelect
+		{
+		case .Detail(_):
+			fallthrough
+		case .SectionDetail(_):
+			
+			let dec:CellDecorator={ (cell:UITableViewCell) in
+				cell.accessoryType=UITableViewCellAccessoryType.DisclosureIndicator
+			}
+			cellDecorators.append(dec)
+			listenForSegue()
+		default:
+			_=0
+		}
 	}
-	
 	var sectionDetailSegue:String?=nil
-	public func setupSectionDetail(segue:String)
+	public func setupSectionOnSelect(onSelect:OnSelectBehaviour<Section>)
 	{
-		sectionDetailSegue=segue
-		onSectionClick={ row in
-			self.vc.performSegueWithIdentifier(segue, sender: nil)
+		switch onSelect
+		{
+		case .Detail(let segue):
+			sectionDetailSegue=segue
+			onSectionClick = { row in
+				self.vc.performSegueWithIdentifier(segue, sender: nil)
+			}
+			listenForSegue()
+		case .Action(let closure):
+			self.onSectionClick=closure
 		}
-		listenForSegue()
 	}
-	
+	var listeningForSegue=false
 	public func listenForSegue() {
+		guard !listeningForSegue else {return}
+		listeningForSegue=true
 		vc.rx_prepareForSegue.subscribeNext { (segue,_) in
 			guard var dest=segue.destinationViewController as? DetailView,
 				let identifier=segue.identifier else {return}
 			switch identifier
 			{
-			case self.dataDetailSegue! where self.dataDetailSegue != nil:
+			case let val where val==self.dataDetailSegue:
 				dest.detailManager.object=self.clickedDataObj
-			case self.sectionDetailSegue! where self.sectionDetailSegue != nil:
+			case let val where val==self.dataDetailSectionSegue:
+				dest.detailManager.object=self.clickedSectionObj
+			case let val where val==self.sectionDetailSegue:
 				dest.detailManager.object=self.clickedSectionObj
 			default:
 				_=0
@@ -185,3 +231,12 @@ public class AutoSectionedTableViewManager<
 	}
 }
 
+//public class AutoSearchableSectionedTableViewManager<
+//DataType:Visualizable,
+//SectionType:SectionVisualizable,
+//_SectionerType:Sectioner where _SectionerType.Data==DataType,_SectionerType.Section==SectionType
+//>:AutoSectionedTableViewManager<DataType,SectionType,_SectionerType>,Searchable
+//{
+//	public var searchController:UISearchController!
+//
+//}

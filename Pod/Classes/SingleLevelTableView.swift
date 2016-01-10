@@ -28,6 +28,8 @@ public protocol AutoSingleLevelTableView:Disposer {
 	func setupTableView(tableView:UITableView,vc:UIViewController)
 }
 
+public typealias CellDecorator=(cell:UITableViewCell)->()
+
 // non dovrebbe essere pubblico
 public protocol Searchable:class,ControllerWithTableView,Disposer
 {
@@ -159,7 +161,6 @@ public class AutoSingleLevelTableViewManager<DataType where DataType:Visualizabl
 		}.addDisposableTo(dataBindDisposeBag)
 		
 	}
-	public typealias CellDecorator=(cell:UITableViewCell)->()
 	public var cellDecorators:[CellDecorator]=[]
 	
 	public func setupOnSelect(onSelect:OnSelectBehaviour<Data>)
