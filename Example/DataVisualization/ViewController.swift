@@ -86,6 +86,18 @@ class PlainSectionedViewController:UIViewController {
 	}
 }
 
+
+class SearchSectionedViewController:UIViewController {
+	@IBOutlet weak var tableView: UITableView!
+	let tvManager=AutoSectionedTableViewManager<Worker,Department,WorkerSectioner>()
+	override func viewDidLoad() {
+		super.viewDidLoad()
+		tvManager.setupTableView(tableView,vc:self)
+		//		tvManager.setupDataOnSelect(.Detail(segue:"workerDetail"))
+		tvManager.setupDataOnSelect(.SectionDetail(segue:"departmentDetail"))
+		tvManager.setupSectionOnSelect(.Detail(segue:"departmentDetail"))
+	}
+}
 class WorkerDetail1:UIViewController,DetailView
 {
 	@IBOutlet weak var label1: UILabel!
