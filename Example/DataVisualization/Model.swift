@@ -94,15 +94,20 @@ func +<T>(array:[T],element:T)->[T]
 	return copy
 }
 
-struct WorkerSectioner:Sectioner
+struct WorkerSectioner:Sectioner,Cached
 {
 	typealias Data=Worker
 	typealias Section=Department
 	typealias SectionAndData=(Section,[Data])
 	var _sections=Variable([SectionAndData]())
 	var sections:Observable<[SectionAndData]> { return _sections.asObservable() }
-	let disposeBag=DisposeBag()
+	var disposeBag=DisposeBag()
+	let viewForActivityIndicator: UIView?
 	init(viewForActivityIndicator: UIView?) {
+		self.viewForActivityIndicator=viewForActivityIndicator
+		rebind()
+	}
+	func rebind() {
 		Data.api(viewForActivityIndicator).subscribeNext { (w:[Worker]) -> Void in
 			self._sections.value=w
 				.map{ $0.departmentId }
@@ -113,5 +118,12 @@ struct WorkerSectioner:Sectioner
 					w.filter{ $0.departmentId==dep })
 			}
 		}.addDisposableTo(disposeBag)
+	}
+	mutating func resubscribe() {
+		disposeBag=DisposeBag()
+		rebind()
+	}
+	static func invalidateCache() {
+		Data.invalidateCache()
 	}
 }

@@ -16,6 +16,7 @@ public protocol Sectioner
 	typealias Data
 	typealias Section
 	var sections:Observable<[(Section,[Data])]> {get}
+	mutating func resubscribe()
 }
 
 public protocol AutoSectionedTableView:Disposer {
@@ -49,6 +50,7 @@ public class AutoSectionedTableViewManager<
 	>:NSObject,AutoSectionedTableView,UITableViewDelegate,ControllerWithTableView
 {
 	public let disposeBag=DisposeBag()
+	public var dataBindDisposeBag=DisposeBag()
 	public typealias Data=DataType
 	public typealias Section=SectionType
 	public typealias SectionerType=_SectionerType
@@ -101,6 +103,15 @@ public class AutoSectionedTableViewManager<
 		tableView.delegate=self
 		bindData()
 		
+		if let Cacheable=SectionerType.self as? Cached.Type
+		{
+			setupRefreshControl{
+				Cacheable.invalidateCache()
+				self.sectioner.resubscribe()
+				self.dataBindDisposeBag=DisposeBag()
+				self.bindData()
+			}
+		}
 		
 	}
 	func bindData()
@@ -109,7 +120,7 @@ public class AutoSectionedTableViewManager<
 			self.sections.value=secs.map{ (s,d) in
 				RxSectionModel(model: s, items: d)
 			}
-		}.addDisposableTo(disposeBag)
+		}.addDisposableTo(dataBindDisposeBag)
 		dataSource.cellFactory={
 			(tableView,indexPath,item:Data) in
 			guard let cell=tableView.dequeueReusableCellWithIdentifier("cell")
@@ -122,7 +133,7 @@ public class AutoSectionedTableViewManager<
 		}
 		
 		sections.asObservable().bindTo(tableView.rx_itemsWithDataSource(dataSource))
-			.addDisposableTo(disposeBag)
+			.addDisposableTo(dataBindDisposeBag)
 		
 	}
 	public func tableView(tableView: UITableView,
