@@ -56,6 +56,10 @@ public class _RxTableViewSectionedDataSource : NSObject
     public func tableView(tableView: UITableView, titleForFooterInSection section: Int) -> String? {
         return _tableView(tableView, titleForFooterInSection: section)
     }
+	public func tableView(tableView: UITableView, canEditRowAtIndexPath indexPath: NSIndexPath) -> Bool {
+		return false
+	}
+
 }
 
 public class RxTableViewSectionedDataSource<S: SectionModelType> : _RxTableViewSectionedDataSource {
