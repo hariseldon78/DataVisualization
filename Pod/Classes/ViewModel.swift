@@ -66,7 +66,9 @@ public protocol SectionVisualizable {
 public protocol WithApi {
 	static func api(viewForActivityIndicator:UIView?)->Observable<[Self]>
 }
-public protocol WithCachedApi:WithApi {
+public protocol Cached {
 	static func invalidateCache()
+}
+public protocol WithCachedApi:WithApi,Cached {
 }
 

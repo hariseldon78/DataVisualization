@@ -14,12 +14,29 @@ public protocol Disposer {
 	var disposeBag:DisposeBag {get}
 }
 
-public protocol ControllerWithTableView
+protocol ControllerWithTableView
 {
 	var tableView:UITableView! {get}
 	var vc:UIViewController! {get}
 }
 
+extension ControllerWithTableView where Self:Disposer
+{
+	func setupRefreshControl(invalidateCacheAndReBindData:()->())
+	{
+		// devo usare un tvc dummy perchè altrimenti RefreshControl si comporta male, il frame non è impostato correttamente.
+		let rc=UIRefreshControl()
+		let dummyTvc=UITableViewController()
+		vc.addChildViewController(dummyTvc)
+		dummyTvc.tableView=tableView
+		dummyTvc.refreshControl=rc
+		rc.rx_controlEvent(UIControlEvents.ValueChanged).subscribeNext{ _ in
+			invalidateCacheAndReBindData()
+			rc.endRefreshing()
+			}.addDisposableTo(disposeBag)
+		
+	}
+}
 public protocol AutoSingleLevelTableView:Disposer {
 	typealias Data:Visualizable,WithApi
 	
@@ -31,13 +48,13 @@ public protocol AutoSingleLevelTableView:Disposer {
 public typealias CellDecorator=(cell:UITableViewCell)->()
 
 // non dovrebbe essere pubblico
-public protocol Searchable:class,ControllerWithTableView,Disposer
+protocol Searchable:class,ControllerWithTableView,Disposer
 {
 	var searchController:UISearchController! {get set}
 	func setupSearchController()
 }
 
-public extension Searchable
+extension Searchable
 {
 	
 	/// To be called in viewDidLoad
@@ -75,7 +92,8 @@ public enum OnSelectBehaviour<DataType>
 	case Detail(segue:String)
 	case Action(action:(d:DataType)->())
 }
-public class AutoSingleLevelTableViewManager<DataType where DataType:Visualizable,DataType:WithApi>:AutoSingleLevelTableView
+
+public class AutoSingleLevelTableViewManager<DataType where DataType:Visualizable,DataType:WithApi>:AutoSingleLevelTableView,ControllerWithTableView
 {
 	public typealias Data=DataType
 	public var data:Observable<[Data]>!
@@ -110,18 +128,11 @@ public class AutoSingleLevelTableViewManager<DataType where DataType:Visualizabl
 		
 		if let Cached=Data.self as? WithCachedApi.Type
 		{
-			// devo usare un tvc dummy perchè altrimenti RefreshControl si comporta male, il frame non è impostato correttamente.
-			let rc=UIRefreshControl()
-			let dummyTvc=UITableViewController()
-			vc.addChildViewController(dummyTvc)
-			dummyTvc.tableView=tableView
-			dummyTvc.refreshControl=rc
-			rc.rx_controlEvent(UIControlEvents.ValueChanged).subscribeNext{ _ in
+			setupRefreshControl{
 				Cached.invalidateCache()
 				self.dataBindDisposeBag=DisposeBag() // butto via la vecchia subscription
 				self.bindData() // rifaccio la subscription
-				rc.endRefreshing()
-			}.addDisposableTo(disposeBag)
+			}
 		}
 		
 		tableView

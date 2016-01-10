@@ -46,7 +46,7 @@ public class AutoSectionedTableViewManager<
 	DataType:Visualizable,
 	SectionType:SectionVisualizable,
 	_SectionerType:Sectioner where _SectionerType.Data==DataType,_SectionerType.Section==SectionType
-	>:NSObject,AutoSectionedTableView,UITableViewDelegate
+	>:NSObject,AutoSectionedTableView,UITableViewDelegate,ControllerWithTableView
 {
 	public let disposeBag=DisposeBag()
 	public typealias Data=DataType
@@ -100,6 +100,8 @@ public class AutoSectionedTableViewManager<
 		}
 		tableView.delegate=self
 		bindData()
+		
+		
 	}
 	func bindData()
 	{
