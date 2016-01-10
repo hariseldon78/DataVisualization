@@ -101,6 +101,18 @@ public class AutoSectionedTableViewManager<
 			tableView.registerClass(clazz, forHeaderFooterViewReuseIdentifier: "section")
 		}
 		tableView.delegate=self
+		
+		dataSource.cellFactory={
+			(tableView,indexPath,item:Data) in
+			guard let cell=tableView.dequeueReusableCellWithIdentifier("cell")
+				else {fatalError("why no cell?")}
+			self.dataViewModel.cellFactory(indexPath.row, item: item, cell: cell)
+			self.cellDecorators.forEach({ dec in
+				dec(cell: cell)
+			})
+			return cell
+		}
+		
 		bindData()
 		
 		if let Cacheable=SectionerType.self as? Cached.Type
@@ -121,19 +133,24 @@ public class AutoSectionedTableViewManager<
 				RxSectionModel(model: s, items: d)
 			}
 		}.addDisposableTo(dataBindDisposeBag)
-		dataSource.cellFactory={
-			(tableView,indexPath,item:Data) in
-			guard let cell=tableView.dequeueReusableCellWithIdentifier("cell")
-				else {fatalError("why no cell?")}
-			self.dataViewModel.cellFactory(indexPath.row, item: item, cell: cell)
-			self.cellDecorators.forEach({ dec in
-				dec(cell: cell)
-			})
-			return cell
-		}
 		
 		sections.asObservable().bindTo(tableView.rx_itemsWithDataSource(dataSource))
 			.addDisposableTo(dataBindDisposeBag)
+		
+		sections.asObservable()
+			.map { array in
+				array.isEmpty
+			}
+			.subscribeNext { empty in
+				if empty {
+					self.tableView.backgroundView=self.sectionViewModel.viewForEmptyList
+				}
+				else
+				{
+					self.tableView.backgroundView=nil
+				}
+			}.addDisposableTo(dataBindDisposeBag)
+
 		
 	}
 	public func tableView(tableView: UITableView,
@@ -244,12 +261,92 @@ public class AutoSectionedTableViewManager<
 	}
 }
 
-//public class AutoSearchableSectionedTableViewManager<
-//DataType:Visualizable,
-//SectionType:SectionVisualizable,
-//_SectionerType:Sectioner where _SectionerType.Data==DataType,_SectionerType.Section==SectionType
-//>:AutoSectionedTableViewManager<DataType,SectionType,_SectionerType>,Searchable
-//{
-//	public var searchController:UISearchController!
-//
-//}
+public class AutoSearchableSectionedTableViewManager<
+DataType:Visualizable,
+SectionType:SectionVisualizable,
+_SectionerType:Sectioner where _SectionerType.Data==DataType,_SectionerType.Section==SectionType
+>:AutoSectionedTableViewManager<DataType,SectionType,_SectionerType>,Searchable
+{
+	public var searchController:UISearchController!
+	public override func setupTableView(tableView:UITableView,vc:UIViewController)
+	{
+		self.vc=vc
+		self.tableView=tableView
+		setupSearchController()
+		super.setupTableView(tableView, vc:vc)
+	}
+	public typealias DataFilteringClosure=(d:DataType,s:String)->Bool
+	public typealias SectionFilteringClosure=(d:SectionType,s:String)->Bool
+	
+	public var dataFilteringClosure:DataFilteringClosure
+	public var sectionFilteringClosure:SectionFilteringClosure
+	public init(dataFilteringClosure:DataFilteringClosure,sectionFilteringClosure:SectionFilteringClosure) {
+		self.dataFilteringClosure=dataFilteringClosure
+		self.sectionFilteringClosure=sectionFilteringClosure
+		super.init()
+	}
+	override func bindData() {
+		let search=searchController.searchBar.rx_text.asObservable()
+		typealias SectionAndData=(Section,[Data])
+		let dataOrSearch=Observable.combineLatest(sectioner.sections, search, resultSelector: { (d:[SectionAndData], s:String) -> [SectionAndData] in
+			switch s
+			{
+			case "": return d
+			default:
+				var res=[SectionAndData]()
+				for (sec,data) in d
+				{
+					if self.sectionFilteringClosure(d: sec, s: s)
+					{
+						res.append((sec,data))
+						continue
+					}
+					
+					var matchingData=[Data]()
+					for item in data
+					{
+						if self.dataFilteringClosure(d: item, s: s)
+						{
+							matchingData.append(item)
+						}
+					}
+					if !matchingData.isEmpty
+					{
+						res.append((sec,matchingData))
+					}
+				}
+				return res
+			}
+		}).shareReplayLatestWhileConnected()
+		
+		dataOrSearch
+			.subscribeNext { (secs:[(Section, [Data])]) -> Void in
+			self.sections.value=secs.map{ (s,d) in
+				RxSectionModel(model: s, items: d)
+			}
+			}.addDisposableTo(dataBindDisposeBag)
+		
+		
+		sections.asObservable().bindTo(tableView.rx_itemsWithDataSource(dataSource))
+			.addDisposableTo(dataBindDisposeBag)
+		
+		dataOrSearch
+			.map { array in
+				array.isEmpty
+			}
+			.subscribeNext { empty in
+				
+				switch (empty,self.searchController.searchBar.text)
+				{
+				case (true,let s) where s==nil || s=="":
+					self.tableView.backgroundView=self.sectionViewModel.viewForEmptyList
+				case (true,_):
+					self.tableView.backgroundView=self.sectionViewModel.viewForEmptySearch
+				default:
+					self.tableView.backgroundView=nil
+				}
+			}.addDisposableTo(dataBindDisposeBag)
+
+		
+	}
+}

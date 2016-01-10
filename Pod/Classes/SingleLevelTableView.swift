@@ -208,7 +208,7 @@ public class AutoSearchableSingleLevelTableViewManager<DataType where DataType:V
 	public var searchController:UISearchController!
 	
 	public typealias FilteringClosure=(d:DataType,s:String)->Bool
-	/// default closure don't filter anything
+
 	public var filteringClosure:FilteringClosure
 	public init(filteringClosure:FilteringClosure) {
 		self.filteringClosure=filteringClosure
