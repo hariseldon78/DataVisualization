@@ -27,6 +27,7 @@ extension ControllerWithTableView where Self:Disposer
 		// devo usare un tvc dummy perchè altrimenti RefreshControl si comporta male, il frame non è impostato correttamente.
 		let rc=UIRefreshControl()
 		let dummyTvc=UITableViewController()
+		rc.backgroundColor=UIColor.clearColor()
 		vc.addChildViewController(dummyTvc)
 		dummyTvc.tableView=tableView
 		dummyTvc.refreshControl=rc
