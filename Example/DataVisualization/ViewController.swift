@@ -76,7 +76,7 @@ class FunkyViewController:UIViewController {
 
 class PlainSectionedViewController:UIViewController {
 	@IBOutlet weak var tableView: UITableView!
-	let tvManager=AutoSectionedTableViewManager<Worker,Department,WorkerSectioner>()
+	let tvManager=AutoSectionedTableViewManager<Worker,Department,WorkerSectioner>(sectioner:WorkerSectioner())
 	override func viewDidLoad() {
 		super.viewDidLoad()
 		tvManager.setupTableView(tableView,vc:self)
@@ -89,7 +89,7 @@ class PlainSectionedViewController:UIViewController {
 
 class SearchSectionedViewController:UIViewController {
 	@IBOutlet weak var tableView: UITableView!
-	let tvManager=AutoSearchableSectionedTableViewManager<Worker,Department,WorkerSectioner>(dataFilteringClosure: { (d, s) -> Bool in
+	let tvManager=AutoSearchableSectionedTableViewManager<Worker,Department,WorkerSectioner>(sectioner:WorkerSectioner(),dataFilteringClosure: { (d, s) -> Bool in
 		return d.name.uppercaseString.containsString(s.uppercaseString)
 		},sectionFilteringClosure: { (d, s) -> Bool in
 		return d.name.uppercaseString.containsString(s.uppercaseString)

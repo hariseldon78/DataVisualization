@@ -12,7 +12,8 @@ import RxCocoa
 
 public protocol Sectioner
 {
-	init(viewForActivityIndicator:UIView?)
+//	init(viewForActivityIndicator:UIView?)
+	var viewForActivityIndicator:UIView? {get set}
 	typealias Data
 	typealias Section
 	var sections:Observable<[(Section,[Data])]> {get}
@@ -27,7 +28,7 @@ public protocol AutoSectionedTableView:Disposer {
 	var sectionViewModel:ViewModel {get}
 	
 	func setupTableView(tableView:UITableView,vc:UIViewController)
-	var sectioner:SectionerType! {get}
+	var sectioner:SectionerType {get}
 }
 class EnrichedTapGestureRecognizer<T>:UITapGestureRecognizer
 {
@@ -67,13 +68,16 @@ public class AutoSectionedTableViewManager<
 
 	public var dataViewModel=Data.defaultViewModel()
 	public var sectionViewModel=Section.defaultSectionViewModel()
-	public var sectioner:SectionerType!
+	public var sectioner:SectionerType
 	var vc:UIViewController!
 	var tableView:UITableView!
 
 	
 	
-	public override init() {super.init()}
+	public init(sectioner:SectionerType) {
+		self.sectioner=sectioner
+		super.init()
+	}
 	public func setupTableView(tableView:UITableView,vc:UIViewController)
 	{
 		guard let dataNib=dataViewModel.cellNib,
@@ -83,7 +87,7 @@ public class AutoSectionedTableViewManager<
 		self.vc=vc
 		self.tableView=tableView
 
-		sectioner=SectionerType(viewForActivityIndicator: self.tableView)
+		sectioner.viewForActivityIndicator=self.tableView
 		
 		switch dataNib
 		{
@@ -280,10 +284,10 @@ _SectionerType:Sectioner where _SectionerType.Data==DataType,_SectionerType.Sect
 	
 	public var dataFilteringClosure:DataFilteringClosure
 	public var sectionFilteringClosure:SectionFilteringClosure
-	public init(dataFilteringClosure:DataFilteringClosure,sectionFilteringClosure:SectionFilteringClosure) {
+	public init(sectioner:SectionerType,dataFilteringClosure:DataFilteringClosure,sectionFilteringClosure:SectionFilteringClosure) {
 		self.dataFilteringClosure=dataFilteringClosure
 		self.sectionFilteringClosure=sectionFilteringClosure
-		super.init()
+		super.init(sectioner: sectioner)
 	}
 	override func bindData() {
 		let search=searchController.searchBar.rx_text.asObservable()

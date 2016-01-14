@@ -102,11 +102,7 @@ struct WorkerSectioner:Sectioner,Cached
 	var _sections=Variable([SectionAndData]())
 	var sections:Observable<[SectionAndData]> { return _sections.asObservable() }
 	var disposeBag=DisposeBag()
-	let viewForActivityIndicator: UIView?
-	init(viewForActivityIndicator: UIView?) {
-		self.viewForActivityIndicator=viewForActivityIndicator
-		rebind()
-	}
+	var viewForActivityIndicator: UIView? {didSet{rebind()}}
 	func rebind() {
 		Data.api(viewForActivityIndicator).subscribeNext { (w:[Worker]) -> Void in
 			self._sections.value=w
