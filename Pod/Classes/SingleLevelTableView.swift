@@ -20,6 +20,10 @@ protocol ControllerWithTableView
 	var vc:UIViewController! {get}
 }
 
+let backgroundScheduler=OperationQueueScheduler(operationQueue: NSOperationQueue())
+
+
+
 extension ControllerWithTableView where Self:Disposer
 {
 	func setupRefreshControl(invalidateCacheAndReBindData:()->())
@@ -146,9 +150,13 @@ public class AutoSingleLevelTableViewManager<DataType where DataType:Visualizabl
 	
 	func bindData(){
 		
-		data=DataType.api(tableView).shareReplayLatestWhileConnected()
+		data=DataType.api(tableView)
+			.subscribeOn(backgroundScheduler)
+			.map {$0}
+			.shareReplayLatestWhileConnected()
 		
 		data
+			.observeOn(MainScheduler.instance)
 			.bindTo(tableView.rx_itemsWithCellIdentifier("cell")) {
 				(index,item,cell)->Void in
 				self.viewModel.cellFactory(index,item: item,cell: cell)
@@ -162,6 +170,7 @@ public class AutoSingleLevelTableViewManager<DataType where DataType:Visualizabl
 			.map { array in
 				array.isEmpty
 			}
+			.observeOn(MainScheduler.instance)
 			.subscribeNext { empty in
 				if empty {
 					self.tableView.backgroundView=self.viewModel.viewForEmptyList
@@ -223,7 +232,11 @@ public class AutoSearchableSingleLevelTableViewManager<DataType where DataType:V
 		super.setupTableView(tableView, vc:vc)
 	}
 	override func bindData() {
-		data=DataType.api(tableView).shareReplayLatestWhileConnected()
+		data=DataType.api(tableView)
+			.subscribeOn(backgroundScheduler)
+			.map{$0}
+			.observeOn(MainScheduler.instance)
+			.shareReplayLatestWhileConnected()
 		let search=searchController.searchBar.rx_text.asObservable()
 		
 		let dataOrSearch=Observable.combineLatest(data,search) {
@@ -236,6 +249,7 @@ public class AutoSearchableSingleLevelTableViewManager<DataType where DataType:V
 			}.shareReplayLatestWhileConnected()
 		
 		dataOrSearch
+			.observeOn(MainScheduler.instance)
 			.bindTo(tableView.rx_itemsWithCellIdentifier("cell")) {
 				(index,item,cell)->Void in
 				self.viewModel.cellFactory(index,item: item,cell: cell)

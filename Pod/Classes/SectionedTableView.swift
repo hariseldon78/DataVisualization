@@ -132,19 +132,24 @@ public class AutoSectionedTableViewManager<
 	}
 	func bindData()
 	{
-		sectioner.sections.subscribeNext { (secs:[(Section, [Data])]) -> Void in
+		sectioner.sections
+		.subscribeOn(backgroundScheduler)
+			.subscribeNext { (secs:[(Section, [Data])]) -> Void in
 			self.sections.value=secs.map{ (s,d) in
 				RxSectionModel(model: s, items: d)
 			}
 		}.addDisposableTo(dataBindDisposeBag)
 		
-		sections.asObservable().bindTo(tableView.rx_itemsWithDataSource(dataSource))
+		sections.asObservable()
+			.observeOn(MainScheduler.instance)
+			.bindTo(tableView.rx_itemsWithDataSource(dataSource))
 			.addDisposableTo(dataBindDisposeBag)
 		
 		sections.asObservable()
 			.map { array in
 				array.isEmpty
 			}
+			.observeOn(MainScheduler.instance)
 			.subscribeNext { empty in
 				if empty {
 					self.tableView.backgroundView=self.sectionViewModel.viewForEmptyList
@@ -292,7 +297,7 @@ _SectionerType:Sectioner where _SectionerType.Data==DataType,_SectionerType.Sect
 	override func bindData() {
 		let search=searchController.searchBar.rx_text.asObservable()
 		typealias SectionAndData=(Section,[Data])
-		let dataOrSearch=Observable.combineLatest(sectioner.sections, search, resultSelector: { (d:[SectionAndData], s:String) -> [SectionAndData] in
+		let dataOrSearch=Observable.combineLatest(sectioner.sections.subscribeOn(backgroundScheduler), search, resultSelector: { (d:[SectionAndData], s:String) -> [SectionAndData] in
 			switch s
 			{
 			case "": return d
@@ -324,6 +329,7 @@ _SectionerType:Sectioner where _SectionerType.Data==DataType,_SectionerType.Sect
 		}).shareReplayLatestWhileConnected()
 		
 		dataOrSearch
+			.observeOn(MainScheduler.instance)
 			.subscribeNext { (secs:[(Section, [Data])]) -> Void in
 			self.sections.value=secs.map{ (s,d) in
 				RxSectionModel(model: s, items: d)
@@ -331,13 +337,16 @@ _SectionerType:Sectioner where _SectionerType.Data==DataType,_SectionerType.Sect
 			}.addDisposableTo(dataBindDisposeBag)
 		
 		
-		sections.asObservable().bindTo(tableView.rx_itemsWithDataSource(dataSource))
+		sections.asObservable()
+			.observeOn(MainScheduler.instance)
+			.bindTo(tableView.rx_itemsWithDataSource(dataSource))
 			.addDisposableTo(dataBindDisposeBag)
 		
 		dataOrSearch
 			.map { array in
 				array.isEmpty
 			}
+			.observeOn(MainScheduler.instance)
 			.subscribeNext { empty in
 				
 				switch (empty,self.searchController.searchBar.text)

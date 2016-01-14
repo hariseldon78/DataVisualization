@@ -60,16 +60,23 @@ struct Worker: Visualizable,WithCachedApi
 				"departmentId":1
 				])
 		}
-		return array
-			.map{ w->Worker in
-				guard let id:UInt=w["id"] as? UInt,
-					name:String=w["name"] as? String,
-					salary:Double=w["salary"] as? Double,
-					dep:UInt=w["departmentId"] as? UInt
-					else {fatalError()}
-			
-				return Worker(id: id , name: name, salary: salary, departmentId: dep)
-			}.toObservable().toArray()
+		return Observable.create({ (observer) -> Disposable in
+			assert(NSThread.currentThread() != NSThread.mainThread())
+			NSThread.sleepForTimeInterval(5)
+			let data=array
+				.map{ w->Worker in
+					guard let id:UInt=w["id"] as? UInt,
+						name:String=w["name"] as? String,
+						salary:Double=w["salary"] as? Double,
+						dep:UInt=w["departmentId"] as? UInt
+						else {fatalError()}
+					
+					return Worker(id: id , name: name, salary: salary, departmentId: dep)
+			}
+			observer.onNext(data)
+			observer.onCompleted()
+			return AnonymousDisposable {}
+		})
 	}
 	static func invalidateCache() {
 		cached=false
@@ -104,7 +111,9 @@ struct WorkerSectioner:Sectioner,Cached
 	var disposeBag=DisposeBag()
 	var viewForActivityIndicator: UIView? {didSet{rebind()}}
 	func rebind() {
-		Data.api(viewForActivityIndicator).subscribeNext { (w:[Worker]) -> Void in
+		Data.api(viewForActivityIndicator)
+			.subscribeOn(OperationQueueScheduler(operationQueue:NSOperationQueue()))
+			.subscribeNext { (w:[Worker]) -> Void in
 			self._sections.value=w
 				.map{ $0.departmentId }
 				.reduce([]) { (deps:[UInt], dep) in
