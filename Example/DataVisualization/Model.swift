@@ -73,7 +73,7 @@ struct Worker: Visualizable,WithCachedApi
 					
 					return Worker(id: id , name: name, salary: salary, departmentId: dep)
 			}
-			observer.onNext(data)
+			observer.onNext([])
 			observer.onCompleted()
 			return AnonymousDisposable {}
 		})

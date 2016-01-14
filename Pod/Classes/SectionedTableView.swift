@@ -128,8 +128,8 @@ public class AutoSectionedTableViewManager<
 				self.bindData()
 			}
 		}
-		
 	}
+	var emptyList=false
 	func bindData()
 	{
 		sectioner.sections
@@ -150,15 +150,20 @@ public class AutoSectionedTableViewManager<
 				array.isEmpty
 			}
 			.observeOn(MainScheduler.instance)
-			.subscribeNext { empty in
-				if empty {
-					self.tableView.backgroundView=self.sectionViewModel.viewForEmptyList
-				}
-				else
-				{
-					self.tableView.backgroundView=nil
-				}
-			}.addDisposableTo(dataBindDisposeBag)
+			.subscribe(onNext: { empty in
+					self.emptyList=empty
+				}, onError: nil,
+				onCompleted: {
+					if self.emptyList {
+						self.tableView.backgroundView=self.sectionViewModel.viewForEmptyList
+					}
+					else
+					{
+						self.tableView.backgroundView=nil
+					}
+
+				}, onDisposed: nil)
+			.addDisposableTo(dataBindDisposeBag)
 
 		
 	}
@@ -294,10 +299,12 @@ _SectionerType:Sectioner where _SectionerType.Data==DataType,_SectionerType.Sect
 		self.sectionFilteringClosure=sectionFilteringClosure
 		super.init(sectioner: sectioner)
 	}
+	var dataCompleted=false
 	override func bindData() {
+		let data=sectioner.sections.subscribeOn(backgroundScheduler).shareReplayLatestWhileConnected()
 		let search=searchController.searchBar.rx_text.asObservable()
 		typealias SectionAndData=(Section,[Data])
-		let dataOrSearch=Observable.combineLatest(sectioner.sections.subscribeOn(backgroundScheduler), search, resultSelector: { (d:[SectionAndData], s:String) -> [SectionAndData] in
+		let dataOrSearch=Observable.combineLatest(data, search, resultSelector: { (d:[SectionAndData], s:String) -> [SectionAndData] in
 			switch s
 			{
 			case "": return d
@@ -342,6 +349,16 @@ _SectionerType:Sectioner where _SectionerType.Data==DataType,_SectionerType.Sect
 			.bindTo(tableView.rx_itemsWithDataSource(dataSource))
 			.addDisposableTo(dataBindDisposeBag)
 		
+		data.map { array in
+				array.isEmpty
+			}
+			.subscribe(onNext: { (empty) -> Void in
+					self.emptyList=empty
+				}, onError: nil, onCompleted: { () -> Void in
+					self.dataCompleted=true
+				}, onDisposed: nil)
+			.addDisposableTo(dataBindDisposeBag)
+		
 		dataOrSearch
 			.map { array in
 				array.isEmpty
@@ -351,9 +368,9 @@ _SectionerType:Sectioner where _SectionerType.Data==DataType,_SectionerType.Sect
 				
 				switch (empty,self.searchController.searchBar.text)
 				{
-				case (true,let s) where s==nil || s=="":
+				case (true,let s) where self.dataCompleted && self.emptyList && (s==nil || s==""):
 					self.tableView.backgroundView=self.sectionViewModel.viewForEmptyList
-				case (true,_):
+				case (true,let s) where s != nil && s! != "":
 					self.tableView.backgroundView=self.sectionViewModel.viewForEmptySearch
 				default:
 					self.tableView.backgroundView=nil
