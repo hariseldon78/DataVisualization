@@ -354,7 +354,8 @@ _SectionerType:Sectioner where _SectionerType.Data==DataType,_SectionerType.Sect
 			}
 			.subscribe(onNext: { (empty) -> Void in
 					self.emptyList=empty
-				}, onError: nil, onCompleted: { () -> Void in
+				}, onError: nil,
+				onCompleted: { () -> Void in
 					self.dataCompleted=true
 				}, onDisposed: nil)
 			.addDisposableTo(dataBindDisposeBag)

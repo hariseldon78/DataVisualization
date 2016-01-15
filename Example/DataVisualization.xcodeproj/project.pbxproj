@@ -56,6 +56,7 @@
 		BFF5DB6776F4C292FCB50856 /* Pods-DataVisualization_Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DataVisualization_Tests.release.xcconfig"; path = "Pods/Target Support Files/Pods-DataVisualization_Tests/Pods-DataVisualization_Tests.release.xcconfig"; sourceTree = "<group>"; };
 		CDF8262716909198AB40C7A4 /* DataVisualization.podspec */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = DataVisualization.podspec; path = ../DataVisualization.podspec; sourceTree = "<group>"; };
 		FB300EAE1C3DFDEE00DC6AE5 /* NibVC.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = NibVC.xib; sourceTree = "<group>"; };
+		FBB768FE1C49356B00FC1816 /* rxSwiftExperiments.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; name = rxSwiftExperiments.playground; path = DataVisualization/rxSwiftExperiments.playground; sourceTree = "<group>"; };
 		FBBE17981C307FE3005E1E5C /* FunkyCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FunkyCell.swift; sourceTree = "<group>"; };
 		FBBE17991C307FE3005E1E5C /* FunkyCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = FunkyCell.xib; sourceTree = "<group>"; };
 		FBC024DC1C303BAF00F4700D /* Model.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Model.swift; sourceTree = "<group>"; };
@@ -88,6 +89,7 @@
 		607FACC71AFB9204008FA782 = {
 			isa = PBXGroup;
 			children = (
+				FBB768FE1C49356B00FC1816 /* rxSwiftExperiments.playground */,
 				607FACF51AFB993E008FA782 /* Podspec Metadata */,
 				607FACD21AFB9204008FA782 /* Example for DataVisualization */,
 				607FACE81AFB9204008FA782 /* Tests */,

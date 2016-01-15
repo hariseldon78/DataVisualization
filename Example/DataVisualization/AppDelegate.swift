@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import RxSwift
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -16,6 +17,47 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
         // Override point for customization after application launch.
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		let obs=Observable<Int>.interval(0.5, scheduler: MainScheduler.instance).take(5)
+		
+		let obs2=Observable<Int>.interval(2,scheduler: MainScheduler.instance).take(6)
+		
+		obs2.map{ _ in
+			obs
+			}
+			.flatMap {$0}
+			.subscribe{ print($0) }
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
         return true
     }
 

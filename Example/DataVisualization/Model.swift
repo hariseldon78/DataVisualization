@@ -14,7 +14,7 @@ import DataVisualization
 var cached=true
 
 struct Worker: Visualizable,WithCachedApi
-{ 
+{
 	static func defaultViewModel() -> ViewModel {
 		return ConcreteViewModel<Worker,TitleCell>(cellName: "TitleCell") { (index, item, cell) -> Void in
 			cell.title.text=item.name
@@ -73,7 +73,7 @@ struct Worker: Visualizable,WithCachedApi
 					
 					return Worker(id: id , name: name, salary: salary, departmentId: dep)
 			}
-			observer.onNext([])
+			observer.onNext(data)
 			observer.onCompleted()
 			return AnonymousDisposable {}
 		})
@@ -106,27 +106,32 @@ struct WorkerSectioner:Sectioner,Cached
 	typealias Data=Worker
 	typealias Section=Department
 	typealias SectionAndData=(Section,[Data])
-	var _sections=Variable([SectionAndData]())
-	var sections:Observable<[SectionAndData]> { return _sections.asObservable() }
-	var disposeBag=DisposeBag()
-	var viewForActivityIndicator: UIView? {didSet{rebind()}}
-	func rebind() {
-		Data.api(viewForActivityIndicator)
-			.subscribeOn(OperationQueueScheduler(operationQueue:NSOperationQueue()))
-			.subscribeNext { (w:[Worker]) -> Void in
-			self._sections.value=w
-				.map{ $0.departmentId }
-				.reduce([]) { (deps:[UInt], dep) in
-					deps.contains(dep) ? deps : deps+dep
-				}.map{ dep in
-					(Department(id: dep, name: "dep n°\(dep)"),
-					w.filter{ $0.departmentId==dep })
+	var _viewForActivityIndicator=Variable<UIView?>(nil)
+	var _refresher=Variable(0)
+	var sections:Observable<[SectionAndData]> {
+		return Observable.combineLatest(_viewForActivityIndicator.asObservable(), _refresher.asObservable()){ $0.0 }
+			.map{ (v) in
+				Data.api(v)
 			}
-		}.addDisposableTo(disposeBag)
+			.subscribeOn(OperationQueueScheduler(operationQueue:NSOperationQueue()))
+			.flatMap { $0 }
+			.map { (w:[Worker]) in
+				let ret=w
+					.map{ $0.departmentId }
+					.reduce([]) { (deps:[UInt], dep) in
+						deps.contains(dep) ? deps : deps+dep
+					}.map{ dep in
+						(Department(id: dep, name: "dep n°\(dep)"),
+							w.filter{ $0.departmentId==dep })
+				}
+				return ret
+		}
 	}
+	
+	var viewForActivityIndicator: UIView? {didSet{_viewForActivityIndicator.value=viewForActivityIndicator}}
+	
 	mutating func resubscribe() {
-		disposeBag=DisposeBag()
-		rebind()
+		_refresher.value++
 	}
 	static func invalidateCache() {
 		Data.invalidateCache()
