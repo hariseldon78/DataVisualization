@@ -98,7 +98,13 @@ class SearchSectionedViewController:UIViewController {
 		super.viewDidLoad()
 		tvManager.setupTableView(tableView,vc:self)
 		//		tvManager.setupDataOnSelect(.Detail(segue:"workerDetail"))
-		tvManager.setupDataOnSelect(.SectionDetail(segue:"departmentDetail"))
+		tvManager.transformForDataDetail={
+			d in
+			guard let d=d else {return nil}
+			return Department(id:d.departmentId,name:"")
+		}
+		
+		tvManager.setupDataOnSelect(.Detail(segue:"dataSectionDetail"))
 		tvManager.setupSectionOnSelect(.Detail(segue:"departmentDetail"))
 	}
 }

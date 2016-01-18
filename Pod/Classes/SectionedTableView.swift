@@ -44,6 +44,7 @@ public enum OnSelectSectionedBehaviour<T>
 	case SectionDetail(segue:String) // shows the detail of the section, even if starting from a data cell
 	case Action(action:(d:T)->())
 }
+
 public class AutoSectionedTableViewManager<
 	DataType:Visualizable,
 	SectionType:SectionVisualizable,
@@ -204,6 +205,7 @@ public class AutoSectionedTableViewManager<
 	
 	var dataDetailSegue:String?=nil
 	var dataDetailSectionSegue:String?=nil
+	/// please setup different segues for data and sections.
 	public func setupDataOnSelect(onSelect:OnSelectSectionedBehaviour<Data>)
 	{
 		switch onSelect
@@ -239,6 +241,7 @@ public class AutoSectionedTableViewManager<
 		}
 	}
 	var sectionDetailSegue:String?=nil
+	/// please setup different segues for data and sections.
 	public func setupSectionOnSelect(onSelect:OnSelectBehaviour<Section>)
 	{
 		switch onSelect
@@ -253,6 +256,8 @@ public class AutoSectionedTableViewManager<
 			self.onSectionClick=closure
 		}
 	}
+	public var transformForDataDetail:(d:Data?)->(Any?)={ return ($0 ?? nil) }
+	public var transformForSectionDetail:(s:Section?)->(Any?)={ return ($0 ?? nil) }
 	var listeningForSegue=false
 	public func listenForSegue() {
 		guard !listeningForSegue else {return}
@@ -261,13 +266,13 @@ public class AutoSectionedTableViewManager<
 			guard var dest=segue.destinationViewController as? DetailView,
 				let identifier=segue.identifier else {return}
 			switch identifier
-			{
+			{ 
 			case let val where val==self.dataDetailSegue:
-				dest.detailManager.object=self.clickedDataObj
+				dest.detailManager.object=self.transformForDataDetail(d:self.clickedDataObj)
 			case let val where val==self.dataDetailSectionSegue:
-				dest.detailManager.object=self.clickedSectionObj
+				dest.detailManager.object=self.transformForSectionDetail(s:self.clickedSectionObj)
 			case let val where val==self.sectionDetailSegue:
-				dest.detailManager.object=self.clickedSectionObj
+				dest.detailManager.object=self.transformForSectionDetail(s:self.clickedSectionObj)
 			default:
 				_=0
 			}
