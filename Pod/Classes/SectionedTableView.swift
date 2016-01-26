@@ -276,10 +276,10 @@ public class AutoSectionedTableViewManager<
 }
 
 public class AutoSearchableSectionedTableViewManager<
-DataType:Visualizable,
-SectionType:SectionVisualizable,
-_SectionerType:Sectioner where _SectionerType.Data==DataType,_SectionerType.Section==SectionType
->:AutoSectionedTableViewManager<DataType,SectionType,_SectionerType>,Searchable
+	DataType:Visualizable,
+	SectionType:SectionVisualizable,
+	_SectionerType:Sectioner where _SectionerType.Data==DataType,_SectionerType.Section==SectionType
+	>:AutoSectionedTableViewManager<DataType,SectionType,_SectionerType>,Searchable
 {
 	public var searchController:UISearchController!
 	public override func setupTableView(tableView:UITableView,vc:UIViewController)

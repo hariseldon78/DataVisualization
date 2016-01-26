@@ -110,6 +110,7 @@ struct WorkerSectioner:Sectioner,Cached
 	var _refresher=Variable(0)
 	var sections:Observable<[SectionAndData]> {
 		return Observable.combineLatest(_viewForActivityIndicator.asObservable(), _refresher.asObservable()){ $0.0 }
+			.observeOn(OperationQueueScheduler(operationQueue:NSOperationQueue()))
 			.map{ (v) in
 				Data.api(v)
 			}
