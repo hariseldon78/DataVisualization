@@ -1,15 +1,4 @@
-# DataVisualization
-
-[![CI Status](http://img.shields.io/travis/Roberto Previdi/DataVisualization.svg?style=flat)](https://travis-ci.org/Roberto Previdi/DataVisualization)
-[![Version](https://img.shields.io/cocoapods/v/DataVisualization.svg?style=flat)](http://cocoapods.org/pods/DataVisualization)
-[![License](https://img.shields.io/cocoapods/l/DataVisualization.svg?style=flat)](http://cocoapods.org/pods/DataVisualization)
-[![Platform](https://img.shields.io/cocoapods/p/DataVisualization.svg?style=flat)](http://cocoapods.org/pods/DataVisualization)
-
-## Usage
-
-To run the example project, clone the repo, and run `pod install` from the Example directory first.
-
-## Requirements
+## DataVisualization
 
 ## Installation
 
@@ -20,10 +9,43 @@ it, simply add the following line to your Podfile:
 pod "DataVisualization"
 ```
 
+#### Usage
+
+To run the example project, clone the repo, and run `pod install` from the Example directory first.
+
+```swift
+// Swift
+
+import UIKit
+import DataVisualization
+
+class PlainViewController:UIViewController
+{
+    @IBOutlet weak var tableView: UITableView!
+    var tvManager=AutoSearchableSingleLevelTableViewManager<Worker> (filteringClosure: { (d:Worker, s:String) -> Bool in
+        return d.name.uppercaseString.containsString(s.uppercaseString)
+    })
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        tvManager.setupTableView(tableView,vc:self)
+		tvManager.setupOnSelect(.Detail(segue:"detail"))
+    }
+}
+
+```
 ## Author
 
-Roberto Previdi, hariseldon78@gmail.com
+DataVisualization is written by 
+
+Roberto Previdi <hariseldon78@gmail.com>
+for 
+Municipium s.r.l., Verona, Italy
 
 ## License
 
 DataVisualization is available under the MIT license. See the LICENSE file for more info.
+
+**Copyright (c) 2015 Municipium s.r.l.**
+
+
+
