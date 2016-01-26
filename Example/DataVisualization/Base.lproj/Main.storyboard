@@ -185,13 +185,13 @@
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="yOX-2g-fMH">
                                 <rect key="frame" x="279" y="72" width="42" height="21"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="JK0-xE-iIg">
                                 <rect key="frame" x="279" y="522" width="42" height="21"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
                         </subviews>
@@ -398,7 +398,6 @@
                         <outlet property="tableView" destination="C1j-hP-bDB" id="hOX-RL-xLF"/>
                         <segue destination="bda-FG-fWT" kind="show" identifier="workerDetail" id="4M2-6G-yf5"/>
                         <segue destination="Hto-bm-dic" kind="show" identifier="departmentDetail" id="JVy-uT-YDE"/>
-                        <segue destination="Hto-bm-dic" kind="show" identifier="dataSectionDetail" id="jX7-67-Eat"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="DUF-PF-7z9" sceneMemberID="firstResponder"/>
@@ -424,7 +423,7 @@
         </scene>
     </scenes>
     <inferredMetricsTieBreakers>
-        <segue reference="jX7-67-Eat"/>
+        <segue reference="JVy-uT-YDE"/>
         <segue reference="4M2-6G-yf5"/>
     </inferredMetricsTieBreakers>
 </document>
