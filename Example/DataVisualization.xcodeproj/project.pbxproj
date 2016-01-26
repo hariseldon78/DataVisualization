@@ -23,6 +23,8 @@
 		FBC024E31C304C2A00F4700D /* TitleCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = FBC024E11C304C2A00F4700D /* TitleCell.xib */; };
 		FBC2827B1C33778F00FE50FE /* TitleHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBC282791C33778F00FE50FE /* TitleHeader.swift */; };
 		FBC2827C1C33778F00FE50FE /* TitleHeader.xib in Resources */ = {isa = PBXBuildFile; fileRef = FBC2827A1C33778F00FE50FE /* TitleHeader.xib */; };
+		FBFDB2221C57E786006BD12D /* StaticTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBFDB2201C57E786006BD12D /* StaticTableViewCell.swift */; };
+		FBFDB2231C57E786006BD12D /* StaticTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = FBFDB2211C57E786006BD12D /* StaticTableViewCell.xib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -64,6 +66,10 @@
 		FBC024E11C304C2A00F4700D /* TitleCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TitleCell.xib; sourceTree = "<group>"; };
 		FBC282791C33778F00FE50FE /* TitleHeader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TitleHeader.swift; sourceTree = "<group>"; };
 		FBC2827A1C33778F00FE50FE /* TitleHeader.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TitleHeader.xib; sourceTree = "<group>"; };
+		FBFDB21E1C57ADCA006BD12D /* LICENSE */ = {isa = PBXFileReference; lastKnownFileType = text; name = LICENSE; path = ../LICENSE; sourceTree = "<group>"; };
+		FBFDB21F1C57ADCA006BD12D /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../README.md; sourceTree = "<group>"; };
+		FBFDB2201C57E786006BD12D /* StaticTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StaticTableViewCell.swift; sourceTree = "<group>"; };
+		FBFDB2211C57E786006BD12D /* StaticTableViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = StaticTableViewCell.xib; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -89,6 +95,8 @@
 		607FACC71AFB9204008FA782 = {
 			isa = PBXGroup;
 			children = (
+				FBFDB21E1C57ADCA006BD12D /* LICENSE */,
+				FBFDB21F1C57ADCA006BD12D /* README.md */,
 				FBB768FE1C49356B00FC1816 /* rxSwiftExperiments.playground */,
 				607FACF51AFB993E008FA782 /* Podspec Metadata */,
 				607FACD21AFB9204008FA782 /* Example for DataVisualization */,
@@ -125,6 +133,8 @@
 				FBBE17991C307FE3005E1E5C /* FunkyCell.xib */,
 				FBC282791C33778F00FE50FE /* TitleHeader.swift */,
 				FBC2827A1C33778F00FE50FE /* TitleHeader.xib */,
+				FBFDB2201C57E786006BD12D /* StaticTableViewCell.swift */,
+				FBFDB2211C57E786006BD12D /* StaticTableViewCell.xib */,
 			);
 			name = "Example for DataVisualization";
 			path = DataVisualization;
@@ -277,6 +287,7 @@
 				FBC024E31C304C2A00F4700D /* TitleCell.xib in Resources */,
 				607FACDB1AFB9204008FA782 /* Main.storyboard in Resources */,
 				FBBE179B1C307FE3005E1E5C /* FunkyCell.xib in Resources */,
+				FBFDB2231C57E786006BD12D /* StaticTableViewCell.xib in Resources */,
 				FBC2827C1C33778F00FE50FE /* TitleHeader.xib in Resources */,
 				607FACE01AFB9204008FA782 /* LaunchScreen.xib in Resources */,
 				FB300EB01C3DFDEF00DC6AE5 /* NibVC.xib in Resources */,
@@ -396,6 +407,7 @@
 				607FACD61AFB9204008FA782 /* AppDelegate.swift in Sources */,
 				FBC2827B1C33778F00FE50FE /* TitleHeader.swift in Sources */,
 				FBC024E21C304C2A00F4700D /* TitleCell.swift in Sources */,
+				FBFDB2221C57E786006BD12D /* StaticTableViewCell.swift in Sources */,
 				FBC024DD1C303BAF00F4700D /* Model.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -24,6 +24,27 @@ class PlainViewController:UIViewController
 	}
 }
 
+
+class StaticViewController:UIViewController
+{
+	@IBOutlet weak var tableView: UITableView!
+	@IBOutlet var staticHeaderView: UIView!
+	var tvManager=AutoSearchableSingleLevelTableViewManager<Worker> (filteringClosure: { (d:Worker, s:String) -> Bool in
+		return d.name.uppercaseString.containsString(s.uppercaseString)
+	})
+	
+	override func viewDidLoad() {
+		super.viewDidLoad()
+		tvManager.setupTableView(tableView,vc:self)
+		tvManager.setupOnSelect(.Detail(segue:"detail"))
+	}
+	override func viewDidAppear(animated: Bool) {
+		super.viewDidAppear(animated)
+		tableView.tableHeaderView=staticHeaderView
+		
+	}
+}
+
 class NoStoryboardViewController:UIViewController
 {
 	@IBOutlet weak var tableView: UITableView!
