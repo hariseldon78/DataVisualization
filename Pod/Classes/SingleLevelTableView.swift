@@ -54,7 +54,7 @@ public protocol AutoSingleLevelTableView:Disposer {
 
 public typealias CellDecorator=(cell:UITableViewCell)->()
 
-enum SearchControllerStyle
+public enum SearchControllerStyle
 {
 	case SearchBarInTableHeader
 	case SearchBarInNavigationBar
@@ -248,7 +248,9 @@ public class AutoSearchableSingleLevelTableViewManager<DataType where DataType:V
 	public typealias FilteringClosure=(d:DataType,s:String)->Bool
 	
 	public var filteringClosure:FilteringClosure
-	public init(filteringClosure:FilteringClosure) {
+	let searchStyle:SearchControllerStyle
+	public init(filteringClosure:FilteringClosure,searchStyle:SearchControllerStyle = .SearchBarInNavigationBar) {
+		self.searchStyle=searchStyle
 		self.filteringClosure=filteringClosure
 		super.init()
 	}
@@ -256,7 +258,7 @@ public class AutoSearchableSingleLevelTableViewManager<DataType where DataType:V
 	{
 		self.vc=vc
 		self.tableView=tableView
-		setupSearchController(.SearchBarInNavigationBar)
+		setupSearchController(searchStyle)
 		super.setupTableView(tableView, vc:vc)
 	}
 	override func bindData() {

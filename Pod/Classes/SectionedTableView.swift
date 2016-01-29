@@ -286,7 +286,7 @@ public class AutoSearchableSectionedTableViewManager<
 	{
 		self.vc=vc
 		self.tableView=tableView
-		setupSearchController(.SearchBarInNavigationBar)
+		setupSearchController(searchStyle)
 		super.setupTableView(tableView, vc:vc)
 	}
 	public typealias DataFilteringClosure=(d:DataType,s:String)->Bool
@@ -294,7 +294,9 @@ public class AutoSearchableSectionedTableViewManager<
 	
 	public var dataFilteringClosure:DataFilteringClosure
 	public var sectionFilteringClosure:SectionFilteringClosure
-	public init(sectioner:SectionerType,dataFilteringClosure:DataFilteringClosure,sectionFilteringClosure:SectionFilteringClosure) {
+	let searchStyle:SearchControllerStyle
+	public init(sectioner:SectionerType,dataFilteringClosure:DataFilteringClosure,sectionFilteringClosure:SectionFilteringClosure,searchStyle:SearchControllerStyle = .SearchBarInNavigationBar) {
+		self.searchStyle=searchStyle
 		self.dataFilteringClosure=dataFilteringClosure
 		self.sectionFilteringClosure=sectionFilteringClosure
 		super.init(sectioner: sectioner)
