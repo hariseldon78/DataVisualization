@@ -13,6 +13,15 @@ import DataVisualization
 
 var cached=true
 
+extension Array{
+	mutating func maybeAppend(e:Element,p:Double=0.5)
+	{
+		if Double(random()%100)<p*100.0
+		{
+			append(e)
+		}
+	}
+}
 struct Worker: Visualizable,WithCachedApi
 {
 	static func defaultViewModel() -> ViewModel {
@@ -52,6 +61,7 @@ struct Worker: Visualizable,WithCachedApi
 				"departmentId":0
 			]
 		]
+		
 		if !cached {
 			array.append([
 				"id":4,
@@ -60,9 +70,53 @@ struct Worker: Visualizable,WithCachedApi
 				"departmentId":1
 				])
 		}
+		array.maybeAppend([
+			"id":5,
+			"name":"Adele",
+			"salary":1130.0,
+			"departmentId":0
+			])
+		array.maybeAppend([
+			"id":6,
+			"name":"Berta",
+			"salary":1130.0,
+			"departmentId":0
+			])
+		array.maybeAppend([
+			"id":7,
+			"name":"Carla",
+			"salary":1130.0,
+			"departmentId":0
+			])
+		array.maybeAppend([
+			"id":8,
+			"name":"Diana",
+			"salary":1130.0,
+			"departmentId":0
+			])
+		array.maybeAppend([
+			"id":9,
+			"name":"Emma",
+			"salary":1130.0,
+			"departmentId":0
+			])
+		array.maybeAppend([
+			"id":10,
+			"name":"Fausta",
+			"salary":1130.0,
+			"departmentId":0
+			])
+		array.maybeAppend([
+			"id":11,
+			"name":"Ilaria",
+			"salary":1130.0,
+			"departmentId":0
+			])
+
+		
 		return Observable.create({ (observer) -> Disposable in
 			assert(NSThread.currentThread() != NSThread.mainThread())
-			NSThread.sleepForTimeInterval(5)
+			NSThread.sleepForTimeInterval(2)
 			let data=array
 				.map{ w->Worker in
 					guard let id:UInt=w["id"] as? UInt,

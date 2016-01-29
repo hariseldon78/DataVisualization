@@ -27,6 +27,8 @@ class PlainViewController:UIViewController
 
 class StaticViewController:UIViewController
 {
+	// non funziona il refresh
+
 	@IBOutlet weak var tableView: UITableView!
 	@IBOutlet var staticHeaderView: UIView!
 	var tvManager=AutoSearchableSingleLevelTableViewManager<Worker> (filteringClosure: { (d:Worker, s:String) -> Bool in
@@ -66,6 +68,9 @@ class NoStoryboardViewController:UIViewController
 
 class PlainNoDetViewController:UIViewController
 {
+	
+	// non funziona il refresh
+	
 	@IBOutlet weak var tableView: UITableView!
 	var tvManager=AutoSingleLevelTableViewManager<Worker>()
 	override func viewDidLoad() {

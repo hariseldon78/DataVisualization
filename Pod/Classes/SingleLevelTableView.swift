@@ -34,6 +34,8 @@ extension ControllerWithTableView where Self:Disposer
 		rc.backgroundColor=UIColor.clearColor()
 		vc.addChildViewController(dummyTvc)
 		dummyTvc.tableView=tableView
+		tableView.bounces=true
+		tableView.alwaysBounceVertical=true
 		dummyTvc.refreshControl=rc
 		rc.rx_controlEvent(UIControlEvents.ValueChanged).subscribeNext{ _ in
 			invalidateCacheAndReBindData()
@@ -52,37 +54,63 @@ public protocol AutoSingleLevelTableView:Disposer {
 
 public typealias CellDecorator=(cell:UITableViewCell)->()
 
+enum SearchControllerStyle
+{
+	case SearchBarInTableHeader
+	case SearchBarInNavigationBar
+}
+
 // non dovrebbe essere pubblico
 protocol Searchable:class,ControllerWithTableView,Disposer
 {
 	var searchController:UISearchController! {get set}
-	func setupSearchController()
+	func setupSearchController(style:SearchControllerStyle)
 }
+
 
 extension Searchable
 {
 	
 	/// To be called in viewDidLoad
-	func setupSearchController()
+	func setupSearchController(style:SearchControllerStyle)
 	{
 		searchController=({
+			
 			let sc=UISearchController(searchResultsController: nil)
-			sc.hidesNavigationBarDuringPresentation=false
-			sc.dimsBackgroundDuringPresentation=false
-			sc.searchBar.searchBarStyle=UISearchBarStyle.Minimal
-			sc.searchBar.sizeToFit()
+			switch style{
+			case .SearchBarInTableHeader:
+				sc.hidesNavigationBarDuringPresentation=false
+				sc.dimsBackgroundDuringPresentation=false
+				sc.searchBar.searchBarStyle=UISearchBarStyle.Minimal
+				sc.searchBar.sizeToFit()
+			case .SearchBarInNavigationBar:
+				sc.hidesNavigationBarDuringPresentation=false
+				sc.dimsBackgroundDuringPresentation=false
+				sc.searchBar.searchBarStyle=UISearchBarStyle.Minimal
+				sc.searchBar.sizeToFit()
+			}
 			return sc
+			
 			}())
 		vc.rx_viewWillAppear.subscribeNext { _ in
-			self.tableView.tableHeaderView=self.searchController.searchBar
+			switch style{
+			case .SearchBarInTableHeader:
+				self.tableView.tableHeaderView=self.searchController.searchBar
+			case .SearchBarInNavigationBar:
+				self.vc.navigationItem.titleView=self.searchController.searchBar
+				self.vc.definesPresentationContext=true
+			}
 			}.addDisposableTo(disposeBag)
 		vc.rx_viewWillDisappear.subscribeNext{ _ in
-			self.searchController.active=false
-			self.searchController.searchBar.endEditing(true)
-			if self.isSearching
-			{
-				// senno si comportava male...
-				self.searchController.searchBar.removeFromSuperview()
+			switch style{
+			default:
+				self.searchController.active=false
+				self.searchController.searchBar.endEditing(true)
+				if self.isSearching
+				{
+					// senno si comportava male...
+					self.searchController.searchBar.removeFromSuperview()
+				}
 			}
 			}.addDisposableTo(disposeBag)
 	}
@@ -179,7 +207,7 @@ public class AutoSingleLevelTableViewManager<DataType where DataType:Visualizabl
 				{
 					self.tableView.backgroundView=nil
 				}
-		}.addDisposableTo(dataBindDisposeBag)
+			}.addDisposableTo(dataBindDisposeBag)
 		
 	}
 	public var cellDecorators:[CellDecorator]=[]
@@ -218,7 +246,7 @@ public class AutoSearchableSingleLevelTableViewManager<DataType where DataType:V
 	public var searchController:UISearchController!
 	
 	public typealias FilteringClosure=(d:DataType,s:String)->Bool
-
+	
 	public var filteringClosure:FilteringClosure
 	public init(filteringClosure:FilteringClosure) {
 		self.filteringClosure=filteringClosure
@@ -228,7 +256,7 @@ public class AutoSearchableSingleLevelTableViewManager<DataType where DataType:V
 	{
 		self.vc=vc
 		self.tableView=tableView
-		setupSearchController()
+		setupSearchController(.SearchBarInNavigationBar)
 		super.setupTableView(tableView, vc:vc)
 	}
 	override func bindData() {
@@ -274,7 +302,7 @@ public class AutoSearchableSingleLevelTableViewManager<DataType where DataType:V
 				default:
 					self.tableView.backgroundView=nil
 				}
-		}.addDisposableTo(dataBindDisposeBag)
+			}.addDisposableTo(dataBindDisposeBag)
 		
 	}
 }

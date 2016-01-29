@@ -286,7 +286,7 @@ public class AutoSearchableSectionedTableViewManager<
 	{
 		self.vc=vc
 		self.tableView=tableView
-		setupSearchController()
+		setupSearchController(.SearchBarInNavigationBar)
 		super.setupTableView(tableView, vc:vc)
 	}
 	public typealias DataFilteringClosure=(d:DataType,s:String)->Bool
