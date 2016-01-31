@@ -115,7 +115,7 @@ class PlainSectionedViewController:UIViewController {
 
 class SearchSectionedViewController:UIViewController {
 	@IBOutlet weak var tableView: UITableView!
-	let tvManager=AutoSearchableSectionedTableViewManager<Worker,Department,WorkerSectioner>(sectioner:WorkerSectioner(),dataFilteringClosure: { (d, s) -> Bool in
+	let tvManager=AutoSearchableSectionedTableViewManager<Worker,Department,WorkerCollapsableSectioner>(sectioner:WorkerCollapsableSectioner(),dataFilteringClosure: { (d, s) -> Bool in
 		return d.name.uppercaseString.containsString(s.uppercaseString)
 		},sectionFilteringClosure: { (d, s) -> Bool in
 		return d.name.uppercaseString.containsString(s.uppercaseString)
@@ -125,7 +125,17 @@ class SearchSectionedViewController:UIViewController {
 		tvManager.setupTableView(tableView,vc:self)
 		//		tvManager.setupDataOnSelect(.Detail(segue:"workerDetail"))
 		tvManager.setupDataOnSelect(.SectionDetail(segue:"departmentDetail"))
-		tvManager.setupSectionOnSelect(.Detail(segue:"departmentDetail"))
+//		tvManager.setupSectionOnSelect(.Detail(segue:"departmentDetail"))
+		tvManager.setupSectionOnSelect(OnSelectBehaviour<Department>.Action(action: { (d) in
+			if let s=self.tvManager.sectioner.selectedSection.value where s==d
+			{
+				self.tvManager.sectioner.selectedSection.value=nil
+			}
+			else
+			{
+				self.tvManager.sectioner.selectedSection.value=d
+			}
+		}))
 	}
 }
 class WorkerDetail1:UIViewController,DetailView

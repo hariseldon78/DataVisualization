@@ -147,6 +147,10 @@ struct Department:SectionVisualizable {
 	let id:UInt
 	let name:String
 }
+func ==(a:Department,b:Department)->Bool
+{
+	return (a.id == b.id)
+}
 
 func +<T>(array:[T],element:T)->[T]
 {
@@ -155,7 +159,7 @@ func +<T>(array:[T],element:T)->[T]
 	return copy
 }
 
-struct WorkerSectioner:Sectioner,Cached
+class WorkerSectioner:Sectioner,Cached
 {
 	typealias Data=Worker
 	typealias Section=Department
@@ -185,10 +189,30 @@ struct WorkerSectioner:Sectioner,Cached
 	
 	var viewForActivityIndicator: UIView? {didSet{_viewForActivityIndicator.value=viewForActivityIndicator}}
 	
-	mutating func resubscribe() {
-		_refresher.value++
+	func resubscribe() {
+		_refresher.value+=1
 	}
 	static func invalidateCache() {
 		Data.invalidateCache()
+	}
+}
+class WorkerCollapsableSectioner:WorkerSectioner
+{
+	var selectedSection=Variable<Section?>(nil)
+	override var sections:Observable<[SectionAndData]> {
+		return Observable.combineLatest(super.sections,selectedSection.asObservable())
+		{
+			let (sectionsAndData,selected)=$0
+			return sectionsAndData.map{ (s,dd)  in
+				if let selected=selected where s==selected
+				{
+					return (s,dd)
+				}
+				else
+				{
+					return (s,[Data]())
+				}
+			}
+		}
 	}
 }
