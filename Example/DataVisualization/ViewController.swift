@@ -123,9 +123,7 @@ class SearchSectionedViewController:UIViewController {
 	override func viewDidLoad() {
 		super.viewDidLoad()
 		tvManager.setupTableView(tableView,vc:self)
-		//		tvManager.setupDataOnSelect(.Detail(segue:"workerDetail"))
 		tvManager.setupDataOnSelect(.SectionDetail(segue:"departmentDetail"))
-//		tvManager.setupSectionOnSelect(.Detail(segue:"departmentDetail"))
 		tvManager.setupSectionOnSelect(OnSelectBehaviour<Department>.Action(action: { (d) in
 			if let s=self.tvManager.sectioner.selectedSection.value where s==d
 			{
