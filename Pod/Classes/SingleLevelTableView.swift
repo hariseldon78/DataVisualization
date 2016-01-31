@@ -82,11 +82,14 @@ extension Searchable
 				sc.hidesNavigationBarDuringPresentation=false
 				sc.dimsBackgroundDuringPresentation=false
 				sc.searchBar.searchBarStyle=UISearchBarStyle.Minimal
+				sc.searchBar.backgroundColor=UIColor(white: 1.0, alpha: 0.95)
 				sc.searchBar.sizeToFit()
 			case .SearchBarInNavigationBar:
 				sc.hidesNavigationBarDuringPresentation=false
 				sc.dimsBackgroundDuringPresentation=false
 				sc.searchBar.searchBarStyle=UISearchBarStyle.Minimal
+//				CORREGGERE I COLORI!
+				sc.searchBar.backgroundColor=UIColor(white: 1.0, alpha: 0.95)
 				sc.searchBar.sizeToFit()
 			}
 			return sc

@@ -36,10 +36,6 @@ class _RxTableViewReactiveArrayDataSource: NSObject, UITableViewDataSource {
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         return _tableView(tableView, cellForRowAtIndexPath: indexPath)
     }
-	
-	func tableView(tableView: UITableView, canEditRowAtIndexPath indexPath: NSIndexPath) -> Bool {
-		return false
-	}
 }
 
 

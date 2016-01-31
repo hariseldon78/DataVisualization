@@ -6,7 +6,7 @@ DataVisualization is available through [CocoaPods](http://cocoapods.org). To ins
 it, simply add the following line to your Podfile:
 
 ```ruby
-pod "DataVisualization"
+pod "DataVisualization", :git => 'https://github.com/hariseldon78/DataVisualization.git'
 ```
 
 #### Usage

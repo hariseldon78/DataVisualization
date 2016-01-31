@@ -1,18 +1,18 @@
 source 'https://github.com/CocoaPods/Specs.git'
 use_frameworks!
 
-target 'DataVisualization_Example', :exclusive => true do
+target 'DataVisualization_Example' do
   pod "DataVisualization", :path => "../"
 end
 
-target 'DataVisualization_Tests', :exclusive => true do
+target 'DataVisualization_Tests' do
   pod "DataVisualization", :path => "../"
 
   pod 'Quick', '~> 0.8.0'
-  pod 'Nimble', '3.0.0'
-  pod 'FBSnapshotTestCase'
-  pod 'Nimble-Snapshots'
-  
+#  pod 'Nimble', '3.0.0'
+#  pod 'FBSnapshotTestCase'
+#  pod 'Nimble-Snapshots'
+
   pod 'RxSwift'
   pod 'RxCocoa'
 end

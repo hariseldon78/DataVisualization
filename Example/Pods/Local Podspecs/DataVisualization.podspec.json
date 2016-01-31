@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "summary": "Tools to automate and facilitate data visualizations in table/collection views.",
   "description": "\"Tools to automate and facilitate data visualizations in table/collection views.\"",
-  "homepage": "https://bitbucket.org/robertoprevidi/datavisualization",
+  "homepage": "https://bitbucket.org/municipiumteam/datavisualization",
   "license": "private",
   "authors": {
     "Roberto Previdi": "hariseldon78@gmail.com"
@@ -24,10 +24,10 @@
   },
   "dependencies": {
     "RxSwift": [
-      "~> 2.0.0-beta"
+      "~> 2.0.0"
     ],
     "RxCocoa": [
-      "~> 2.0.0-beta"
+      "~> 2.0.0"
     ]
   }
 }
