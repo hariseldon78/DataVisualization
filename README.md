@@ -8,6 +8,10 @@ it, simply add the following line to your Podfile:
 ```ruby
 pod "DataVisualization", :git => 'https://github.com/hariseldon78/DataVisualization.git'
 ```
+#### Screenshots
+
+![Plain](dv-screenshot-plain.png)
+
 
 #### Usage
 
@@ -31,12 +35,6 @@ class PlainViewController:UIViewController
 		tvManager.setupOnSelect(.Detail(segue:"detail"))
     }
 }
-
-#### Screenshots
-
-![Plain](dv-screenshot-plain.png)
-
-
 ```
 ## Author
 
