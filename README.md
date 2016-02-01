@@ -10,10 +10,8 @@ pod "DataVisualization", :git => 'https://github.com/hariseldon78/DataVisualizat
 ```
 #### Screenshots
 
-![Plain](Example/dv-screenshot-plain.png)
-![Funky](Example/dv-screenshot-funky.png)
-![Sectioned](Example/dv-screenshot-sec.png)
-![Search-sectioned](Example/dv-screenshot-sea-sec.png)
+![Plain](Example/dv-screenshot-plain.png)![Funky](Example/dv-screenshot-funky.png)
+![Sectioned](Example/dv-screenshot-sec.png)![Search-sectioned](Example/dv-screenshot-sea-sec.png)
 ![Static view](Example/dv-screenshot-static.png)
 
 
