@@ -161,6 +161,8 @@ public class AutoSingleLevelTableViewManager<DataType where DataType:Visualizabl
 			tableView.registerClass(clazz, forCellReuseIdentifier: "cell")
 		}
 		bindData()
+		self.tableView.rowHeight=UITableViewAutomaticDimension
+		self.tableView.estimatedRowHeight=100
 		
 		if let Cached=Data.self as? WithCachedApi.Type
 		{
