@@ -304,7 +304,7 @@ public class AutoSearchableSectionedTableViewManager<
 	var dataCompleted=false
 	override func bindData() {
 		let data=sectioner.sections.subscribeOn(backgroundScheduler).shareReplayLatestWhileConnected()
-		let search=searchController.searchBar.rx_text.asObservable()
+		let search=searchController.searchBar.rx_textOrCancel.asObservable()
 		typealias SectionAndData=(Section,[Data])
 		let dataOrSearch=Observable.combineLatest(data, search, resultSelector: { (d:[SectionAndData], s:String) -> [SectionAndData] in
 			switch s

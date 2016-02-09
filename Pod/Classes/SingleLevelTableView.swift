@@ -87,9 +87,8 @@ extension Searchable
 			case .SearchBarInNavigationBar:
 				sc.hidesNavigationBarDuringPresentation=false
 				sc.dimsBackgroundDuringPresentation=false
-				sc.searchBar.searchBarStyle=UISearchBarStyle.Minimal
-//				CORREGGERE I COLORI!
-				sc.searchBar.backgroundColor=UIColor(white: 1.0, alpha: 0.95)
+				sc.searchBar.searchBarStyle=UISearchBarStyle.Prominent
+				sc.searchBar.tintColor=UIColor(white:0.9, alpha:1.0) // non bianco altrimenti non si vede il cursore (influisce sul cursore e sul testo del pulsante cancel)
 				sc.searchBar.sizeToFit()
 			}
 			return sc
@@ -272,7 +271,7 @@ public class AutoSearchableSingleLevelTableViewManager<DataType where DataType:V
 			.map{$0}
 			.observeOn(MainScheduler.instance)
 			.shareReplayLatestWhileConnected()
-		let search=searchController.searchBar.rx_text.asObservable()
+		let search=searchController.searchBar.rx_textOrCancel.asObservable()
 		
 		let dataOrSearch=Observable.combineLatest(data,search) {
 			(d:[Data],s:String)->[Data] in

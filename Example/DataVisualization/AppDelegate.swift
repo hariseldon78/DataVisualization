@@ -22,22 +22,22 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 		
 		
 		
-		
-		
-		
-		
-		let obs=Observable<Int>.interval(0.5, scheduler: MainScheduler.instance).take(5)
-		
-		let obs2=Observable<Int>.interval(2,scheduler: MainScheduler.instance).take(6)
-		
-		obs2.map{ _ in
-			obs
-			}
-			.flatMap {$0}
-			.subscribe{ print($0) }
-		
-		
-		
+//		
+//		
+//		
+//		
+//		let obs=Observable<Int>.interval(0.5, scheduler: MainScheduler.instance).take(5)
+//		
+//		let obs2=Observable<Int>.interval(2,scheduler: MainScheduler.instance).take(6)
+//		
+//		obs2.map{ _ in
+//			obs
+//			}
+//			.flatMap {$0}
+//			.subscribe{ print($0) }
+//		
+//		
+//		
 		
 		
 		
