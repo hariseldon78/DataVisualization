@@ -114,11 +114,15 @@ class PlainSectionedViewController:UIViewController {
 
 
 class SearchSectionedViewController:UIViewController {
+	var disposeBag=DisposeBag()
 	@IBOutlet weak var tableView: UITableView!
-	let tvManager=AutoSearchableSectionedTableViewManager<Worker,Department,WorkerCollapsableSectioner>(sectioner:WorkerCollapsableSectioner(),dataFilteringClosure: { (d, s) -> Bool in
-		return d.name.uppercaseString.containsString(s.uppercaseString)
-		},sectionFilteringClosure: { (d, s) -> Bool in
-		return d.name.uppercaseString.containsString(s.uppercaseString)
+	let tvManager=AutoSearchableSectionedTableViewManager<Worker,Department,CollapsableSectioner<WorkerSectioner>>(
+		sectioner:CollapsableSectioner(original:WorkerSectioner()),
+		dataFilteringClosure: { (d, s) -> Bool in
+			return d.name.uppercaseString.containsString(s.uppercaseString)
+		},
+		sectionFilteringClosure: { (d, s) -> Bool in
+			return d.name.uppercaseString.containsString(s.uppercaseString)
 	})
 	override func viewDidLoad() {
 		super.viewDidLoad()
@@ -134,6 +138,15 @@ class SearchSectionedViewController:UIViewController {
 				self.tvManager.sectioner.selectedSection.value=d
 			}
 		}))
+		tvManager.search.asObservable()
+			.map{!$0.isEmpty}
+			.distinctUntilChanged()
+			.subscribeNext {
+				print("showAll=\($0)")
+				self.tvManager.sectioner.showAll.value=$0
+		}.addDisposableTo(disposeBag)
+		
+		
 	}
 }
 class WorkerDetail1:UIViewController,DetailView

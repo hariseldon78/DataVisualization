@@ -12,12 +12,86 @@ import RxCocoa
 
 public protocol Sectioner
 {
-//	init(viewForActivityIndicator:UIView?)
+	//	init(viewForActivityIndicator:UIView?)
 	var viewForActivityIndicator:UIView? {get set}
 	typealias Data
 	typealias Section
 	var sections:Observable<[(Section,[Data])]> {get}
 	mutating func resubscribe()
+}
+
+public enum SectionCollapseState
+{
+	case Expanded
+	case Collapsed
+	public var char:String {
+		switch self
+		{
+		case .Expanded:
+			return "v"
+		case .Collapsed:
+			return ">"
+		}
+	}
+}
+public protocol CollapsableSection:Equatable
+{
+	var collapseState:SectionCollapseState {get set}
+}
+public protocol CollapsableSectionerProtocol:Sectioner
+{
+	typealias Section:CollapsableSection
+	var showAll:Variable<Bool> {get set}
+	var selectedSection:Variable<Section?> {get set}
+}
+public class CollapsableSectioner<
+	OriginalSectioner where
+	OriginalSectioner:Sectioner,
+	OriginalSectioner:Cached,
+	OriginalSectioner.Section:CollapsableSection>
+	:CollapsableSectionerProtocol,Cached
+{
+	public typealias Data=OriginalSectioner.Data
+	public typealias Section=OriginalSectioner.Section
+	public typealias SectionAndData=(Section,[Data])
+	public var showAll=Variable(false)
+	public var selectedSection=Variable<OriginalSectioner.Section?>(nil)
+	var original:OriginalSectioner
+	public init(original:OriginalSectioner)
+	{
+		self.original=original
+	}
+	public var sections:Observable<[SectionAndData]> {
+		return Observable.combineLatest(original.sections,selectedSection.asObservable(),showAll.asObservable())
+			{
+				let (sectionsAndData,selected,showAll)=$0
+				return sectionsAndData.map{ (var s,dd)  in
+					if showAll || (selected != nil && s==selected!)
+					{
+						s.collapseState = .Expanded
+						return (s,dd)
+					}
+					else
+					{
+						s.collapseState = .Collapsed
+						return (s,[Data]())
+					}
+				}
+		}
+	}
+	public func resubscribe() {
+		original.resubscribe()
+	}
+	
+	public var viewForActivityIndicator: UIView? {
+		get {return original.viewForActivityIndicator}
+		set(x) {original.viewForActivityIndicator=x}
+	}
+	
+	
+	public static func invalidateCache() {
+		OriginalSectioner.invalidateCache()
+	}
 }
 
 public protocol AutoSectionedTableView:Disposer {
@@ -56,22 +130,24 @@ public class AutoSectionedTableViewManager<
 	public typealias Section=SectionType
 	public typealias SectionerType=_SectionerType
 	
+	public typealias SectionAndData=(Section,[Data])
+
 	typealias RxSectionModel=SectionModel<Section,Data>
 	let dataSource=RxTableViewSectionedReloadDataSource<RxSectionModel>()
 	var sections=Variable([RxSectionModel]())
 	
 	var onDataClick:((row:Data)->())?=nil
 	var clickedDataObj:Data?
-
+	
 	var onSectionClick:((section:Section)->())?=nil
 	var clickedSectionObj:Section?
-
+	
 	public var dataViewModel=Data.defaultViewModel()
 	public var sectionViewModel=Section.defaultSectionViewModel()
 	public var sectioner:SectionerType
 	var vc:UIViewController!
 	var tableView:UITableView!
-
+	
 	
 	
 	public init(sectioner:SectionerType) {
@@ -82,11 +158,11 @@ public class AutoSectionedTableViewManager<
 	{
 		guard let dataNib=dataViewModel.cellNib,
 			sectionNib=sectionViewModel.cellNib
-		else {fatalError("No cellNib defined: are you using ConcreteViewModel properly?")}
+			else {fatalError("No cellNib defined: are you using ConcreteViewModel properly?")}
 		
 		self.vc=vc
 		self.tableView=tableView
-
+		
 		sectioner.viewForActivityIndicator=self.tableView
 		
 		switch dataNib
@@ -96,7 +172,7 @@ public class AutoSectionedTableViewManager<
 		case .Second(let clazz):
 			tableView.registerClass(clazz, forCellReuseIdentifier: "cell")
 		}
-			
+		
 		switch sectionNib
 		{
 		case .First(let nib):
@@ -130,15 +206,18 @@ public class AutoSectionedTableViewManager<
 		}
 	}
 	var emptyList=false
+	public var data:Observable<[SectionAndData]> {
+		return sectioner.sections
+	}
 	func bindData()
 	{
-		sectioner.sections
-		.subscribeOn(backgroundScheduler)
+		data
+			.subscribeOn(backgroundScheduler)
 			.subscribeNext { (secs:[(Section, [Data])]) -> Void in
-			self.sections.value=secs.map{ (s,d) in
-				RxSectionModel(model: s, items: d)
-			}
-		}.addDisposableTo(dataBindDisposeBag)
+				self.sections.value=secs.map{ (s,d) in
+					RxSectionModel(model: s, items: d)
+				}
+			}.addDisposableTo(dataBindDisposeBag)
 		
 		sections.asObservable()
 			.observeOn(MainScheduler.instance)
@@ -151,7 +230,7 @@ public class AutoSectionedTableViewManager<
 			}
 			.observeOn(MainScheduler.instance)
 			.subscribe(onNext: { empty in
-					self.emptyList=empty
+				self.emptyList=empty
 				}, onError: nil,
 				onCompleted: {
 					if self.emptyList {
@@ -161,10 +240,10 @@ public class AutoSectionedTableViewManager<
 					{
 						self.tableView.backgroundView=nil
 					}
-
+					
 				}, onDisposed: nil)
 			.addDisposableTo(dataBindDisposeBag)
-
+		
 		
 	}
 	public func tableView(tableView: UITableView,
@@ -179,7 +258,7 @@ public class AutoSectionedTableViewManager<
 			let gestRec=EnrichedTapGestureRecognizer(target: self, action: "sectionTitleTapped:",obj:s)
 			hv.addGestureRecognizer(gestRec)
 		}
-
+		
 		return hv
 	}
 	func sectionTitleTapped(gr:UITapGestureRecognizer)
@@ -291,6 +370,50 @@ public class AutoSearchableSectionedTableViewManager<
 	}
 	public typealias DataFilteringClosure=(d:DataType,s:String)->Bool
 	public typealias SectionFilteringClosure=(d:SectionType,s:String)->Bool
+	public var search:Observable<String> {
+		return searchController.searchBar.rx_textOrCancel.asObservable()
+	}
+	public var allData:Observable<[SectionAndData]> {
+		return sectioner.sections.subscribeOn(backgroundScheduler).shareReplayLatestWhileConnected()
+	}
+	public override var data:Observable<[SectionAndData]> {
+		return Observable.combineLatest(
+			allData,
+			search,
+			resultSelector: {
+				(d:[SectionAndData], s:String) -> [SectionAndData] in
+				switch s
+				{
+				case "": return d
+				default:
+					var res=[SectionAndData]()
+					for (sec,data) in d
+					{
+						if self.sectionFilteringClosure(d: sec, s: s)
+						{
+							res.append((sec,data))
+							continue
+						}
+						
+						var matchingData=[Data]()
+						for item in data
+						{
+							if self.dataFilteringClosure(d: item, s: s)
+							{
+								matchingData.append(item)
+							}
+						}
+						if !matchingData.isEmpty
+						{
+							res.append((sec,matchingData))
+						}
+					}
+					return res
+				}
+			})
+			.shareReplayLatestWhileConnected()
+			.observeOn(MainScheduler.instance)
+	}
 	
 	public var dataFilteringClosure:DataFilteringClosure
 	public var sectionFilteringClosure:SectionFilteringClosure
@@ -303,66 +426,31 @@ public class AutoSearchableSectionedTableViewManager<
 	}
 	var dataCompleted=false
 	override func bindData() {
-		let data=sectioner.sections.subscribeOn(backgroundScheduler).shareReplayLatestWhileConnected()
-		let search=searchController.searchBar.rx_textOrCancel.asObservable()
-		typealias SectionAndData=(Section,[Data])
-		let dataOrSearch=Observable.combineLatest(data, search, resultSelector: { (d:[SectionAndData], s:String) -> [SectionAndData] in
-			switch s
-			{
-			case "": return d
-			default:
-				var res=[SectionAndData]()
-				for (sec,data) in d
-				{
-					if self.sectionFilteringClosure(d: sec, s: s)
-					{
-						res.append((sec,data))
-						continue
-					}
-					
-					var matchingData=[Data]()
-					for item in data
-					{
-						if self.dataFilteringClosure(d: item, s: s)
-						{
-							matchingData.append(item)
-						}
-					}
-					if !matchingData.isEmpty
-					{
-						res.append((sec,matchingData))
-					}
-				}
-				return res
-			}
-		}).shareReplayLatestWhileConnected()
-		
-		dataOrSearch
-			.observeOn(MainScheduler.instance)
-			.subscribeNext { (secs:[(Section, [Data])]) -> Void in
-			self.sections.value=secs.map{ (s,d) in
+		data.subscribeNext {
+			(secs:[(Section, [Data])]) -> Void in
+			self.sections.value=secs.map{
+				(s,d) in
 				RxSectionModel(model: s, items: d)
 			}
 			}.addDisposableTo(dataBindDisposeBag)
-		
 		
 		sections.asObservable()
 			.observeOn(MainScheduler.instance)
 			.bindTo(tableView.rx_itemsWithDataSource(dataSource))
 			.addDisposableTo(dataBindDisposeBag)
 		
-		data.map { array in
-				array.isEmpty
+		allData.map { array in
+			array.isEmpty
 			}
 			.subscribe(onNext: { (empty) -> Void in
-					self.emptyList=empty
+				self.emptyList=empty
 				}, onError: nil,
 				onCompleted: { () -> Void in
 					self.dataCompleted=true
 				}, onDisposed: nil)
 			.addDisposableTo(dataBindDisposeBag)
 		
-		dataOrSearch
+		data
 			.map { array in
 				array.isEmpty
 			}
@@ -379,7 +467,7 @@ public class AutoSearchableSectionedTableViewManager<
 					self.tableView.backgroundView=nil
 				}
 			}.addDisposableTo(dataBindDisposeBag)
-
+		
 		
 	}
 }

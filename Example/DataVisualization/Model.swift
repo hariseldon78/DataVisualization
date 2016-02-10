@@ -137,10 +137,11 @@ struct Worker: Visualizable,WithCachedApi
 	}
 }
 
-struct Department:SectionVisualizable {
+struct Department:SectionVisualizable,CollapsableSection {
+	var collapseState:SectionCollapseState = .Expanded
 	static func defaultSectionViewModel() -> ViewModel {
 		return ConcreteViewModel<Department,TitleHeader>(cellName: "TitleHeader") { (index, item, cell) -> Void in
-			cell.title.text=item.name
+			cell.title.text="\(item.collapseState.char) - \(item.name)"
 		}
 	}
 	
@@ -151,6 +152,7 @@ func ==(a:Department,b:Department)->Bool
 {
 	return (a.id == b.id)
 }
+
 
 func +<T>(array:[T],element:T)->[T]
 {
@@ -180,7 +182,7 @@ class WorkerSectioner:Sectioner,Cached
 					.reduce([]) { (deps:[UInt], dep) in
 						deps.contains(dep) ? deps : deps+dep
 					}.map{ dep in
-						(Department(id: dep, name: "dep n°\(dep)"),
+						(Department(collapseState:.Expanded, id: dep, name: "dep n°\(dep)"),
 							w.filter{ $0.departmentId==dep })
 				}
 				return ret
@@ -194,25 +196,5 @@ class WorkerSectioner:Sectioner,Cached
 	}
 	static func invalidateCache() {
 		Data.invalidateCache()
-	}
-}
-class WorkerCollapsableSectioner:WorkerSectioner
-{
-	var selectedSection=Variable<Section?>(nil)
-	override var sections:Observable<[SectionAndData]> {
-		return Observable.combineLatest(super.sections,selectedSection.asObservable())
-		{
-			let (sectionsAndData,selected)=$0
-			return sectionsAndData.map{ (s,dd)  in
-				if let selected=selected where s==selected
-				{
-					return (s,dd)
-				}
-				else
-				{
-					return (s,[Data]())
-				}
-			}
-		}
 	}
 }
