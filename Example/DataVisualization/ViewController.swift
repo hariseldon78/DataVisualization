@@ -83,22 +83,22 @@ class PlainNoDetViewController:UIViewController
 		}))
 	}
 }
-class FunkyViewController:UIViewController {
-	@IBOutlet weak var tableView: UITableView!
-	let tvManager=AutoSingleLevelTableViewManager<Worker>()
-	override func viewDidLoad() {
-		super.viewDidLoad()
-		tvManager.viewModel=ConcreteViewModel<Worker,FunkyCell>(cellName: "FunkyCell") {
-			(index, item, cell) -> Void in
-			cell.title.text=item.name
-			cell.subtitle.text="salary: €\(item.salary)"
-		}
-		
-		tvManager.setupTableView(tableView,vc:self)
-		tvManager.setupOnSelect(.Detail(segue:"detail"))
-	}
-
-}
+//class FunkyViewController:UIViewController {
+//	@IBOutlet weak var tableView: UITableView!
+//	let tvManager=AutoSingleLevelTableViewManager<Worker>()
+//	override func viewDidLoad() {
+//		super.viewDidLoad()
+//		tvManager.viewModel=ConcreteViewModel<Worker,FunkyCell>(cellName: "FunkyCell") {
+//			(index:Int, item:Worker.ViewModelPAT.Data, cell:Worker.ViewModelPAT.Cell) -> Void in
+//			cell.title.text=item.name
+//			cell.subtitle.text="salary: €\(item.salary)"
+//		}
+//		
+//		tvManager.setupTableView(tableView,vc:self)
+//		tvManager.setupOnSelect(.Detail(segue:"detail"))
+//	}
+//
+//}
 
 class PlainSectionedViewController:UIViewController {
 	@IBOutlet weak var tableView: UITableView!

@@ -122,13 +122,13 @@
 			isa = PBXGroup;
 			children = (
 				607FACD51AFB9204008FA782 /* AppDelegate.swift */,
-				FB300EAE1C3DFDEE00DC6AE5 /* NibVC.xib */,
 				607FACD71AFB9204008FA782 /* ViewController.swift */,
+				FBC024DC1C303BAF00F4700D /* Model.swift */,
+				FB300EAE1C3DFDEE00DC6AE5 /* NibVC.xib */,
 				607FACD91AFB9204008FA782 /* Main.storyboard */,
 				607FACDC1AFB9204008FA782 /* Images.xcassets */,
 				607FACDE1AFB9204008FA782 /* LaunchScreen.xib */,
 				607FACD31AFB9204008FA782 /* Supporting Files */,
-				FBC024DC1C303BAF00F4700D /* Model.swift */,
 				FBC024E01C304C2A00F4700D /* TitleCell.swift */,
 				FBC024E11C304C2A00F4700D /* TitleCell.xib */,
 				FBBE17981C307FE3005E1E5C /* FunkyCell.swift */,
@@ -186,15 +186,6 @@
 			name = Pods;
 			sourceTree = "<group>";
 		};
-		FBDC9144C92F97C18619C9D6 /* Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-				0B49284D5621B9EF24DF11D8 /* Pods_DataVisualization_Example.framework */,
-				106C4A69BD0D2809E8B598DE /* Pods_DataVisualization_Tests.framework */,
-			);
-			name = Frameworks;
-			sourceTree = "<group>";
-		};
 		FB3A2CF61C5F7AB500222592 /* screenshots */ = {
 			isa = PBXGroup;
 			children = (
@@ -205,6 +196,15 @@
 				FB3A2CF51C5F7AB000222592 /* dv-screenshot-static.png */,
 			);
 			name = screenshots;
+			sourceTree = "<group>";
+		};
+		FBDC9144C92F97C18619C9D6 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				0B49284D5621B9EF24DF11D8 /* Pods_DataVisualization_Example.framework */,
+				106C4A69BD0D2809E8B598DE /* Pods_DataVisualization_Tests.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */

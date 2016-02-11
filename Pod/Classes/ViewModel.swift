@@ -16,39 +16,39 @@ public enum Either<T1,T2>
 	case Second(T2)
 }
 
-public class ViewModel {
-	public var cellNib:Either<UINib,UIView.Type>?
-	func cellFactory(index:Int,item:Any,cell:UIView)->Void {}
-	public var viewForEmptyList:UIView? {return nil}
-	public var viewForEmptySearch:UIView? {return nil}
+public protocol ViewModel {
+	typealias Data
+	typealias Cell:UIView
+	var cellNib:Either<UINib,UIView.Type>?  {get}
+	func cellFactory(index:Int,item:Data,cell:Cell)->Void
+	var viewForEmptyList:UIView? {get}
+	var viewForEmptySearch:UIView? {get}
 }
 
-public class ConcreteViewModel<Data,Cell:UIView>:ViewModel
+
+public class ConcreteViewModel<_Data,Cell:UIView>:ViewModel
 {
+	public typealias Data=_Data
+	public var cellNib:Either<UINib,UIView.Type>?
 	var cellFactoryClosure:(index:Int,item:Data,cell:Cell)->Void
 	public init(cellName:String,cellFactory:(index:Int,item:Data,cell:Cell)->Void) {
 		self.cellFactoryClosure=cellFactory
-		super.init()
 		cellNib = .First(UINib(nibName: cellName, bundle: nil))
 	}
 	public init(cellFactory:(index:Int,item:Data,cell:Cell)->Void) {
 		self.cellFactoryClosure=cellFactory
-		super.init()
 		cellNib = Either.Second(Cell.self)
 	}
-	override func cellFactory(index: Int, item: Any, cell: UIView) {
-		guard let item=item as? Data,
-			cell=cell as? Cell
-			else {fatalError("ViewModel used with wrong data type or cell")}
+	public func cellFactory(index: Int, item: Data, cell: Cell) {
 		self.cellFactoryClosure(index: index, item: item, cell: cell)
 	}
-	public override var viewForEmptyList:UIView? {
+	public var viewForEmptyList:UIView? {
 		let lab=UILabel()
 		lab.text=NSLocalizedString("La lista è vuota", comment: "")
 		lab.textAlignment = .Center
 		return lab
 	}
-	public override var viewForEmptySearch:UIView? {
+	public var viewForEmptySearch:UIView? {
 		let lab=UILabel()
 		lab.text=NSLocalizedString("Nessun elemento corrisponde alla ricerca", comment: "")
 		lab.textAlignment = .Center
@@ -58,10 +58,14 @@ public class ConcreteViewModel<Data,Cell:UIView>:ViewModel
 }
 
 public protocol Visualizable {
-	static func defaultViewModel()->ViewModel
+	typealias ViewModelPAT:ViewModel
+	static func defaultViewModel()->ViewModelPAT
 }
+
+
 public protocol SectionVisualizable {
-	static func defaultSectionViewModel()->ViewModel
+	typealias ViewModelPAT:ViewModel
+	static func defaultSectionViewModel()->ViewModelPAT
 }
 public protocol WithApi {
 	static func api(viewForActivityIndicator:UIView?)->Observable<[Self]>

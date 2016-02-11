@@ -24,7 +24,7 @@ extension Array{
 }
 struct Worker: Visualizable,WithCachedApi
 {
-	static func defaultViewModel() -> ViewModel {
+	static func defaultViewModel() -> ConcreteViewModel<Worker,TitleCell> {
 		return ConcreteViewModel<Worker,TitleCell>(cellName: "TitleCell") { (index, item, cell) -> Void in
 			cell.title.text=item.name
 		}
@@ -139,7 +139,7 @@ struct Worker: Visualizable,WithCachedApi
 
 struct Department:SectionVisualizable,CollapsableSection {
 	var collapseState:SectionCollapseState = .Expanded
-	static func defaultSectionViewModel() -> ViewModel {
+	static func defaultSectionViewModel() -> ConcreteViewModel<Department,TitleHeader> {
 		return ConcreteViewModel<Department,TitleHeader>(cellName: "TitleHeader") { (index, item, cell) -> Void in
 			cell.title.text="\(item.collapseState.char) - \(item.name)"
 		}

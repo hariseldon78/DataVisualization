@@ -98,8 +98,8 @@ public protocol AutoSectionedTableView:Disposer {
 	typealias Data:Visualizable
 	typealias Section:SectionVisualizable
 	typealias SectionerType:Sectioner
-	var dataViewModel:ViewModel {get}
-	var sectionViewModel:ViewModel {get}
+	var dataViewModel:Data.ViewModelPAT {get}
+	var sectionViewModel:Section.ViewModelPAT {get}
 	
 	func setupTableView(tableView:UITableView,vc:UIViewController)
 	var sectioner:SectionerType {get}
@@ -129,7 +129,7 @@ public class AutoSectionedTableViewManager<
 	public typealias Data=DataType
 	public typealias Section=SectionType
 	public typealias SectionerType=_SectionerType
-	
+
 	public typealias SectionAndData=(Section,[Data])
 
 	typealias RxSectionModel=SectionModel<Section,Data>
@@ -186,7 +186,7 @@ public class AutoSectionedTableViewManager<
 			(tableView,indexPath,item:Data) in
 			guard let cell=tableView.dequeueReusableCellWithIdentifier("cell")
 				else {fatalError("why no cell?")}
-			self.dataViewModel.cellFactory(indexPath.row, item: item, cell: cell)
+			self.dataViewModel.cellFactory(indexPath.row, item: item as! Data.ViewModelPAT.Data, cell: cell as! Data.ViewModelPAT.Cell)
 			self.cellDecorators.forEach({ dec in
 				dec(cell: cell)
 			})
@@ -252,7 +252,7 @@ public class AutoSectionedTableViewManager<
 		guard let hv=tableView.dequeueReusableHeaderFooterViewWithIdentifier("section")
 			else {fatalError("why no section cell?")}
 		let s=sections.value[section].model
-		sectionViewModel.cellFactory(section, item: s, cell: hv)
+		sectionViewModel.cellFactory(section, item: s as! Section.ViewModelPAT.Data, cell: hv as! Section.ViewModelPAT.Cell)
 		if onSectionClick != nil
 		{
 			let gestRec=EnrichedTapGestureRecognizer(target: self, action: "sectionTitleTapped:",obj:s)

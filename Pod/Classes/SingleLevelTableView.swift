@@ -47,7 +47,7 @@ extension ControllerWithTableView where Self:Disposer
 public protocol AutoSingleLevelTableView:Disposer {
 	typealias Data:Visualizable,WithApi
 	
-	var viewModel:ViewModel {get}
+	var viewModel:Data.ViewModelPAT {get}
 	var data:Observable<[Data]> {get}
 	func setupTableView(tableView:UITableView,vc:UIViewController)
 }
@@ -190,7 +190,7 @@ public class AutoSingleLevelTableViewManager<DataType where DataType:Visualizabl
 		data
 			.bindTo(tableView.rx_itemsWithCellIdentifier("cell")) {
 				(index,item,cell)->Void in
-				self.viewModel.cellFactory(index,item: item,cell: cell)
+				self.viewModel.cellFactory(index,item: item as! Data.ViewModelPAT.Data,cell: cell as! Data.ViewModelPAT.Cell)
 				self.cellDecorators.forEach({ dec in
 					dec(cell: cell)
 				})
