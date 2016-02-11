@@ -46,8 +46,9 @@ extension ControllerWithTableView where Self:Disposer
 }
 public protocol AutoSingleLevelTableView:Disposer {
 	typealias Data:Visualizable,WithApi
+	typealias DataViewModel:ViewModel // where DataViewModel.Data==Data
 	
-	var viewModel:Data.ViewModelPAT {get}
+	var viewModel:DataViewModel {get}
 	var data:Observable<[Data]> {get}
 	func setupTableView(tableView:UITableView,vc:UIViewController)
 }
@@ -128,7 +129,7 @@ public enum OnSelectBehaviour<DataType>
 	case Action(action:(d:DataType)->())
 }
 
-public class AutoSingleLevelTableViewManager<DataType where DataType:Visualizable,DataType:WithApi>:AutoSingleLevelTableView,ControllerWithTableView
+public class AutoSingleLevelTableViewManager<DataType,DataViewModel where DataType:Visualizable,DataType:WithApi,DataViewModel:ViewModel,DataViewModel.Data==DataType>:AutoSingleLevelTableView,ControllerWithTableView
 {
 	public typealias Data=DataType
 	public var data:Observable<[Data]> {
@@ -140,14 +141,15 @@ public class AutoSingleLevelTableViewManager<DataType where DataType:Visualizabl
 	}
 	public let disposeBag=DisposeBag()
 	public var dataBindDisposeBag=DisposeBag()
-	public var viewModel=Data.defaultViewModel()
+	public let viewModel:DataViewModel
 	public var vc:UIViewController!
 	public var tableView:UITableView!
 	
 	var onClick:((row:Data)->())?=nil
 	var clickedObj:Data?
 	
-	public init(){
+	public required init(viewModel:DataViewModel){
+		self.viewModel=viewModel
 	}
 	public func setupTableView(tableView:UITableView,vc:UIViewController)
 	{
@@ -190,7 +192,7 @@ public class AutoSingleLevelTableViewManager<DataType where DataType:Visualizabl
 		data
 			.bindTo(tableView.rx_itemsWithCellIdentifier("cell")) {
 				(index,item,cell)->Void in
-				self.viewModel.cellFactory(index,item: item as! Data.ViewModelPAT.Data,cell: cell as! Data.ViewModelPAT.Cell)
+				self.viewModel.cellFactory(index,item: item, cell: cell as! DataViewModel.Cell)
 				self.cellDecorators.forEach({ dec in
 					dec(cell: cell)
 				})
@@ -249,7 +251,7 @@ public class AutoSingleLevelTableViewManager<DataType where DataType:Visualizabl
 	
 }
 
-public class AutoSearchableSingleLevelTableViewManager<DataType where DataType:Visualizable,DataType:WithApi>:AutoSingleLevelTableViewManager<DataType>,Searchable
+public class AutoSearchableSingleLevelTableViewManager<DataType,DataViewModel where DataType:Visualizable,DataType:WithApi,DataViewModel:ViewModel,DataViewModel.Data==DataType>:AutoSingleLevelTableViewManager<DataType,DataViewModel>,Searchable
 {
 	public var searchController:UISearchController!
 	public typealias FilteringClosure=(d:DataType,s:String)->Bool
@@ -279,10 +281,10 @@ public class AutoSearchableSingleLevelTableViewManager<DataType where DataType:V
 		
 	}
 	
-	public init(filteringClosure:FilteringClosure,searchStyle:SearchControllerStyle = .SearchBarInNavigationBar) {
+	public init(viewModel:DataViewModel,filteringClosure:FilteringClosure,searchStyle:SearchControllerStyle = .SearchBarInNavigationBar) {
 		self.searchStyle=searchStyle
 		self.filteringClosure=filteringClosure
-		super.init()
+		super.init(viewModel: viewModel)
 	}
 	public override func setupTableView(tableView:UITableView,vc:UIViewController)
 	{

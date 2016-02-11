@@ -14,7 +14,7 @@ import DataVisualization
 class PlainViewController:UIViewController
 {
 	@IBOutlet weak var tableView: UITableView!
-	var tvManager=AutoSearchableSingleLevelTableViewManager<Worker> (filteringClosure: { (d:Worker, s:String) -> Bool in
+	var tvManager=AutoSearchableSingleLevelTableViewManager (viewModel: Worker.defaultViewModel(), filteringClosure: { (d:Worker, s:String) -> Bool in
 		return d.name.uppercaseString.containsString(s.uppercaseString)
 	})
 	override func viewDidLoad() {
@@ -27,11 +27,9 @@ class PlainViewController:UIViewController
 
 class StaticViewController:UIViewController
 {
-	// non funziona il refresh
-
 	@IBOutlet weak var tableView: UITableView!
 	@IBOutlet var staticHeaderView: UIView!
-	var tvManager=AutoSearchableSingleLevelTableViewManager<Worker> (filteringClosure: { (d:Worker, s:String) -> Bool in
+	var tvManager=AutoSearchableSingleLevelTableViewManager (viewModel: Worker.defaultViewModel(), filteringClosure: { (d:Worker, s:String) -> Bool in
 		return d.name.uppercaseString.containsString(s.uppercaseString)
 	})
 	
@@ -50,7 +48,7 @@ class StaticViewController:UIViewController
 class NoStoryboardViewController:UIViewController
 {
 	@IBOutlet weak var tableView: UITableView!
-	var tvManager=AutoSearchableSingleLevelTableViewManager<Worker> (filteringClosure: { (d:Worker, s:String) -> Bool in
+	var tvManager=AutoSearchableSingleLevelTableViewManager (viewModel: Worker.defaultViewModel(), filteringClosure: { (d:Worker, s:String) -> Bool in
 		return d.name.uppercaseString.containsString(s.uppercaseString)
 	})
 	init(){
@@ -69,10 +67,8 @@ class NoStoryboardViewController:UIViewController
 class PlainNoDetViewController:UIViewController
 {
 	
-	// non funziona il refresh
-	
 	@IBOutlet weak var tableView: UITableView!
-	var tvManager=AutoSingleLevelTableViewManager<Worker>()
+	var tvManager=AutoSingleLevelTableViewManager(viewModel: Worker.defaultViewModel())
 	override func viewDidLoad() {
 		super.viewDidLoad()
 		tvManager.setupTableView(tableView,vc:self)
