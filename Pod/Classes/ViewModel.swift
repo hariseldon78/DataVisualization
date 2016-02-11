@@ -16,32 +16,30 @@ public enum Either<T1,T2>
 	case Second(T2)
 }
 
-public protocol ViewModel {
-	typealias Data
+public protocol BaseViewModel {
 	typealias Cell:UIView
 	var cellNib:Either<UINib,UIView.Type>?  {get}
-	func cellFactory(index:Int,item:Data,cell:Cell)->Void
 	var viewForEmptyList:UIView? {get}
 	var viewForEmptySearch:UIView? {get}
 }
 
 
-public class ConcreteViewModel<_Data,Cell:UIView>:ViewModel
+public protocol ViewModel:BaseViewModel {
+	typealias Data
+	func cellFactory(index:Int,item:Data,cell:Cell)
+}
+
+public protocol SectionViewModel:BaseViewModel {
+	typealias Section
+	typealias Element
+	func cellFactory(index:Int,item:Section,elements:[Element],cell:Cell)
+}
+
+public class BaseConcreteViewModel<_Data,_Cell:UIView,_ClosureType>
 {
-	public typealias Data=_Data
+	public typealias Cell=_Cell
+	public typealias ClosureType=_ClosureType
 	public var cellNib:Either<UINib,UIView.Type>?
-	var cellFactoryClosure:(index:Int,item:Data,cell:Cell)->Void
-	public init(cellName:String,cellFactory:(index:Int,item:Data,cell:Cell)->Void) {
-		self.cellFactoryClosure=cellFactory
-		cellNib = .First(UINib(nibName: cellName, bundle: nil))
-	}
-	public init(cellFactory:(index:Int,item:Data,cell:Cell)->Void) {
-		self.cellFactoryClosure=cellFactory
-		cellNib = Either.Second(Cell.self)
-	}
-	public func cellFactory(index: Int, item: Data, cell: Cell) {
-		self.cellFactoryClosure(index: index, item: item, cell: cell)
-	}
 	public var viewForEmptyList:UIView? {
 		let lab=UILabel()
 		lab.text=NSLocalizedString("La lista è vuota", comment: "")
@@ -54,14 +52,49 @@ public class ConcreteViewModel<_Data,Cell:UIView>:ViewModel
 		lab.textAlignment = .Center
 		return lab
 	}
+	public typealias Data=_Data
+		var cellFactoryClosure:ClosureType
+	public init(cellName:String,cellFactory:ClosureType) {
+		self.cellFactoryClosure=cellFactory
+		cellNib = .First(UINib(nibName: cellName, bundle: nil))
+	}
+	public init(cellFactory:ClosureType) {
+		self.cellFactoryClosure=cellFactory
+		cellNib = Either.Second(Cell.self)
+	}
+
+}
+public class ConcreteViewModel<Data,Cell:UIView>:BaseConcreteViewModel<Data,Cell,(index:Int,item:Data,cell:Cell)->Void>,ViewModel
+{
+	public override init(cellName:String,cellFactory:ClosureType) {
+		super.init(cellName:cellName,cellFactory:cellFactory)
+	}
+	public override init(cellFactory:ClosureType) {
+		super.init(cellFactory:cellFactory)
+	}
+	public func cellFactory(index: Int, item: Data, cell: Cell) {
+		self.cellFactoryClosure(index: index, item: item, cell: cell)
+	}
+}
+
+public class ConcreteSectionViewModel<Section,Element,Cell:UIView>:BaseConcreteViewModel<Section,Cell,(index:Int,item:Section,elements:[Element],cell:Cell)->Void>,SectionViewModel
+{
 	
+	public override init(cellName:String,cellFactory:ClosureType) {
+		super.init(cellName:cellName,cellFactory:cellFactory)
+	}
+	public override init(cellFactory:ClosureType) {
+		super.init(cellFactory:cellFactory)
+	}
+	public func cellFactory(index:Int,item:Section,elements:[Element],cell:Cell) {
+		self.cellFactoryClosure(index:index, item:item, elements:elements, cell:cell)
+	}
 }
 
 public protocol Visualizable {
 	typealias ViewModelPAT:ViewModel
 	static func defaultViewModel()->ViewModelPAT
 }
-
 
 public protocol SectionVisualizable {
 	typealias ViewModelPAT:ViewModel
