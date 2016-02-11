@@ -95,10 +95,10 @@ public class CollapsableSectioner<
 }
 
 public protocol AutoSectionedTableView:Disposer {
-	typealias Data:Visualizable
+	typealias Element:Visualizable
 	typealias Section:SectionVisualizable
 	typealias SectionerType:Sectioner
-	var dataViewModel:Data.ViewModelPAT {get}
+	var dataViewModel:Element.ViewModelPAT {get}
 	var sectionViewModel:Section.ViewModelPAT {get}
 	
 	func setupTableView(tableView:UITableView,vc:UIViewController)
@@ -119,30 +119,30 @@ public enum OnSelectSectionedBehaviour<T>
 	case Action(action:(d:T)->())
 }
 public class AutoSectionedTableViewManager<
-	DataType:Visualizable,
+	ElementType:Visualizable,
 	SectionType:SectionVisualizable,
-	_SectionerType:Sectioner where _SectionerType.Data==DataType,_SectionerType.Section==SectionType
+	_SectionerType:Sectioner where _SectionerType.Data==ElementType,_SectionerType.Section==SectionType
 	>:NSObject,AutoSectionedTableView,UITableViewDelegate,ControllerWithTableView
 {
 	public let disposeBag=DisposeBag()
 	public var dataBindDisposeBag=DisposeBag()
-	public typealias Data=DataType
+	public typealias Element=ElementType
 	public typealias Section=SectionType
 	public typealias SectionerType=_SectionerType
 
-	public typealias SectionAndData=(Section,[Data])
+	public typealias SectionAndData=(Section,[Element])
 
-	typealias RxSectionModel=SectionModel<Section,Data>
+	typealias RxSectionModel=SectionModel<Section,Element>
 	let dataSource=RxTableViewSectionedReloadDataSource<RxSectionModel>()
 	var sections=Variable([RxSectionModel]())
 	
-	var onDataClick:((row:Data)->())?=nil
-	var clickedDataObj:Data?
+	var onDataClick:((row:Element)->())?=nil
+	var clickedDataObj:Element?
 	
 	var onSectionClick:((section:Section)->())?=nil
 	var clickedSectionObj:Section?
 	
-	public var dataViewModel=Data.defaultViewModel()
+	public var dataViewModel=Element.defaultViewModel()
 	public var sectionViewModel=Section.defaultSectionViewModel()
 	public var sectioner:SectionerType
 	var vc:UIViewController!
@@ -183,10 +183,10 @@ public class AutoSectionedTableViewManager<
 		tableView.delegate=self
 		
 		dataSource.cellFactory={
-			(tableView,indexPath,item:Data) in
+			(tableView,indexPath,item:Element) in
 			guard let cell=tableView.dequeueReusableCellWithIdentifier("cell")
 				else {fatalError("why no cell?")}
-			self.dataViewModel.cellFactory(indexPath.row, item: item as! Data.ViewModelPAT.Data, cell: cell as! Data.ViewModelPAT.Cell)
+			self.dataViewModel.cellFactory(indexPath.row, item: item as! Element.ViewModelPAT.Data, cell: cell as! Element.ViewModelPAT.Cell)
 			self.cellDecorators.forEach({ dec in
 				dec(cell: cell)
 			})
@@ -213,7 +213,7 @@ public class AutoSectionedTableViewManager<
 	{
 		data
 			.subscribeOn(backgroundScheduler)
-			.subscribeNext { (secs:[(Section, [Data])]) -> Void in
+			.subscribeNext { (secs:[(Section, [Element])]) -> Void in
 				self.sections.value=secs.map{ (s,d) in
 					RxSectionModel(model: s, items: d)
 				}
@@ -283,7 +283,7 @@ public class AutoSectionedTableViewManager<
 	
 	var dataDetailSegue:String?=nil
 	var dataDetailSectionSegue:String?=nil
-	public func setupDataOnSelect(onSelect:OnSelectSectionedBehaviour<Data>)
+	public func setupDataOnSelect(onSelect:OnSelectSectionedBehaviour<Element>)
 	{
 		switch onSelect
 		{
@@ -395,7 +395,7 @@ public class AutoSearchableSectionedTableViewManager<
 							continue
 						}
 						
-						var matchingData=[Data]()
+						var matchingData=[Element]()
 						for item in data
 						{
 							if self.dataFilteringClosure(d: item, s: s)
@@ -427,7 +427,7 @@ public class AutoSearchableSectionedTableViewManager<
 	var dataCompleted=false
 	override func bindData() {
 		data.subscribeNext {
-			(secs:[(Section, [Data])]) -> Void in
+			(secs:[(Section, [Element])]) -> Void in
 			self.sections.value=secs.map{
 				(s,d) in
 				RxSectionModel(model: s, items: d)
