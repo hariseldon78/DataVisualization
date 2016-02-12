@@ -97,7 +97,8 @@ class FunkyViewController:UIViewController {
 
 class PlainSectionedViewController:UIViewController {
 	@IBOutlet weak var tableView: UITableView!
-	let tvManager=AutoSectionedTableViewManager<Worker,Department,WorkerSectioner>(sectioner:WorkerSectioner())
+	let tvManager=AutoSectionedTableViewManager<Worker,Worker.DefaultViewModel,Department,Department.DefaultSectionViewModel,WorkerSectioner>(
+		elementViewModel:Worker.defaultViewModel(),sectionViewModel:Department.defaultSectionViewModel(),sectioner:WorkerSectioner())
 	override func viewDidLoad() {
 		super.viewDidLoad()
 		tvManager.setupTableView(tableView,vc:self)
@@ -111,14 +112,18 @@ class PlainSectionedViewController:UIViewController {
 class SearchSectionedViewController:UIViewController {
 	var disposeBag=DisposeBag()
 	@IBOutlet weak var tableView: UITableView!
-	let tvManager=AutoSearchableSectionedTableViewManager<Worker,Department,CollapsableSectioner<WorkerSectioner>>(
-		sectioner:CollapsableSectioner(original:WorkerSectioner()),
+	let tvManager=AutoSearchableSectionedTableViewManager(
+		elementViewModel: Worker.defaultViewModel(),
+		sectionViewModel: Department.defaultSectionViewModel(),
+		sectioner: CollapsableSectioner(original:WorkerSectioner()),
 		dataFilteringClosure: { (d, s) -> Bool in
 			return d.name.uppercaseString.containsString(s.uppercaseString)
 		},
 		sectionFilteringClosure: { (d, s) -> Bool in
 			return d.name.uppercaseString.containsString(s.uppercaseString)
 	})
+	
+	
 	override func viewDidLoad() {
 		super.viewDidLoad()
 		tvManager.setupTableView(tableView,vc:self)

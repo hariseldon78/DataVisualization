@@ -96,10 +96,13 @@ public class CollapsableSectioner<
 
 public protocol AutoSectionedTableView:Disposer {
 	typealias Element:Visualizable
+	typealias ElementViewModel
 	typealias Section:SectionVisualizable
+	typealias SectionViewModel
 	typealias SectionerType:Sectioner
-	var dataViewModel:Element.ViewModelPAT {get}
-	var sectionViewModel:Section.ViewModelPAT {get}
+	
+	var elementViewModel:ElementViewModel {get}
+	var sectionViewModel:SectionViewModel {get}
 	
 	func setupTableView(tableView:UITableView,vc:UIViewController)
 	var sectioner:SectionerType {get}
@@ -119,16 +122,34 @@ public enum OnSelectSectionedBehaviour<T>
 	case Action(action:(d:T)->())
 }
 public class AutoSectionedTableViewManager<
-	ElementType:Visualizable,
-	SectionType:SectionVisualizable,
-	_SectionerType:Sectioner where _SectionerType.Data==ElementType,_SectionerType.Section==SectionType
-	>:NSObject,AutoSectionedTableView,UITableViewDelegate,ControllerWithTableView
+	_Element,
+	_ElementViewModel,
+	_Section,
+	_SectionViewModel,
+	_Sectioner
+	where _Element:Visualizable,
+		_ElementViewModel:ViewModel,
+		_ElementViewModel.Data==_Element,
+		_Section:SectionVisualizable,
+		_SectionViewModel:SectionViewModel,
+		_SectionViewModel.Section==_Section,
+		_SectionViewModel.Element==_Element,
+		_Sectioner:Sectioner,
+		_Sectioner.Data==_Element,
+		_Sectioner.Section==_Section>
+	
+	:	NSObject,
+		AutoSectionedTableView,
+		UITableViewDelegate,
+		ControllerWithTableView
 {
 	public let disposeBag=DisposeBag()
 	public var dataBindDisposeBag=DisposeBag()
-	public typealias Element=ElementType
-	public typealias Section=SectionType
-	public typealias SectionerType=_SectionerType
+	public typealias Element=_Element
+	public typealias ElementViewModel=_ElementViewModel
+	public typealias Section=_Section
+	public typealias SectionViewModel=_SectionViewModel
+	public typealias SectionerType=_Sectioner
 
 	public typealias SectionAndData=(Section,[Element])
 
@@ -142,21 +163,27 @@ public class AutoSectionedTableViewManager<
 	var onSectionClick:((section:Section)->())?=nil
 	var clickedSectionObj:Section?
 	
-	public var dataViewModel=Element.defaultViewModel()
-	public var sectionViewModel=Section.defaultSectionViewModel()
+	public var elementViewModel:ElementViewModel
+	public var sectionViewModel:SectionViewModel
 	public var sectioner:SectionerType
 	var vc:UIViewController!
 	var tableView:UITableView!
 	
 	
 	
-	public init(sectioner:SectionerType) {
+	public init(
+		elementViewModel:ElementViewModel,
+		sectionViewModel:SectionViewModel,
+		sectioner:SectionerType)
+	{
+		self.elementViewModel=elementViewModel
+		self.sectionViewModel=sectionViewModel
 		self.sectioner=sectioner
 		super.init()
 	}
 	public func setupTableView(tableView:UITableView,vc:UIViewController)
 	{
-		guard let dataNib=dataViewModel.cellNib,
+		guard let dataNib=elementViewModel.cellNib,
 			sectionNib=sectionViewModel.cellNib
 			else {fatalError("No cellNib defined: are you using ConcreteViewModel properly?")}
 		
@@ -186,7 +213,8 @@ public class AutoSectionedTableViewManager<
 			(tableView,indexPath,item:Element) in
 			guard let cell=tableView.dequeueReusableCellWithIdentifier("cell")
 				else {fatalError("why no cell?")}
-			self.dataViewModel.cellFactory(indexPath.row, item: item as! Element.ViewModelPAT.Data, cell: cell as! Element.ViewModelPAT.Cell)
+			self.elementViewModel.cellFactory(
+				indexPath.row, item: item, cell: cell as! ElementViewModel.Cell)
 			self.cellDecorators.forEach({ dec in
 				dec(cell: cell)
 			})
@@ -251,11 +279,11 @@ public class AutoSectionedTableViewManager<
 	{
 		guard let hv=tableView.dequeueReusableHeaderFooterViewWithIdentifier("section")
 			else {fatalError("why no section cell?")}
-		let s=sections.value[section].model
-		sectionViewModel.cellFactory(section, item: s as! Section.ViewModelPAT.Data, cell: hv as! Section.ViewModelPAT.Cell)
+		let sec=sections.value[section]
+		sectionViewModel.cellFactory(section, item:sec.model, elements:sec.items, cell:hv as! SectionViewModel.Cell)
 		if onSectionClick != nil
 		{
-			let gestRec=EnrichedTapGestureRecognizer(target: self, action: "sectionTitleTapped:",obj:s)
+			let gestRec=EnrichedTapGestureRecognizer(target: self, action: "sectionTitleTapped:",obj:sec.model)
 			hv.addGestureRecognizer(gestRec)
 		}
 		
@@ -355,10 +383,28 @@ public class AutoSectionedTableViewManager<
 }
 
 public class AutoSearchableSectionedTableViewManager<
-	DataType:Visualizable,
-	SectionType:SectionVisualizable,
-	_SectionerType:Sectioner where _SectionerType.Data==DataType,_SectionerType.Section==SectionType
-	>:AutoSectionedTableViewManager<DataType,SectionType,_SectionerType>,Searchable
+	_Element,
+	_ElementViewModel,
+	_Section,
+	_SectionViewModel,
+	_Sectioner
+	where _Element:Visualizable,
+		_ElementViewModel:ViewModel,
+		_ElementViewModel.Data==_Element,
+		_Section:SectionVisualizable,
+		_SectionViewModel:SectionViewModel,
+		_SectionViewModel.Section==_Section,
+		_SectionViewModel.Element==_Element,
+		_Sectioner:Sectioner,
+		_Sectioner.Data==_Element,
+		_Sectioner.Section==_Section>
+	
+	:AutoSectionedTableViewManager<_Element,
+		_ElementViewModel,
+		_Section,
+		_SectionViewModel,
+		_Sectioner>,
+	Searchable
 {
 	public var searchController:UISearchController!
 	public override func setupTableView(tableView:UITableView,vc:UIViewController)
@@ -368,8 +414,8 @@ public class AutoSearchableSectionedTableViewManager<
 		setupSearchController(searchStyle)
 		super.setupTableView(tableView, vc:vc)
 	}
-	public typealias DataFilteringClosure=(d:DataType,s:String)->Bool
-	public typealias SectionFilteringClosure=(d:SectionType,s:String)->Bool
+	public typealias DataFilteringClosure=(d:Element,s:String)->Bool
+	public typealias SectionFilteringClosure=(d:Section,s:String)->Bool
 	public var search:Observable<String> {
 		return searchController.searchBar.rx_textOrCancel.asObservable()
 	}
@@ -418,12 +464,20 @@ public class AutoSearchableSectionedTableViewManager<
 	public var dataFilteringClosure:DataFilteringClosure
 	public var sectionFilteringClosure:SectionFilteringClosure
 	let searchStyle:SearchControllerStyle
-	public init(sectioner:SectionerType,dataFilteringClosure:DataFilteringClosure,sectionFilteringClosure:SectionFilteringClosure,searchStyle:SearchControllerStyle = .SearchBarInNavigationBar) {
+	
+	public init(elementViewModel:ElementViewModel,
+		sectionViewModel:SectionViewModel,
+		sectioner:SectionerType,
+		dataFilteringClosure:DataFilteringClosure,
+		sectionFilteringClosure:SectionFilteringClosure,
+		searchStyle:SearchControllerStyle = .SearchBarInNavigationBar)
+	{
 		self.searchStyle=searchStyle
 		self.dataFilteringClosure=dataFilteringClosure
 		self.sectionFilteringClosure=sectionFilteringClosure
-		super.init(sectioner: sectioner)
+		super.init(elementViewModel:elementViewModel,sectionViewModel:sectionViewModel,sectioner: sectioner)
 	}
+	
 	var dataCompleted=false
 	override func bindData() {
 		data.subscribeNext {

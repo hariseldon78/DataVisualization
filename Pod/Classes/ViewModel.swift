@@ -97,8 +97,8 @@ public protocol Visualizable {
 }
 
 public protocol SectionVisualizable {
-	typealias ViewModelPAT:ViewModel
-	static func defaultSectionViewModel()->ViewModelPAT
+	typealias SectionViewModelPAT:SectionViewModel
+	static func defaultSectionViewModel()->SectionViewModelPAT
 }
 public protocol WithApi {
 	static func api(viewForActivityIndicator:UIView?)->Observable<[Self]>

@@ -124,12 +124,20 @@ extension Searchable
 }
 public enum OnSelectBehaviour<DataType>
 {
-	
 	case Detail(segue:String)
 	case Action(action:(d:DataType)->())
 }
 
-public class AutoSingleLevelTableViewManager<DataType,DataViewModel where DataType:Visualizable,DataType:WithApi,DataViewModel:ViewModel,DataViewModel.Data==DataType>:AutoSingleLevelTableView,ControllerWithTableView
+public class AutoSingleLevelTableViewManager<
+	DataType,
+	DataViewModel
+	where DataType:Visualizable,
+		DataType:WithApi,
+		DataViewModel:ViewModel,
+		DataViewModel.Data==DataType>
+	
+	:	AutoSingleLevelTableView,
+		ControllerWithTableView
 {
 	public typealias Data=DataType
 	public var data:Observable<[Data]> {
