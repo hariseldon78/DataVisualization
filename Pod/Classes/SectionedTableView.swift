@@ -37,6 +37,7 @@ public enum SectionCollapseState
 public protocol CollapsableSection:Equatable
 {
 	var collapseState:SectionCollapseState {get set}
+	var elementsCount:Int {get set} // FIXME: seems a bad hack...
 }
 public protocol CollapsableSectionerProtocol:Sectioner
 {
@@ -66,6 +67,7 @@ public class CollapsableSectioner<
 			{
 				let (sectionsAndData,selected,showAll)=$0
 				return sectionsAndData.map{ (var s,dd)  in
+					s.elementsCount=dd.count
 					if showAll || (selected != nil && s==selected!)
 					{
 						s.collapseState = .Expanded
@@ -280,6 +282,7 @@ public class AutoSectionedTableViewManager<
 		guard let hv=tableView.dequeueReusableHeaderFooterViewWithIdentifier("section")
 			else {fatalError("why no section cell?")}
 		let sec=sections.value[section]
+		
 		sectionViewModel.cellFactory(section, item:sec.model, elements:sec.items, cell:hv as! SectionViewModel.Cell)
 		if onSectionClick != nil
 		{

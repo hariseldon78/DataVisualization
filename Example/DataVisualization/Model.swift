@@ -140,14 +140,20 @@ struct Worker: Visualizable,WithCachedApi
 
 struct Department:SectionVisualizable,CollapsableSection {
 	var collapseState:SectionCollapseState = .Expanded
+	var elementsCount:Int=0
 	typealias DefaultSectionViewModel=ConcreteSectionViewModel<Department,Worker,TitleHeader>
 	static func defaultSectionViewModel() -> DefaultSectionViewModel {
 		return DefaultSectionViewModel(cellName: "TitleHeader") {
 			(index, item, elements, cell) -> Void in
-			cell.title.text="\(item.collapseState.char) - \(item.name) - \(elements.count) items"
+			cell.title.text="\(item.collapseState.char) - \(item.name) - \(item.elementsCount) items"
 		}
 	}
-	
+	init(collapseState:SectionCollapseState, id: UInt, name: String)
+	{
+		self.collapseState=collapseState
+		self.id=id
+		self.name=name
+	}
 	let id:UInt
 	let name:String
 }
