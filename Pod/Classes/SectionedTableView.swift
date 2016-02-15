@@ -57,7 +57,7 @@ public class CollapsableSectioner<
 	public typealias SectionAndData=(Section,[Data])
 	public var showAll=Variable(false)
 	public var selectedSection=Variable<OriginalSectioner.Section?>(nil)
-	var original:OriginalSectioner
+	public var original:OriginalSectioner
 	public init(original:OriginalSectioner)
 	{
 		self.original=original

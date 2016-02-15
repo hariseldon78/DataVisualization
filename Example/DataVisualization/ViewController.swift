@@ -102,7 +102,6 @@ class PlainSectionedViewController:UIViewController {
 	override func viewDidLoad() {
 		super.viewDidLoad()
 		tvManager.setupTableView(tableView,vc:self)
-//		tvManager.setupDataOnSelect(.Detail(segue:"workerDetail"))
 		tvManager.setupDataOnSelect(.SectionDetail(segue:"departmentDetail"))
 		tvManager.setupSectionOnSelect(.Detail(segue:"departmentDetail"))
 	}
@@ -129,6 +128,7 @@ class SearchSectionedViewController:UIViewController {
 		tvManager.setupTableView(tableView,vc:self)
 		tvManager.setupDataOnSelect(.SectionDetail(segue:"departmentDetail"))
 		tvManager.setupSectionOnSelect(OnSelectBehaviour<Department>.Action(action: { (d) in
+			// TODO: creare una behaviouraction ad hoc, o almeno un methodo in CollapsableSectionerProtocol
 			if let s=self.tvManager.sectioner.selectedSection.value where s==d
 			{
 				self.tvManager.sectioner.selectedSection.value=nil
