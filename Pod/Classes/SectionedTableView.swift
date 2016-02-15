@@ -97,9 +97,9 @@ public class CollapsableSectioner<
 }
 
 public protocol AutoSectionedTableView:Disposer {
-	typealias Element:Visualizable
+	typealias Element
 	typealias ElementViewModel
-	typealias Section:SectionVisualizable
+	typealias Section
 	typealias SectionViewModel
 	typealias SectionerType:Sectioner
 	
@@ -129,10 +129,9 @@ public class AutoSectionedTableViewManager<
 	_Section,
 	_SectionViewModel,
 	_Sectioner
-	where _Element:Visualizable,
+	where
 		_ElementViewModel:ViewModel,
 		_ElementViewModel.Data==_Element,
-		_Section:SectionVisualizable,
 		_SectionViewModel:SectionViewModel,
 		_SectionViewModel.Section==_Section,
 		_SectionViewModel.Element==_Element,
@@ -391,10 +390,9 @@ public class AutoSearchableSectionedTableViewManager<
 	_Section,
 	_SectionViewModel,
 	_Sectioner
-	where _Element:Visualizable,
+	where
 		_ElementViewModel:ViewModel,
 		_ElementViewModel.Data==_Element,
-		_Section:SectionVisualizable,
 		_SectionViewModel:SectionViewModel,
 		_SectionViewModel.Section==_Section,
 		_SectionViewModel.Element==_Element,

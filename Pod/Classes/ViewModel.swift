@@ -91,15 +91,6 @@ public class ConcreteSectionViewModel<Section,Element,Cell:UIView>:BaseConcreteV
 	}
 }
 
-public protocol Visualizable {
-	typealias ViewModelPAT:ViewModel
-	static func defaultViewModel()->ViewModelPAT
-}
-
-public protocol SectionVisualizable {
-	typealias SectionViewModelPAT:SectionViewModel
-	static func defaultSectionViewModel()->SectionViewModelPAT
-}
 public protocol WithApi {
 	static func api(viewForActivityIndicator:UIView?)->Observable<[Self]>
 }

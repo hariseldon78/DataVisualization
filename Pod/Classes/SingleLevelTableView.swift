@@ -45,7 +45,7 @@ extension ControllerWithTableView where Self:Disposer
 	}
 }
 public protocol AutoSingleLevelTableView:Disposer {
-	typealias Data:Visualizable,WithApi
+	typealias Data:WithApi
 	typealias DataViewModel:ViewModel // where DataViewModel.Data==Data
 	
 	var viewModel:DataViewModel {get}
@@ -131,7 +131,7 @@ public enum OnSelectBehaviour<DataType>
 public class AutoSingleLevelTableViewManager<
 	DataType,
 	DataViewModel
-	where DataType:Visualizable,
+	where
 		DataType:WithApi,
 		DataViewModel:ViewModel,
 		DataViewModel.Data==DataType>
@@ -259,7 +259,7 @@ public class AutoSingleLevelTableViewManager<
 	
 }
 
-public class AutoSearchableSingleLevelTableViewManager<DataType,DataViewModel where DataType:Visualizable,DataType:WithApi,DataViewModel:ViewModel,DataViewModel.Data==DataType>:AutoSingleLevelTableViewManager<DataType,DataViewModel>,Searchable
+public class AutoSearchableSingleLevelTableViewManager<DataType,DataViewModel where DataType:WithApi,DataViewModel:ViewModel,DataViewModel.Data==DataType>:AutoSingleLevelTableViewManager<DataType,DataViewModel>,Searchable
 {
 	public var searchController:UISearchController!
 	public typealias FilteringClosure=(d:DataType,s:String)->Bool

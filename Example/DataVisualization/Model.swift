@@ -22,7 +22,7 @@ extension Array{
 		}
 	}
 }
-struct Worker: Visualizable,WithCachedApi
+struct Worker: WithCachedApi
 {
 	typealias DefaultViewModel=ConcreteViewModel<Worker,TitleCell>
 	static func defaultViewModel() -> DefaultViewModel {
@@ -138,7 +138,7 @@ struct Worker: Visualizable,WithCachedApi
 	}
 }
 
-struct Department:SectionVisualizable,CollapsableSection {
+struct Department:CollapsableSection {
 	var collapseState:SectionCollapseState = .Expanded
 	var elementsCount:Int=0
 	typealias DefaultSectionViewModel=ConcreteSectionViewModel<Department,Worker,TitleHeader>
