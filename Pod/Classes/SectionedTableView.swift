@@ -130,19 +130,19 @@ public class AutoSectionedTableViewManager<
 	_SectionViewModel,
 	_Sectioner
 	where
-		_ElementViewModel:ViewModel,
-		_ElementViewModel.Data==_Element,
-		_SectionViewModel:SectionViewModel,
-		_SectionViewModel.Section==_Section,
-		_SectionViewModel.Element==_Element,
-		_Sectioner:Sectioner,
-		_Sectioner.Data==_Element,
-		_Sectioner.Section==_Section>
+	_ElementViewModel:ViewModel,
+	_ElementViewModel.Data==_Element,
+	_SectionViewModel:SectionViewModel,
+	_SectionViewModel.Section==_Section,
+	_SectionViewModel.Element==_Element,
+	_Sectioner:Sectioner,
+	_Sectioner.Data==_Element,
+	_Sectioner.Section==_Section>
 	
 	:	NSObject,
-		AutoSectionedTableView,
-		UITableViewDelegate,
-		ControllerWithTableView
+	AutoSectionedTableView,
+	UITableViewDelegate,
+	ControllerWithTableView
 {
 	public let disposeBag=DisposeBag()
 	public var dataBindDisposeBag=DisposeBag()
@@ -151,9 +151,9 @@ public class AutoSectionedTableViewManager<
 	public typealias Section=_Section
 	public typealias SectionViewModel=_SectionViewModel
 	public typealias SectionerType=_Sectioner
-
+	
 	public typealias SectionAndData=(Section,[Element])
-
+	
 	typealias RxSectionModel=SectionModel<Section,Element>
 	let dataSource=RxTableViewSectionedReloadDataSource<RxSectionModel>()
 	var sections=Variable([RxSectionModel]())
@@ -391,20 +391,20 @@ public class AutoSearchableSectionedTableViewManager<
 	_SectionViewModel,
 	_Sectioner
 	where
-		_ElementViewModel:ViewModel,
-		_ElementViewModel.Data==_Element,
-		_SectionViewModel:SectionViewModel,
-		_SectionViewModel.Section==_Section,
-		_SectionViewModel.Element==_Element,
-		_Sectioner:Sectioner,
-		_Sectioner.Data==_Element,
-		_Sectioner.Section==_Section>
+	_ElementViewModel:ViewModel,
+	_ElementViewModel.Data==_Element,
+	_SectionViewModel:SectionViewModel,
+	_SectionViewModel.Section==_Section,
+	_SectionViewModel.Element==_Element,
+	_Sectioner:Sectioner,
+	_Sectioner.Data==_Element,
+	_Sectioner.Section==_Section>
 	
 	:AutoSectionedTableViewManager<_Element,
-		_ElementViewModel,
-		_Section,
-		_SectionViewModel,
-		_Sectioner>,
+	_ElementViewModel,
+	_Section,
+	_SectionViewModel,
+	_Sectioner>,
 	Searchable
 {
 	public var searchController:UISearchController!
@@ -423,7 +423,10 @@ public class AutoSearchableSectionedTableViewManager<
 	public var allData:Observable<[SectionAndData]> {
 		return sectioner.sections.subscribeOn(backgroundScheduler).shareReplayLatestWhileConnected()
 	}
-	public override var data:Observable<[SectionAndData]> {
+	public func searchObserver(
+		allData:Observable<[SectionAndData]>,
+		search:Observable<String>)->Observable<[SectionAndData]>
+	{
 		return Observable.combineLatest(
 			allData,
 			search,
@@ -457,9 +460,12 @@ public class AutoSearchableSectionedTableViewManager<
 					}
 					return res
 				}
-			})
+		})
 			.shareReplayLatestWhileConnected()
 			.observeOn(MainScheduler.instance)
+	}
+	public override var data:Observable<[SectionAndData]> {
+		return searchObserver(allData, search: search)
 	}
 	
 	public var dataFilteringClosure:DataFilteringClosure
