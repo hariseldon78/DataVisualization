@@ -100,7 +100,20 @@ extension Searchable
 			case .SearchBarInTableHeader:
 				self.tableView.tableHeaderView=self.searchController.searchBar
 			case .SearchBarInNavigationBar:
-				self.vc.navigationItem.titleView=self.searchController.searchBar
+				var buttons=self.vc.navigationItem.rightBarButtonItems ?? [UIBarButtonItem]()
+				let searchButton=UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Search, target: nil, action: nil)
+				searchButton.rx_tap.subscribeNext{
+					if self.vc.navigationItem.titleView==nil
+					{
+						self.vc.navigationItem.titleView=self.searchController.searchBar
+					}
+					else
+					{
+						self.vc.navigationItem.titleView=nil
+					}
+				}.addDisposableTo(self.disposeBag)
+				buttons.append(searchButton)
+				self.vc.navigationItem.rightBarButtonItems=buttons
 				self.vc.definesPresentationContext=true
 			}
 			}.addDisposableTo(disposeBag)

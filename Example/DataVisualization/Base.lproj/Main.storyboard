@@ -5,10 +5,10 @@
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
     </dependencies>
     <scenes>
-        <!--Plain View Controller-->
+        <!--plain-->
         <scene sceneID="ufC-wZ-h7g">
             <objects>
-                <viewController id="vXZ-lx-hvc" customClass="PlainViewController" customModule="DataVisualization_Example" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController title="plain" id="vXZ-lx-hvc" customClass="PlainViewController" customModule="DataVisualization_Example" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="jyV-Pf-zRb"/>
                         <viewControllerLayoutGuide type="bottom" id="2fi-mo-0CV"/>
@@ -30,7 +30,7 @@
                             <constraint firstItem="EPd-PU-pHf" firstAttribute="bottom" secondItem="2fi-mo-0CV" secondAttribute="top" id="yzu-ZS-cfp"/>
                         </constraints>
                     </view>
-                    <navigationItem key="navigationItem" id="swO-Aa-sqZ"/>
+                    <navigationItem key="navigationItem" title="plain" id="swO-Aa-sqZ"/>
                     <connections>
                         <outlet property="tableView" destination="EPd-PU-pHf" id="tQn-mv-CAs"/>
                         <segue destination="bda-FG-fWT" kind="show" identifier="detail" id="bq7-cn-0fa"/>
@@ -339,10 +339,10 @@
             </objects>
             <point key="canvasLocation" x="1967" y="2746"/>
         </scene>
-        <!--Funky View Controller-->
+        <!--funky-->
         <scene sceneID="jLL-Ck-bNk">
             <objects>
-                <viewController id="rsq-sr-Vqk" customClass="FunkyViewController" customModule="DataVisualization_Example" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController title="funky" id="rsq-sr-Vqk" customClass="FunkyViewController" customModule="DataVisualization_Example" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="HWX-6t-ldI"/>
                         <viewControllerLayoutGuide type="bottom" id="F9M-K6-ViZ"/>
@@ -364,7 +364,7 @@
                             <constraint firstItem="e9g-GU-4OD" firstAttribute="leading" secondItem="Ko3-kH-SCd" secondAttribute="leading" id="XEu-Zr-ihe"/>
                         </constraints>
                     </view>
-                    <navigationItem key="navigationItem" id="DfY-Zn-cDU"/>
+                    <navigationItem key="navigationItem" title="funky" id="DfY-Zn-cDU"/>
                     <connections>
                         <outlet property="tableView" destination="e9g-GU-4OD" id="Fvx-B7-XDj"/>
                         <segue destination="y6S-9n-iS8" kind="show" identifier="detail" id="cnL-x7-rLl"/>
@@ -374,10 +374,10 @@
             </objects>
             <point key="canvasLocation" x="586" y="1170"/>
         </scene>
-        <!--Plain Sectioned View Controller-->
+        <!--plain sectioned-->
         <scene sceneID="VSh-hp-o5V">
             <objects>
-                <viewController id="w3L-tK-r0Y" customClass="PlainSectionedViewController" customModule="DataVisualization_Example" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController title="plain sectioned" id="w3L-tK-r0Y" customClass="PlainSectionedViewController" customModule="DataVisualization_Example" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="kO2-XD-hNL"/>
                         <viewControllerLayoutGuide type="bottom" id="P19-nl-rIa"/>
@@ -399,7 +399,7 @@
                             <constraint firstItem="UXb-Pm-0Mx" firstAttribute="top" secondItem="24q-G6-JkO" secondAttribute="top" id="rYN-Gh-SoN"/>
                         </constraints>
                     </view>
-                    <navigationItem key="navigationItem" id="WYl-oi-S42"/>
+                    <navigationItem key="navigationItem" title="plain sectioned" id="WYl-oi-S42"/>
                     <connections>
                         <outlet property="tableView" destination="UXb-Pm-0Mx" id="zLP-Lc-s77"/>
                         <segue destination="Hto-bm-dic" kind="show" identifier="departmentDetail" id="Fbp-Ym-Xcz"/>
@@ -413,7 +413,7 @@
         <!--Plain NoDet View Controller-->
         <scene sceneID="hIb-Sq-wbh">
             <objects>
-                <viewController id="gw6-Xf-JWf" userLabel="Plain NoDet View Controller" customClass="PlainNoDetViewController" customModule="DataVisualization_Example" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController title="plain nodet" id="gw6-Xf-JWf" userLabel="Plain NoDet View Controller" customClass="PlainNoDetViewController" customModule="DataVisualization_Example" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="L2s-Qm-Bnh"/>
                         <viewControllerLayoutGuide type="bottom" id="E7A-pN-acw"/>
@@ -435,7 +435,7 @@
                             <constraint firstAttribute="trailing" secondItem="S4s-8t-QKo" secondAttribute="trailing" id="oGq-M5-Veh"/>
                         </constraints>
                     </view>
-                    <navigationItem key="navigationItem" id="f6K-6y-keO"/>
+                    <navigationItem key="navigationItem" title="plain nodet" id="f6K-6y-keO"/>
                     <connections>
                         <outlet property="tableView" destination="S4s-8t-QKo" id="uof-a7-xYU"/>
                     </connections>
@@ -444,10 +444,10 @@
             </objects>
             <point key="canvasLocation" x="458" y="-1392"/>
         </scene>
-        <!--Search Sectioned View Controller-->
+        <!--search sectioned-->
         <scene sceneID="A1s-3t-vZj">
             <objects>
-                <viewController id="Zgy-QO-TcR" customClass="SearchSectionedViewController" customModule="DataVisualization_Example" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController title="search sectioned" id="Zgy-QO-TcR" customClass="SearchSectionedViewController" customModule="DataVisualization_Example" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="RYy-Rw-isD"/>
                         <viewControllerLayoutGuide type="bottom" id="tvS-Bg-0KV"/>
@@ -469,7 +469,7 @@
                             <constraint firstItem="C1j-hP-bDB" firstAttribute="top" secondItem="est-BU-Imc" secondAttribute="top" id="aes-4i-2ro"/>
                         </constraints>
                     </view>
-                    <navigationItem key="navigationItem" id="Ihq-aW-9Te"/>
+                    <navigationItem key="navigationItem" title="search sectioned" id="Ihq-aW-9Te"/>
                     <connections>
                         <outlet property="tableView" destination="C1j-hP-bDB" id="hOX-RL-xLF"/>
                         <segue destination="bda-FG-fWT" kind="show" identifier="workerDetail" id="4M2-6G-yf5"/>
@@ -484,7 +484,7 @@
         <!--Static-->
         <scene sceneID="dAI-I8-vCM">
             <objects>
-                <viewController id="UZg-L6-geS" userLabel="Static" customClass="StaticViewController" customModule="DataVisualization_Example" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController title="static" id="UZg-L6-geS" userLabel="Static" customClass="StaticViewController" customModule="DataVisualization_Example" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="nil-i6-x5q"/>
                         <viewControllerLayoutGuide type="bottom" id="cAp-Je-26m"/>
@@ -506,7 +506,7 @@
                             <constraint firstItem="eeS-Zv-R8D" firstAttribute="top" secondItem="UaJ-lj-tBw" secondAttribute="top" id="d7t-FV-We6"/>
                         </constraints>
                     </view>
-                    <navigationItem key="navigationItem" id="H2A-Ml-lpk"/>
+                    <navigationItem key="navigationItem" title="static" id="H2A-Ml-lpk"/>
                     <connections>
                         <outlet property="staticHeaderView" destination="ese-32-T7w" id="FA5-xJ-Ggr"/>
                         <outlet property="tableView" destination="eeS-Zv-R8D" id="v6O-qz-tf0"/>
@@ -539,7 +539,7 @@
         </scene>
     </scenes>
     <inferredMetricsTieBreakers>
-        <segue reference="bq7-cn-0fa"/>
         <segue reference="JVy-uT-YDE"/>
+        <segue reference="4M2-6G-yf5"/>
     </inferredMetricsTieBreakers>
 </document>
