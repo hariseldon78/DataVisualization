@@ -95,28 +95,26 @@ extension Searchable
 			return sc
 			
 			}())
-		vc.rx_viewWillAppear.subscribeNext { _ in
-			switch style{
-			case .SearchBarInTableHeader:
-				self.tableView.tableHeaderView=self.searchController.searchBar
-			case .SearchBarInNavigationBar:
-				var buttons=self.vc.navigationItem.rightBarButtonItems ?? [UIBarButtonItem]()
-				let searchButton=UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Search, target: nil, action: nil)
-				searchButton.rx_tap.subscribeNext{
-					if self.vc.navigationItem.titleView==nil
-					{
-						self.vc.navigationItem.titleView=self.searchController.searchBar
-					}
-					else
-					{
-						self.vc.navigationItem.titleView=nil
-					}
+		switch style{
+		case .SearchBarInTableHeader:
+			self.tableView.tableHeaderView=self.searchController.searchBar
+		case .SearchBarInNavigationBar:
+			var buttons=self.vc.navigationItem.rightBarButtonItems ?? [UIBarButtonItem]()
+			let searchButton=UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Search, target: nil, action: nil)
+			searchButton.rx_tap.subscribeNext{
+				if self.vc.navigationItem.titleView==nil
+				{
+					self.vc.navigationItem.titleView=self.searchController.searchBar
+				}
+				else
+				{
+					self.vc.navigationItem.titleView=nil
+				}
 				}.addDisposableTo(self.disposeBag)
-				buttons.append(searchButton)
-				self.vc.navigationItem.rightBarButtonItems=buttons
-				self.vc.definesPresentationContext=true
-			}
-			}.addDisposableTo(disposeBag)
+			buttons.append(searchButton)
+			self.vc.navigationItem.rightBarButtonItems=buttons
+			self.vc.definesPresentationContext=true
+		}
 		vc.rx_viewWillDisappear.subscribeNext{ _ in
 			switch style{
 			default:
@@ -145,12 +143,12 @@ public class AutoSingleLevelTableViewManager<
 	DataType,
 	DataViewModel
 	where
-		DataType:WithApi,
-		DataViewModel:ViewModel,
-		DataViewModel.Data==DataType>
+	DataType:WithApi,
+	DataViewModel:ViewModel,
+	DataViewModel.Data==DataType>
 	
 	:	AutoSingleLevelTableView,
-		ControllerWithTableView
+	ControllerWithTableView
 {
 	public typealias Data=DataType
 	public var data:Observable<[Data]> {
@@ -287,7 +285,7 @@ public class AutoSearchableSingleLevelTableViewManager<DataType,DataViewModel wh
 			.map{$0}
 			.observeOn(MainScheduler.instance)
 			.shareReplayLatestWhileConnected()
-
+		
 		let dataOrSearch=Observable.combineLatest(allData,search) {
 			(d:[Data],s:String)->[Data] in
 			switch s {
