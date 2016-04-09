@@ -15,14 +15,6 @@ extension Array {
 		return indices ~= index ? self[index] : nil
 	}
 }
-func bindingErrorToInterface(error: ErrorType) {
-	let error = "Binding error to UI: \(error)"
-	#if DEBUG
-		fatalError(error)
-	#else
-		print(error)
-	#endif
-}
 
 extension UISearchBar
 {
@@ -32,6 +24,16 @@ extension UISearchBar
 	}
 	
 	public var rx_textOrCancel: ControlProperty<String> {
+		
+		func bindingErrorToInterface(error: ErrorType) {
+			let error = "Binding error to UI: \(error)"
+			#if DEBUG
+    			rxFatalError(error)
+			#else
+    			print(error)
+			#endif
+		}
+		
 		let cancelMeansNoText=rx_cancel.map{""}
 		let source:Observable<String>=Observable.of(
 				rx_text.asObservable(),
