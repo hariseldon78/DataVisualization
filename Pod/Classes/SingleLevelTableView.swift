@@ -138,6 +138,11 @@ public enum OnSelectBehaviour<DataType>
 	case Detail(segue:String)
 	case Action(action:(d:DataType)->())
 }
+class TableViewDelegate:NSObject,UITableViewDelegate{
+	func tableView(tableView: UITableView, editingStyleForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCellEditingStyle {
+		return UITableViewCellEditingStyle.None
+	}
+}
 
 public class AutoSingleLevelTableViewManager<
 	DataType,
@@ -163,6 +168,7 @@ public class AutoSingleLevelTableViewManager<
 	public let viewModel:DataViewModel
 	public var vc:UIViewController!
 	public var tableView:UITableView!
+	var tableViewDelegate=TableViewDelegate()
 	
 	var onClick:((row:Data)->())?=nil
 	var clickedObj:Data?
@@ -178,6 +184,8 @@ public class AutoSingleLevelTableViewManager<
 		
 		self.vc=vc
 		self.tableView=tableView
+		dump(tableView)
+		tableView.rx_setDelegate(tableViewDelegate)
 		
 		switch nib
 		{
@@ -205,6 +213,7 @@ public class AutoSingleLevelTableViewManager<
 				self.clickedObj=obj
 				self.onClick?(row: obj)
 			}.addDisposableTo(disposeBag)
+		
 	}
 	
 	func bindData(){
