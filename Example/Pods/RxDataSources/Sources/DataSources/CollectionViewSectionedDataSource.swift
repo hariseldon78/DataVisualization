@@ -1,20 +1,20 @@
 //
-//  RxCollectionViewSectionedDataSource.swift
-//  RxExample
+//  CollectionViewSectionedDataSource.swift
+//  RxDataSources
 //
 //  Created by Krunoslav Zaher on 7/2/15.
-//  Copyright (c) 2015 Krunoslav Zaher. All rights reserved.
+//  Copyright © 2015 Krunoslav Zaher. All rights reserved.
 //
 
 import Foundation
 import UIKit
 #if !RX_NO_MODULE
-import RxSwift
 import RxCocoa
 #endif
     
-public class _RxCollectionViewSectionedDataSource : NSObject
-                                                  , UICollectionViewDataSource {
+public class _CollectionViewSectionedDataSource
+    : NSObject
+    , UICollectionViewDataSource {
     
     func _numberOfSectionsInCollectionView(collectionView: UICollectionView) -> Int {
         return 0
@@ -47,17 +47,31 @@ public class _RxCollectionViewSectionedDataSource : NSObject
     public func collectionView(collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, atIndexPath indexPath: NSIndexPath) -> UICollectionReusableView {
         return _collectionView(collectionView, viewForSupplementaryElementOfKind: kind, atIndexPath: indexPath)
     }
+    
+    func _collectionView(collectionView: UICollectionView, canMoveItemAtIndexPath indexPath: NSIndexPath) -> Bool {
+        return false
+    }
+    
+    public func collectionView(collectionView: UICollectionView, canMoveItemAtIndexPath indexPath: NSIndexPath) -> Bool {
+        return _collectionView(collectionView, canMoveItemAtIndexPath: indexPath)
+    }
+    
+    func _collectionView(collectionView: UICollectionView, moveItemAtIndexPath sourceIndexPath: NSIndexPath, toIndexPath destinationIndexPath: NSIndexPath) {
+        
+    }
+    public func collectionView(collectionView: UICollectionView, moveItemAtIndexPath sourceIndexPath: NSIndexPath, toIndexPath destinationIndexPath: NSIndexPath) {
+        _collectionView(collectionView, moveItemAtIndexPath: sourceIndexPath, toIndexPath: destinationIndexPath)
+    }
+    
 }
 
-public class RxCollectionViewSectionedDataSource<S: SectionModelType> : _RxCollectionViewSectionedDataSource {
+public class CollectionViewSectionedDataSource<S: SectionModelType>
+    : _CollectionViewSectionedDataSource
+    , SectionedViewDataSourceType {
     public typealias I = S.Item
     public typealias Section = S
-    public typealias CellFactory = (UICollectionView, NSIndexPath, I) -> UICollectionViewCell
-    public typealias SupplementaryViewFactory = (UICollectionView, String, NSIndexPath) -> UICollectionReusableView
-    
-    public typealias IncrementalUpdateObserver = AnyObserver<Changeset<S>>
-    
-    public typealias IncrementalUpdateDisposeKey = Bag<IncrementalUpdateObserver>.KeyType
+    public typealias CellFactory = (CollectionViewSectionedDataSource<S>, UICollectionView, NSIndexPath, I) -> UICollectionViewCell
+    public typealias SupplementaryViewFactory = (CollectionViewSectionedDataSource<S>, UICollectionView, String, NSIndexPath) -> UICollectionReusableView
     
     // This structure exists because model can be mutable
     // In that case current state value should be preserved.
@@ -67,28 +81,33 @@ public class RxCollectionViewSectionedDataSource<S: SectionModelType> : _RxColle
     // properly.
     public typealias SectionModelSnapshot = SectionModel<S, I>
     
-    var sectionModels: [SectionModelSnapshot] = []
+    private var _sectionModels: [SectionModelSnapshot] = []
     
     public func sectionAtIndex(section: Int) -> S {
-        return self.sectionModels[section].model
-    }
-
-    public func itemAtIndexPath(indexPath: NSIndexPath) -> I {
-        return self.sectionModels[indexPath.section].items[indexPath.item]
+        return self._sectionModels[section].model
     }
     
-    var incrementalUpdateObservers: Bag<IncrementalUpdateObserver> = Bag()
+    public func itemAtIndexPath(indexPath: NSIndexPath) -> I {
+        return self._sectionModels[indexPath.section].items[indexPath.item]
+    }
+    
+    public func modelAtIndexPath(indexPath: NSIndexPath) throws -> Any {
+        return itemAtIndexPath(indexPath)
+    }
     
     public func setSections(sections: [S]) {
-        self.sectionModels = sections.map { SectionModelSnapshot(model: $0, items: $0.items) }
+        self._sectionModels = sections.map { SectionModelSnapshot(model: $0, items: $0.items) }
     }
     
     public var cellFactory: CellFactory! = nil
     public var supplementaryViewFactory: SupplementaryViewFactory
     
+    public var moveItem: ((CollectionViewSectionedDataSource<S>, sourceIndexPath:NSIndexPath, destinationIndexPath:NSIndexPath) -> Void)?
+    public var canMoveItemAtIndexPath: ((CollectionViewSectionedDataSource<S>, indexPath:NSIndexPath) -> Bool)?
+    
     public override init() {
-        self.cellFactory = { _, _, _ in return (nil as UICollectionViewCell?)! }
-        self.supplementaryViewFactory = { _, _, _ in (nil as UICollectionReusableView?)! }
+        self.cellFactory = {_, _, _, _ in return (nil as UICollectionViewCell?)! }
+        self.supplementaryViewFactory = {_, _, _, _ in (nil as UICollectionReusableView?)! }
         
         super.init()
         
@@ -98,40 +117,45 @@ public class RxCollectionViewSectionedDataSource<S: SectionModelType> : _RxColle
             return (nil as UICollectionViewCell!)!
         }
         
-        self.supplementaryViewFactory = { [weak self] _, _, _ in
+        self.supplementaryViewFactory = { [weak self] _ in
             precondition(false, "There is a minor problem. `supplementaryViewFactory` property on \(self!) was not set.")
             return (nil as UICollectionReusableView?)!
         }
     }
     
-    // observers
-    
-    public func addIncrementalUpdatesObserver(observer: IncrementalUpdateObserver) -> IncrementalUpdateDisposeKey {
-        return incrementalUpdateObservers.insert(observer)
-    }
-    
-    public func removeIncrementalUpdatesObserver(key: IncrementalUpdateDisposeKey) {
-        let element = incrementalUpdateObservers.removeKey(key)
-        precondition(element != nil, "Element removal failed")
-    }
-    
-    // UITableViewDataSource
+    // UICollectionViewDataSource
     
     override func _numberOfSectionsInCollectionView(collectionView: UICollectionView) -> Int {
-        return sectionModels.count
+        return _sectionModels.count
     }
     
     override func _collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return sectionModels[section].items.count
+        return _sectionModels[section].items.count
     }
     
     override func _collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
-        precondition(indexPath.item < sectionModels[indexPath.section].items.count)
+        precondition(indexPath.item < _sectionModels[indexPath.section].items.count)
         
-        return cellFactory(collectionView, indexPath, itemAtIndexPath(indexPath))
+        return cellFactory(self, collectionView, indexPath, itemAtIndexPath(indexPath))
     }
     
     override func _collectionView(collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, atIndexPath indexPath: NSIndexPath) -> UICollectionReusableView {
-        return supplementaryViewFactory(collectionView, kind, indexPath)
+        return supplementaryViewFactory(self, collectionView, kind, indexPath)
     }
+    
+    override func _collectionView(collectionView: UICollectionView, canMoveItemAtIndexPath indexPath: NSIndexPath) -> Bool {
+        guard let canMoveItem = canMoveItemAtIndexPath?(self, indexPath: indexPath) else {
+            return super._collectionView(collectionView, canMoveItemAtIndexPath: indexPath)
+        }
+        
+        return canMoveItem
+    }
+    
+    override func _collectionView(collectionView: UICollectionView, moveItemAtIndexPath sourceIndexPath: NSIndexPath, toIndexPath destinationIndexPath: NSIndexPath) {
+        guard let _ = moveItem?(self, sourceIndexPath:sourceIndexPath, destinationIndexPath: destinationIndexPath) else {
+            super._collectionView(collectionView, moveItemAtIndexPath: sourceIndexPath, toIndexPath: destinationIndexPath)
+            return
+        }
+    }
+    
 }

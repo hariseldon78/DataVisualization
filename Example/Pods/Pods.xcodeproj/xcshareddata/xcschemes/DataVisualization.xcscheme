@@ -14,7 +14,7 @@
             buildForArchiving = "YES">
             <BuildableReference
                BuildableIdentifier = 'primary'
-               BlueprintIdentifier = 'C4640361E710FDEBFA183799'
+               BlueprintIdentifier = 'D4459E380E38960B74342D4B'
                BlueprintName = 'DataVisualization'
                ReferencedContainer = 'container:Pods.xcodeproj'
                BuildableName = 'DataVisualization.framework'>

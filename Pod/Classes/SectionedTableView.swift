@@ -9,6 +9,7 @@
 import Foundation
 import RxSwift
 import RxCocoa
+import RxDataSources
 
 public protocol Sectioner
 {
@@ -210,8 +211,8 @@ public class AutoSectionedTableViewManager<
 		}
 		tableView.delegate=self
 		
-		dataSource.cellFactory={
-			(tableView,indexPath,item:Element) in
+		dataSource.configureCell={
+			(dataSource,tableView,indexPath,item:Element) in
 			guard let cell=tableView.dequeueReusableCellWithIdentifier("cell")
 				else {fatalError("why no cell?")}
 			self.elementViewModel.cellFactory(

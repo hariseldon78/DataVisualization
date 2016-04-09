@@ -15,6 +15,15 @@ extension Array {
 		return indices ~= index ? self[index] : nil
 	}
 }
+func bindingErrorToInterface(error: ErrorType) {
+	let error = "Binding error to UI: \(error)"
+	#if DEBUG
+		fatalError(error)
+	#else
+		print(error)
+	#endif
+}
+
 extension UISearchBar
 {
 	public var rx_cancel: ControlEvent<Void> {
