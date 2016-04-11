@@ -23,6 +23,9 @@
     ]
   },
   "dependencies": {
+    "Cartography": [
+
+    ],
     "RxDataSources": [
       "~> 0.6"
     ],

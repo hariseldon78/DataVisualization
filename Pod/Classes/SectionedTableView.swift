@@ -419,7 +419,8 @@ public class AutoSearchableSectionedTableViewManager<
 	public typealias DataFilteringClosure=(d:Element,s:String)->Bool
 	public typealias SectionFilteringClosure=(d:Section,s:String)->Bool
 	public var search:Observable<String> {
-		return searchController.searchBar.rx_textOrCancel.asObservable()
+		guard let searchBar=searchController.searchBar as? CustomSearchBar else {fatalError()}
+		return searchBar.rx_textOrCancel.asObservable()
 	}
 	public var allData:Observable<[SectionAndData]> {
 		return sectioner.sections.subscribeOn(backgroundScheduler).shareReplayLatestWhileConnected()

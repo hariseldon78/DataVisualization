@@ -84,6 +84,7 @@ strip_invalid_archs() {
 
 
 if [[ "$CONFIGURATION" == "Debug" ]]; then
+  install_framework "Pods-DataVisualization_Tests/Cartography.framework"
   install_framework "Pods-DataVisualization_Tests/DataVisualization.framework"
   install_framework "Pods-DataVisualization_Tests/RxCocoa.framework"
   install_framework "Pods-DataVisualization_Tests/RxDataSources.framework"
@@ -91,6 +92,7 @@ if [[ "$CONFIGURATION" == "Debug" ]]; then
   install_framework "Pods-DataVisualization_Tests/Quick.framework"
 fi
 if [[ "$CONFIGURATION" == "Release" ]]; then
+  install_framework "Pods-DataVisualization_Tests/Cartography.framework"
   install_framework "Pods-DataVisualization_Tests/DataVisualization.framework"
   install_framework "Pods-DataVisualization_Tests/RxCocoa.framework"
   install_framework "Pods-DataVisualization_Tests/RxDataSources.framework"

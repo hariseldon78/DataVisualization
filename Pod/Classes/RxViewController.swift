@@ -16,41 +16,6 @@ extension Array {
 	}
 }
 
-extension UISearchBar
-{
-	public var rx_cancel: ControlEvent<Void> {
-		let source=rx_delegate.observe("searchBarCancelButtonClicked:").map{_ in _=0}
-		return ControlEvent(events: source)
-	}
-	
-	public var rx_textOrCancel: ControlProperty<String> {
-		
-		func bindingErrorToInterface(error: ErrorType) {
-			let error = "Binding error to UI: \(error)"
-			#if DEBUG
-    			rxFatalError(error)
-			#else
-    			print(error)
-			#endif
-		}
-		
-		let cancelMeansNoText=rx_cancel.map{""}
-		let source:Observable<String>=Observable.of(
-				rx_text.asObservable(),
-				cancelMeansNoText)
-			.merge()
-		return ControlProperty(values: source, valueSink: AnyObserver { [weak self] event in
-			switch event {
-			case .Next(let value):
-				self?.text = value
-			case .Error(let error):
-				bindingErrorToInterface(error)
-			case .Completed:
-				break
-			}
-		})
-	}
-}
 extension UIViewController
 {
 	var rx_raw_viewDidLoad:Observable<[AnyObject]> {return rx_sentMessage("viewDidLoad")}
