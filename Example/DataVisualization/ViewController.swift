@@ -149,6 +149,55 @@ class SearchSectionedViewController:UIViewController {
 		
 	}
 }
+
+class SearchSectionedFunkyViewController:UIViewController {
+	var disposeBag=DisposeBag()
+	@IBOutlet weak var tableView: UITableView!
+	
+	typealias DataViewModel=ConcreteViewModel<Worker,FunkyCell>
+
+	let tvManager=AutoSearchableSectionedTableViewManager(
+		elementViewModel: DataViewModel(cellName: "FunkyCell") {
+			(index:Int, item, cell:DataViewModel.Cell) -> Void in
+			cell.title.text=item.name
+			cell.subtitle.text="salary: €\(item.salary)"
+		},
+		sectionViewModel: Department.defaultSectionViewModel(),
+		sectioner: CollapsableSectioner(original:WorkerSectioner()),
+		dataFilteringClosure: { (d, s) -> Bool in
+			return d.name.uppercaseString.containsString(s.uppercaseString)
+		},
+		sectionFilteringClosure: { (d, s) -> Bool in
+			return d.name.uppercaseString.containsString(s.uppercaseString)
+	})
+	
+	
+	override func viewDidLoad() {
+		super.viewDidLoad()
+		tvManager.setupTableView(tableView,vc:self)
+		tvManager.setupDataOnSelect(.SectionDetail(segue:"departmentDetail"))
+		tvManager.setupSectionOnSelect(OnSelectBehaviour<Department>.Action(action: { (d) in
+			// TODO: creare una behaviouraction ad hoc, o almeno un methodo in CollapsableSectionerProtocol
+			if let s=self.tvManager.sectioner.selectedSection.value where s==d
+			{
+				self.tvManager.sectioner.selectedSection.value=nil
+			}
+			else
+			{
+				self.tvManager.sectioner.selectedSection.value=d
+			}
+		}))
+		tvManager.search.asObservable()
+			.map{!$0.isEmpty}
+			.distinctUntilChanged()
+			.subscribeNext {
+				print("showAll=\($0)")
+				self.tvManager.sectioner.showAll.value=$0
+			}.addDisposableTo(disposeBag)
+		
+		
+	}
+}
 class WorkerDetail1:UIViewController,DetailView
 {
 	@IBOutlet weak var label1: UILabel!

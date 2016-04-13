@@ -124,6 +124,8 @@ public enum OnSelectSectionedBehaviour<T>
 	case SectionDetail(segue:String) // shows the detail of the section, even if starting from a data cell
 	case Action(action:(d:T)->())
 }
+
+
 public class AutoSectionedTableViewManager<
 	_Element,
 	_ElementViewModel,
@@ -142,7 +144,7 @@ public class AutoSectionedTableViewManager<
 	
 	:	NSObject,
 	AutoSectionedTableView,
-	UITableViewDelegate,
+	TableViewDelegateCommon,
 	ControllerWithTableView
 {
 	public let disposeBag=DisposeBag()
@@ -191,25 +193,12 @@ public class AutoSectionedTableViewManager<
 		
 		self.vc=vc
 		self.tableView=tableView
-		
 		sectioner.viewForActivityIndicator=self.tableView
 		
-		switch dataNib
-		{
-		case .First(let nib):
-			tableView.registerNib(nib, forCellReuseIdentifier: "cell")
-		case .Second(let clazz):
-			tableView.registerClass(clazz, forCellReuseIdentifier: "cell")
-		}
-		
-		switch sectionNib
-		{
-		case .First(let nib):
-			tableView.registerNib(nib, forHeaderFooterViewReuseIdentifier: "section")
-		case .Second(let clazz):
-			tableView.registerClass(clazz, forHeaderFooterViewReuseIdentifier: "section")
-		}
-		tableView.delegate=self
+		tableView.rx_setDelegate(self)
+		registerDataCell(dataNib)
+		registerSectionCell(sectionNib)
+		setupRowSize()
 		
 		dataSource.configureCell={
 			(dataSource,tableView,indexPath,item:Element) in
@@ -298,7 +287,6 @@ public class AutoSectionedTableViewManager<
 		clickedSectionObj=gr.obj
 		onSectionClick?(section:gr.obj)
 	}
-	public var cellDecorators:[CellDecorator]=[]
 	public func tableView(tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
 		guard let hv=tableView.dequeueReusableHeaderFooterViewWithIdentifier("section")
 			else {fatalError("why no section cell?")}
@@ -311,6 +299,8 @@ public class AutoSectionedTableViewManager<
 		clickedSectionObj=sections.value[indexPath.section].model
 		onDataClick?(row:item)
 	}
+	
+	public var cellDecorators:[CellDecorator]=[]
 	
 	var dataDetailSegue:String?=nil
 	var dataDetailSectionSegue:String?=nil
