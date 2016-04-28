@@ -206,6 +206,8 @@ public class AutoSectionedTableViewManager<
 				else {fatalError("why no cell?")}
 			self.elementViewModel.cellFactory(
 				indexPath.row, item: item, cell: cell as! ElementViewModel.Cell)
+			cell.setNeedsUpdateConstraints()
+			cell.updateConstraintsIfNeeded()
 			self.cellDecorators.forEach({ dec in
 				dec(cell: cell)
 			})

@@ -172,6 +172,8 @@ public class AutoSingleLevelTableViewManager<
 			.bindTo(tableView.rx_itemsWithCellIdentifier("cell")) {
 				(index,item,cell)->Void in
 				self.viewModel.cellFactory(index,item: item, cell: cell as! DataViewModel.Cell)
+				cell.setNeedsUpdateConstraints()
+				cell.updateConstraintsIfNeeded()
 				self.cellDecorators.forEach({ dec in
 					dec(cell: cell)
 				})
