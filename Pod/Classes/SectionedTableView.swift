@@ -267,6 +267,9 @@ public class AutoSectionedTableViewManager<
 		
 		
 	}
+	public func tableView(tableView: UITableView, editingStyleForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCellEditingStyle {
+		return _tableView(tableView, editingStyleForRowAtIndexPath: indexPath)
+	}
 	public func tableView(tableView: UITableView,
 		viewForHeaderInSection section: Int) -> UIView?
 	{

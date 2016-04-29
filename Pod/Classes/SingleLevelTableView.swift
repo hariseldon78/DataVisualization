@@ -96,7 +96,8 @@ protocol TableViewDelegateCommon: UITableViewDelegate{
 	func tableView(tableView: UITableView, editingStyleForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCellEditingStyle
 }
 extension TableViewDelegateCommon{
-	func tableView(tableView: UITableView, editingStyleForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCellEditingStyle {
+// NON SI PUO' IMPLEMENTARE DIRETTAMENTE I METODI O NON VERRANNO CHIAMATI DAL DELEGATE PROXY
+	func _tableView(tableView: UITableView, editingStyleForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCellEditingStyle {
 		return UITableViewCellEditingStyle.None
 	}
 }
@@ -181,6 +182,9 @@ public class AutoSingleLevelTableViewManager<
 			.addDisposableTo(dataBindDisposeBag)
 		
 		handleEmpty()
+	}
+	public func tableView(tableView: UITableView, editingStyleForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCellEditingStyle {
+		return _tableView(tableView, editingStyleForRowAtIndexPath: indexPath)
 	}
 	
 	func handleEmpty()
