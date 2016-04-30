@@ -164,6 +164,9 @@ public class AutoSingleLevelTableViewManager<
 			.subscribeNext { (obj) -> Void in
 				self.clickedObj=obj
 				self.onClick?(row: obj)
+				tableView.indexPathsForSelectedRows?.forEach{ (indexPath) in
+					tableView.deselectRowAtIndexPath(indexPath, animated: true)
+				}
 			}.addDisposableTo(disposeBag)
 		
 	}

@@ -303,6 +303,10 @@ public class AutoSectionedTableViewManager<
 		clickedDataObj=item
 		clickedSectionObj=sections.value[indexPath.section].model
 		onDataClick?(row:item)
+		tableView.indexPathsForSelectedRows?.forEach{ (indexPath) in
+			tableView.deselectRowAtIndexPath(indexPath, animated: true)
+		}
+
 	}
 	
 	public var cellDecorators:[CellDecorator]=[]
