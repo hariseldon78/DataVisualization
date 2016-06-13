@@ -250,19 +250,16 @@ public class AutoSectionedTableViewManager<
 				array.isEmpty
 			}
 			.observeOn(MainScheduler.instance)
-			.subscribe(onNext: { empty in
+			.subscribeNext { empty in
 				self.emptyList=empty
-				}, onError: nil,
-				onCompleted: {
-					if self.emptyList {
-						self.tableView.backgroundView=self.sectionViewModel.viewForEmptyList
-					}
-					else
-					{
-						self.tableView.backgroundView=nil
-					}
-					
-				}, onDisposed: nil)
+				if self.emptyList {
+					self.tableView.backgroundView=self.sectionViewModel.viewForEmptyList
+				}
+				else
+				{
+					self.tableView.backgroundView=nil
+				}
+			}
 			.addDisposableTo(dataBindDisposeBag)
 		
 		
