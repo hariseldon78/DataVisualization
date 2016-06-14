@@ -35,23 +35,38 @@ public protocol SectionViewModel:BaseViewModel {
 	func cellFactory(index:Int,item:Section,elements:[Element],cell:Cell)
 }
 
+public enum EmptyBehaviour {
+	case None
+	case LabelWithString(s:String)
+	case CustomView(v:UIView)
+	func getView()->UIView?
+	{
+		switch self {
+		case .None:
+			return nil
+		case .LabelWithString(let s):
+			let lab=UILabel()
+			lab.text=NSLocalizedString(s, comment: "")
+			lab.textAlignment = .Center
+			return lab
+		case .CustomView(let v):
+			return v
+		}
+	}
+
+}
 public class BaseConcreteViewModel<_Data,_Cell:UIView,_ClosureType>
 {
 	public typealias Cell=_Cell
 	public typealias ClosureType=_ClosureType
 	public var cellNib:Either<UINib,UIView.Type>?
-	public var viewForEmptyList:UIView? {
-		let lab=UILabel()
-		lab.text=NSLocalizedString("La lista è vuota", comment: "")
-		lab.textAlignment = .Center
-		return lab
-	}
-	public var viewForEmptySearch:UIView? {
-		let lab=UILabel()
-		lab.text=NSLocalizedString("Nessun elemento corrisponde alla ricerca", comment: "")
-		lab.textAlignment = .Center
-		return lab
-	}
+	
+	public var emptyBehaviour=EmptyBehaviour.LabelWithString(s: "La lista è vuota")
+	public var viewForEmptyList:UIView? { return emptyBehaviour.getView() }
+	
+	public var emptySearchBehaviour=EmptyBehaviour.LabelWithString(s: "Nessun elemento corrisponde alla ricerca")
+	public var viewForEmptySearch:UIView? { return emptySearchBehaviour.getView() }
+	
 	public typealias Data=_Data
 		var cellFactoryClosure:ClosureType
 	public init(cellName:String,cellFactory:ClosureType) {
