@@ -238,31 +238,19 @@ public class AutoSectionedTableViewManager<
 				self.sections.value=secs.map{ (s,d) in
 					RxSectionModel(model: s, items: d)
 				}
-			}.addDisposableTo(dataBindDisposeBag)
-		
-		sections.asObservable()
-			.observeOn(MainScheduler.instance)
-			.bindTo(tableView.rx_itemsWithDataSource(dataSource))
-			.addDisposableTo(dataBindDisposeBag)
-		
-		sections.asObservable()
-			.map { array in
-				array.isEmpty
-			}
-			.observeOn(MainScheduler.instance)
-			.subscribeNext { empty in
-				self.emptyList=empty
+				self.emptyList=secs.isEmpty
 				if self.emptyList {
 					self.tableView.backgroundView=self.sectionViewModel.viewForEmptyList
-				}
-				else
-				{
+				} else {
 					self.tableView.backgroundView=nil
 				}
 			}
 			.addDisposableTo(dataBindDisposeBag)
 		
-		
+		sections.asObservable()
+			.observeOn(MainScheduler.instance)
+			.bindTo(tableView.rx_itemsWithDataSource(dataSource))
+			.addDisposableTo(dataBindDisposeBag)
 	}
 	public func tableView(tableView: UITableView, editingStyleForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCellEditingStyle {
 		return _tableView(tableView, editingStyleForRowAtIndexPath: indexPath)
