@@ -277,11 +277,11 @@ public class AutoSectionedTableViewManager<
 		clickedSectionObj=gr.obj
 		onSectionClick?(section:gr.obj)
 	}
-	public func tableView(tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-		guard let hv=tableView.dequeueReusableHeaderFooterViewWithIdentifier("section")
-			else {fatalError("why no section cell?")}
-		return hv.bounds.height
-	}
+//	public func tableView(tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+//		guard let hv=tableView.dequeueReusableHeaderFooterViewWithIdentifier("section")
+//			else {fatalError("why no section cell?")}
+//		return hv.bounds.height
+//	}
 	public func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
 		dump(indexPath)
 		let item=dataSource.itemAtIndexPath(indexPath)
