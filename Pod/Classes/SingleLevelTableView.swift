@@ -73,10 +73,11 @@ extension ControllerWithTableView where Self:Disposer
 	{
 		tableView.rowHeight=UITableViewAutomaticDimension
 		tableView.estimatedRowHeight=50
-		
+	}
+	func setupSectionSize()
+	{
 		tableView.sectionHeaderHeight=UITableViewAutomaticDimension
 		tableView.estimatedSectionHeaderHeight=50
-
 	}
 }
 public protocol AutoSingleLevelTableView:Disposer {

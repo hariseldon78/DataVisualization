@@ -199,6 +199,7 @@ public class AutoSectionedTableViewManager<
 		registerDataCell(dataNib)
 		registerSectionCell(sectionNib)
 		setupRowSize()
+		setupSectionSize()
 		
 		dataSource.configureCell={
 			(dataSource,tableView,indexPath,item:Element) in
