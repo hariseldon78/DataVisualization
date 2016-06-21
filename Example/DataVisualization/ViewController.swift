@@ -24,6 +24,20 @@ class PlainViewController:UIViewController
 	}
 }
 
+class PlainCollectionViewController:UIViewController
+{
+	@IBOutlet weak var collectionView: UICollectionView!
+	var tvManager=AutoSingleLevelCollectionViewManager (viewModel: Worker.defaultCollectionViewModel()/*, filteringClosure: { (d:Worker, s:String) -> Bool in
+		return d.name.uppercaseString.containsString(s.uppercaseString)
+	}*/)
+	override func viewDidLoad() {
+		super.viewDidLoad()
+		tvManager.setupCollectionView(collectionView,vc:self)
+//		tvManager.setupOnSelect(.Detail(segue:"detail"))
+	}
+	
+}
+
 
 class StaticViewController:UIViewController
 {

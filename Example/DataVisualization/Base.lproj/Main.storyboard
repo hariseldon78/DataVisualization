@@ -41,6 +41,58 @@
             </objects>
             <point key="canvasLocation" x="594" y="126"/>
         </scene>
+        <!--plainCollection-->
+        <scene sceneID="L44-sb-ZLW">
+            <objects>
+                <viewController title="plain" id="yS8-2h-cOB" userLabel="plainCollection" customClass="PlainCollectionViewController" customModule="DataVisualization_Example" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="wa8-lL-IgT"/>
+                        <viewControllerLayoutGuide type="bottom" id="QHq-FT-mgA"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="chr-Ak-zoM">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <subviews>
+                            <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="J3P-3A-sEb">
+                                <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                                <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
+                                <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="10" minimumInteritemSpacing="10" id="4li-TE-hDY">
+                                    <size key="itemSize" width="150" height="200"/>
+                                    <size key="headerReferenceSize" width="0.0" height="0.0"/>
+                                    <size key="footerReferenceSize" width="0.0" height="0.0"/>
+                                    <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
+                                </collectionViewFlowLayout>
+                                <cells>
+                                    <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" id="UA8-XY-0AL">
+                                        <rect key="frame" x="0.0" y="64" width="150" height="200"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
+                                            <rect key="frame" x="0.0" y="0.0" width="150" height="200"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                        </view>
+                                    </collectionViewCell>
+                                </cells>
+                            </collectionView>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="J3P-3A-sEb" firstAttribute="leading" secondItem="chr-Ak-zoM" secondAttribute="leading" id="6fk-tP-OJ4"/>
+                            <constraint firstAttribute="trailing" secondItem="J3P-3A-sEb" secondAttribute="trailing" id="VEd-6E-I7v"/>
+                            <constraint firstItem="J3P-3A-sEb" firstAttribute="top" secondItem="chr-Ak-zoM" secondAttribute="top" id="kzX-Xp-obc"/>
+                            <constraint firstItem="QHq-FT-mgA" firstAttribute="top" secondItem="J3P-3A-sEb" secondAttribute="bottom" id="qxI-nz-Evn"/>
+                        </constraints>
+                    </view>
+                    <tabBarItem key="tabBarItem" systemItem="favorites" id="lJh-Js-iaD"/>
+                    <navigationItem key="navigationItem" title="plain" id="RAT-xR-Gze"/>
+                    <connections>
+                        <outlet property="collectionView" destination="J3P-3A-sEb" id="dXG-MA-y3p"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="aai-Jv-nkv" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="2070" y="-1002"/>
+        </scene>
         <!--Navigation Controller-->
         <scene sceneID="Da2-Ky-aWo">
             <objects>
@@ -74,10 +126,10 @@
             </objects>
             <point key="canvasLocation" x="1351" y="-635"/>
         </scene>
-        <!--Table View Controller-->
+        <!--BigMenu-->
         <scene sceneID="irG-Zn-1cs">
             <objects>
-                <tableViewController id="dXv-M5-IU0" sceneMemberID="viewController">
+                <tableViewController id="dXv-M5-IU0" userLabel="BigMenu" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="static" style="grouped" separatorStyle="default" rowHeight="44" sectionHeaderHeight="18" sectionFooterHeight="18" id="tSs-eh-Kve">
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -205,12 +257,32 @@
                                             <segue destination="TOb-fQ-Rrw" kind="show" id="1Vk-G4-y2c"/>
                                         </connections>
                                     </tableViewCell>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" textLabel="BuJ-Qo-b3S" style="IBUITableViewCellStyleDefault" id="jaL-cj-rnd">
+                                        <rect key="frame" x="0.0" y="378" width="600" height="44"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="jaL-cj-rnd" id="4L3-3s-fQh">
+                                            <rect key="frame" x="0.0" y="0.0" width="600" height="43"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="plain collection" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="BuJ-Qo-b3S">
+                                                    <rect key="frame" x="15" y="0.0" width="570" height="43"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="16"/>
+                                                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                            </subviews>
+                                        </tableViewCellContentView>
+                                        <connections>
+                                            <segue destination="yS8-2h-cOB" kind="show" id="xbI-EG-dQc"/>
+                                        </connections>
+                                    </tableViewCell>
                                 </cells>
                             </tableViewSection>
                             <tableViewSection headerTitle="sectioned" id="SPN-NO-wf0">
                                 <cells>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" textLabel="hFU-tn-tOH" style="IBUITableViewCellStyleDefault" id="jYc-co-9fB">
-                                        <rect key="frame" x="0.0" y="429" width="600" height="44"/>
+                                        <rect key="frame" x="0.0" y="473" width="600" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="jYc-co-9fB" id="UG4-WW-bBP">
                                             <rect key="frame" x="0.0" y="0.0" width="600" height="43"/>
@@ -230,7 +302,7 @@
                                         </connections>
                                     </tableViewCell>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" textLabel="33H-NN-GiQ" style="IBUITableViewCellStyleDefault" id="hrD-nR-AoU">
-                                        <rect key="frame" x="0.0" y="473" width="600" height="44"/>
+                                        <rect key="frame" x="0.0" y="517" width="600" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="hrD-nR-AoU" id="cgu-SA-gWg">
                                             <rect key="frame" x="0.0" y="0.0" width="600" height="43"/>
@@ -250,7 +322,7 @@
                                         </connections>
                                     </tableViewCell>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" textLabel="3Be-aA-nEw" style="IBUITableViewCellStyleDefault" id="aKQ-gV-g7A">
-                                        <rect key="frame" x="0.0" y="517" width="600" height="44"/>
+                                        <rect key="frame" x="0.0" y="561" width="600" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="aKQ-gV-g7A" id="QLD-Nn-zCb">
                                             <rect key="frame" x="0.0" y="0.0" width="600" height="43"/>
@@ -670,9 +742,9 @@
         </scene>
     </scenes>
     <inferredMetricsTieBreakers>
-        <segue reference="F8Q-eC-vSY"/>
         <segue reference="Ocb-JF-vfA"/>
-        <segue reference="4M2-6G-yf5"/>
+        <segue reference="F8Q-eC-vSY"/>
+        <segue reference="bq7-cn-0fa"/>
         <segue reference="MvY-gL-nK7"/>
     </inferredMetricsTieBreakers>
 </document>

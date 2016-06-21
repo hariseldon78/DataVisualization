@@ -3,7 +3,7 @@
 //  DataVisualization
 //
 //  Created by Roberto Previdi on 28/12/15.
-//  Copyright © 2015 CocoaPods. All rights reserved.
+//  Copyright © 2015 Municipium. All rights reserved.
 //
 
 import Foundation
@@ -15,6 +15,8 @@ public protocol Disposer {
 	var disposeBag:DisposeBag {get}
 }
 
+
+
 protocol ControllerWithTableView
 {
 	var tableView:UITableView! {get}
@@ -22,7 +24,6 @@ protocol ControllerWithTableView
 
 	func registerDataCell(nib: Either<UINib, UIView.Type>)
 	func registerSectionCell(sectionNib: Either<UINib, UIView.Type>)
-	func setupRowSize()
 }
 
 let backgroundScheduler=OperationQueueScheduler(operationQueue: NSOperationQueue())
@@ -80,12 +81,15 @@ extension ControllerWithTableView where Self:Disposer
 		tableView.estimatedSectionHeaderHeight=50
 	}
 }
-public protocol AutoSingleLevelTableView:Disposer {
+public protocol AutoSingleLevelDataView:Disposer {
 	typealias Data:WithApi
 	typealias DataViewModel:ViewModel // where DataViewModel.Data==Data
 	
 	var viewModel:DataViewModel {get}
 	var data:Observable<[Data]> {get}
+}
+
+public protocol AutoSingleLevelTableView:AutoSingleLevelDataView {
 	func setupTableView(tableView:UITableView,vc:UIViewController)
 }
 

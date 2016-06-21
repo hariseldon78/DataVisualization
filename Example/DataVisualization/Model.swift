@@ -31,6 +31,13 @@ struct Worker: WithCachedApi
 		}
 	}
 	
+	typealias CollectionViewModel=ConcreteViewModel<Worker,CollectionTitleCell>
+	static func defaultCollectionViewModel() -> CollectionViewModel {
+		return CollectionViewModel(cellName: "CollectionTitleCell") { (index, item, cell) -> Void in
+			cell.title.text=item.name
+		}
+	}
+	
 	let id:UInt
 	let name:String
 	let salary:Double
