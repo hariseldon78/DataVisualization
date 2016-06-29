@@ -338,6 +338,8 @@ public class AutoSectionedTableViewManager<
 				cell.accessoryType=UITableViewCellAccessoryType.DetailButton
 			}
 			cellDecorators.append(dec)
+		case .None:
+			_=0
 		}
 		
 		switch onSelect

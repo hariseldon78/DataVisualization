@@ -41,6 +41,7 @@ public enum AccessoryStyle
 {
 	case Info
 	case Detail
+	case None
 }
 
 public enum OnSelectBehaviour<DataType>
@@ -235,6 +236,8 @@ public class AutoSingleLevelTableViewManager<
 				cell.accessoryType=UITableViewCellAccessoryType.DetailButton
 			}
 			cellDecorators.append(dec)
+		case .None:
+			_=0
 		}
 		switch onSelect
 		{
