@@ -228,6 +228,15 @@ public class AutoSectionedTableViewManager<
 				self.bindData()
 			}
 		}
+		tableView
+			.rx_itemAccessoryButtonTapped
+			.subscribeNext { (index) in
+				if let obj:Element=try? tableView.rx_modelAtIndexPath(index) {
+					self.tableView.selectRowAtIndexPath(index, animated: false, scrollPosition: UITableViewScrollPosition.None)
+					self.tableView(self.tableView, didSelectRowAtIndexPath: index)
+				}
+		}
+		
 	}
 	var emptyList=false
 	public var data:Observable<[SectionAndData]> {
