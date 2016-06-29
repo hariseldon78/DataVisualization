@@ -116,7 +116,7 @@ class PlainSectionedViewController:UIViewController {
 	override func viewDidLoad() {
 		super.viewDidLoad()
 		tvManager.setupTableView(tableView,vc:self)
-		tvManager.setupDataOnSelect(.SectionDetail(segue:"departmentDetail"))
+		tvManager.setupDataOnSelect(.Info(segue:"workerDetail",presentation:.Push))
 		tvManager.setupSectionOnSelect(.Detail(segue:"departmentDetail",presentation:.Push))
 	}
 }

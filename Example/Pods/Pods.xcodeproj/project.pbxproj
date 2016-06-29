@@ -330,6 +330,7 @@
 		F95ADCA0B85C6C0640372D3EFBBF1AD6 /* View.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB474DB47F09BCBF8CD4E188EF10B054 /* View.swift */; };
 		F9C6F4D830BAA02029EE53C463E9ECA9 /* NSTextStorage+Rx.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAE526195A4F6EA8A56C7B93A4091240 /* NSTextStorage+Rx.swift */; };
 		FB2E892B1D1994BF00883E3A /* SingleLevelCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB2E89291D19891B00883E3A /* SingleLevelCollectionView.swift */; };
+		FB43DAE81D236401009E7C2F /* Common.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB43DAE61D2363AF009E7C2F /* Common.swift */; };
 		FB5F0B821CBEA56F0069D560 /* Search.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB5F0B801CBE87370069D560 /* Search.swift */; };
 		FCE74D976F7B3B444E9E3A90E4093DAB /* InfiniteSequence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 310DA406E001EF5C0B7AF1195673E9AD /* InfiniteSequence.swift */; };
 		FE8F8FDC0B0D469087284A5F9A149544 /* RxTableViewDelegateProxy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E831184906283705321816505C70707 /* RxTableViewDelegateProxy.swift */; };
@@ -836,6 +837,7 @@
 		F9B3FC40539826FC7CAB7E2BD94DDCCD /* Observable+Concurrency.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = "Observable+Concurrency.swift"; path = "RxSwift/Observables/Observable+Concurrency.swift"; sourceTree = "<group>"; };
 		FA2284A164CB5D387E303F246C47B982 /* Constraint.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Constraint.swift; path = Cartography/Constraint.swift; sourceTree = "<group>"; };
 		FB2E89291D19891B00883E3A /* SingleLevelCollectionView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SingleLevelCollectionView.swift; sourceTree = "<group>"; };
+		FB43DAE61D2363AF009E7C2F /* Common.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Common.swift; sourceTree = "<group>"; };
 		FB5F0B801CBE87370069D560 /* Search.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Search.swift; sourceTree = "<group>"; };
 		FB6CC40522A6BD9C44B76501AF52E1FB /* DataVisualization-prefix.pch */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "DataVisualization-prefix.pch"; sourceTree = "<group>"; };
 		FBB3171E73D53F1D50E04AE0F341CFE0 /* RxViewController.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = RxViewController.swift; sourceTree = "<group>"; };
@@ -1472,6 +1474,7 @@
 				D56855C1BCF04C56ECFD4C977D04A1F9 /* ViewModel.swift */,
 				FB5F0B801CBE87370069D560 /* Search.swift */,
 				FB2E89291D19891B00883E3A /* SingleLevelCollectionView.swift */,
+				FB43DAE61D2363AF009E7C2F /* Common.swift */,
 			);
 			path = Classes;
 			sourceTree = "<group>";
@@ -1813,6 +1816,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FB43DAE81D236401009E7C2F /* Common.swift in Sources */,
 				1BCAA97CDFB8322B448BA01F8BF0F0C8 /* DataVisualization-dummy.m in Sources */,
 				7AA23C739EE4FAAA60841D2B09928385 /* DetailManager.swift in Sources */,
 				E3AF22732F9055E3B33AB9726C13F371 /* RxViewController.swift in Sources */,

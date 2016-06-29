@@ -119,8 +119,10 @@ class EnrichedTapGestureRecognizer<T>:UITapGestureRecognizer
 	}
 }
 public enum OnSelectSectionedBehaviour<T>
+	// i can't inherit the cases from OnSelectBehaviour so i need to duplicate a lot of code :(...
 {
-	case Detail(segue:String)
+	case Detail(segue:String,presentation:PresentationMode)
+	case Info(segue:String,presentation:PresentationMode)
 	case SectionDetail(segue:String) // shows the detail of the section, even if starting from a data cell
 	case Action(action:(d:T)->())
 }
@@ -303,7 +305,12 @@ public class AutoSectionedTableViewManager<
 	{
 		switch onSelect
 		{
-		case .Detail(let segue):
+		case .Detail(let segue,let presentation):
+			dataDetailSegue=segue
+			onDataClick = { row in
+				self.vc.performSegueWithIdentifier(segue, sender: nil)
+			}
+		case .Info(let segue,let presentation):
 			dataDetailSegue=segue
 			onDataClick = { row in
 				self.vc.performSegueWithIdentifier(segue, sender: nil)
@@ -326,6 +333,12 @@ public class AutoSectionedTableViewManager<
 			
 			let dec:CellDecorator={ (cell:UITableViewCell) in
 				cell.accessoryType=UITableViewCellAccessoryType.DisclosureIndicator
+			}
+			cellDecorators.append(dec)
+			listenForSegue()
+		case .Info(_,_):
+			let dec:CellDecorator={ (cell:UITableViewCell) in
+				cell.accessoryType=UITableViewCellAccessoryType.DetailButton
 			}
 			cellDecorators.append(dec)
 			listenForSegue()
