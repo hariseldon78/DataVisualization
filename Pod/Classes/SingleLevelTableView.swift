@@ -37,11 +37,15 @@ public enum PresentationMode
 	case Push
 	case Popover(movableAnchor:UIView?)
 }
+public enum AccessoryStyle
+{
+	case Info
+	case Detail
+}
 
 public enum OnSelectBehaviour<DataType>
 {
-	case Detail(segue:String,presentation:PresentationMode)
-	case Info(segue:String,presentation:PresentationMode)
+	case Segue(name:String,presentation:PresentationMode)
 	case Action(action:(d:DataType)->())
 }
 protocol TableViewDelegateCommon: UITableViewDelegate{
@@ -182,7 +186,7 @@ public class AutoSingleLevelTableViewManager<
 	}
 	public var cellDecorators:[CellDecorator]=[]
 	
-	public func setupOnSelect(onSelect:OnSelectBehaviour<Data>)
+	public func setupOnSelect(accessory:AccessoryStyle,_ onSelect:OnSelectBehaviour<Data>)
 	{
 		func prepareSegue(segue:String,presentation:PresentationMode)
 		{
@@ -219,21 +223,23 @@ public class AutoSingleLevelTableViewManager<
 				}
 				}.addDisposableTo(disposeBag)
 		}
-		switch onSelect
+		switch accessory
 		{
-		case .Detail(let segue,let presentation):
+		case .Detail:
 			let dec:CellDecorator={ (cell:UITableViewCell) in
 				cell.accessoryType=UITableViewCellAccessoryType.DisclosureIndicator
 			}
 			cellDecorators.append(dec)
-			prepareSegue(segue,presentation: presentation)
-			
-		case .Info(let segue,let presentation):
+		case .Info:
 			let dec:CellDecorator={ (cell:UITableViewCell) in
 				cell.accessoryType=UITableViewCellAccessoryType.DetailButton
 			}
 			cellDecorators.append(dec)
-			prepareSegue(segue,presentation: presentation)
+		}
+		switch onSelect
+		{
+		case .Segue(let name,let presentation):
+			prepareSegue(name,presentation: presentation)
 			
 		case .Action(let closure):
 			self.onClick=closure

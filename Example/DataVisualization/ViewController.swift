@@ -20,7 +20,7 @@ class PlainViewController:UIViewController
 	override func viewDidLoad() {
 		super.viewDidLoad()
 		tvManager.setupTableView(tableView,vc:self)
-		tvManager.setupOnSelect(.Detail(segue:"detail",presentation:.Push))
+		tvManager.setupOnSelect(.Detail,.Segue(name:"detail",presentation:.Push))
 	}
 }
 
@@ -50,7 +50,7 @@ class StaticViewController:UIViewController
 	override func viewDidLoad() {
 		super.viewDidLoad()
 		tvManager.setupTableView(tableView,vc:self)
-		tvManager.setupOnSelect(.Info(segue:"detail",presentation:.Push))
+		tvManager.setupOnSelect(.Info,.Segue(name:"detail",presentation:.Push))
 	}
 	override func viewDidAppear(animated: Bool) {
 		super.viewDidAppear(animated)
@@ -86,7 +86,7 @@ class PlainNoDetViewController:UIViewController
 	override func viewDidLoad() {
 		super.viewDidLoad()
 		tvManager.setupTableView(tableView,vc:self)
-		tvManager.setupOnSelect(.Action(action: { (d:Worker) -> () in
+		tvManager.setupOnSelect(.Detail,.Action(action: { (d:Worker) -> () in
 			dump(d)
 			let vc=NoStoryboardViewController()
 			self.presentViewController(vc, animated: true, completion: nil)
@@ -104,7 +104,7 @@ class FunkyViewController:UIViewController {
 	override func viewDidLoad() {
 		super.viewDidLoad()
 		tvManager.setupTableView(tableView,vc:self)
-		tvManager.setupOnSelect(.Detail(segue:"detail",presentation:.Push))
+		tvManager.setupOnSelect(.Detail,.Segue(name:"detail",presentation:.Push))
 	}
 
 }
@@ -116,8 +116,8 @@ class PlainSectionedViewController:UIViewController {
 	override func viewDidLoad() {
 		super.viewDidLoad()
 		tvManager.setupTableView(tableView,vc:self)
-		tvManager.setupDataOnSelect(.Info(segue:"workerDetail",presentation:.Push))
-		tvManager.setupSectionOnSelect(.Detail(segue:"departmentDetail",presentation:.Push))
+		tvManager.setupDataOnSelect(.Info,.Segue(name:"workerDetail",presentation:.Push))
+		tvManager.setupSectionOnSelect(.Segue(name:"departmentDetail",presentation:.Push))
 	}
 }
 
@@ -140,7 +140,7 @@ class SearchSectionedViewController:UIViewController {
 	override func viewDidLoad() {
 		super.viewDidLoad()
 		tvManager.setupTableView(tableView,vc:self)
-		tvManager.setupDataOnSelect(.SectionDetail(segue:"departmentDetail"))
+		tvManager.setupDataOnSelect(.Detail,.SectionSegue(name:"departmentDetail",presentation:.Push))
 		tvManager.setupSectionOnSelect(OnSelectBehaviour<Department>.Action(action: { (d) in
 			// TODO: creare una behaviouraction ad hoc, o almeno un methodo in CollapsableSectionerProtocol
 			if let s=self.tvManager.sectioner.selectedSection.value where s==d
@@ -189,7 +189,7 @@ class SearchSectionedFunkyViewController:UIViewController {
 	override func viewDidLoad() {
 		super.viewDidLoad()
 		tvManager.setupTableView(tableView,vc:self)
-		tvManager.setupDataOnSelect(.SectionDetail(segue:"departmentDetail"))
+		tvManager.setupDataOnSelect(.Info,.SectionSegue(name:"departmentDetail",presentation:.Push))
 		tvManager.setupSectionOnSelect(OnSelectBehaviour<Department>.Action(action: { (d) in
 			// TODO: creare una behaviouraction ad hoc, o almeno un methodo in CollapsableSectionerProtocol
 			if let s=self.tvManager.sectioner.selectedSection.value where s==d

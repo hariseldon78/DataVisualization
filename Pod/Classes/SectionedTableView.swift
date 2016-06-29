@@ -121,9 +121,8 @@ class EnrichedTapGestureRecognizer<T>:UITapGestureRecognizer
 public enum OnSelectSectionedBehaviour<T>
 	// i can't inherit the cases from OnSelectBehaviour so i need to duplicate a lot of code :(...
 {
-	case Detail(segue:String,presentation:PresentationMode)
-	case Info(segue:String,presentation:PresentationMode)
-	case SectionDetail(segue:String) // shows the detail of the section, even if starting from a data cell
+	case Segue(name:String,presentation:PresentationMode)
+	case SectionSegue(name:String,presentation:PresentationMode) // shows the detail of the section, even if starting from a data cell
 	case Action(action:(d:T)->())
 }
 
@@ -310,46 +309,42 @@ public class AutoSectionedTableViewManager<
 	
 	var dataDetailSegue:String?=nil
 	var dataDetailSectionSegue:String?=nil
-	public func setupDataOnSelect(onSelect:OnSelectSectionedBehaviour<Element>)
+	public func setupDataOnSelect(accessory:AccessoryStyle,_ onSelect:OnSelectSectionedBehaviour<Element>)
 	{
 		switch onSelect
 		{
-		case .Detail(let segue,let presentation):
-			dataDetailSegue=segue
+		case .Segue(let name,let presentation):
+			dataDetailSegue=name
 			onDataClick = { row in
-				self.vc.performSegueWithIdentifier(segue, sender: nil)
+				self.vc.performSegueWithIdentifier(name, sender: nil)
 			}
-		case .Info(let segue,let presentation):
-			dataDetailSegue=segue
+		case .SectionSegue(let name,let presentation):
+			dataDetailSectionSegue=name
 			onDataClick = { row in
-				self.vc.performSegueWithIdentifier(segue, sender: nil)
+				self.vc.performSegueWithIdentifier(name, sender: nil)
 			}
-		case .SectionDetail(let segue):
-			dataDetailSectionSegue=segue
-			onDataClick = { row in
-				self.vc.performSegueWithIdentifier(segue, sender: nil)
-			}
-			
 		case .Action(let closure):
 			self.onDataClick=closure
 		}
-		
-		switch onSelect
+		switch accessory
 		{
-		case .Detail(_):
-			fallthrough
-		case .SectionDetail(_):
-			
+		case .Detail:
 			let dec:CellDecorator={ (cell:UITableViewCell) in
 				cell.accessoryType=UITableViewCellAccessoryType.DisclosureIndicator
 			}
 			cellDecorators.append(dec)
-			listenForSegue()
-		case .Info(_,_):
+		case .Info:
 			let dec:CellDecorator={ (cell:UITableViewCell) in
 				cell.accessoryType=UITableViewCellAccessoryType.DetailButton
 			}
 			cellDecorators.append(dec)
+		}
+		
+		switch onSelect
+		{
+		case .Segue(_,_):
+			fallthrough
+		case .SectionSegue(_,_):
 			listenForSegue()
 		default:
 			_=0
@@ -369,9 +364,7 @@ public class AutoSectionedTableViewManager<
 		switch onSelect
 		{
 		//FIXME: Supportare popover anche con sections
-		case .Detail(let segue,_):
-			prepareSegue(segue)
-		case .Info(let segue,_):
+		case .Segue(let segue,_):
 			prepareSegue(segue)
 			
 		case .Action(let closure):
