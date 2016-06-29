@@ -95,10 +95,16 @@ public protocol AutoSingleLevelTableView:AutoSingleLevelDataView {
 
 public typealias CellDecorator=(cell:UITableViewCell)->()
 
+public enum PresentationMode
+{
+	case Push
+	case Popover(movableAnchor:UIView?)
+}
 
 public enum OnSelectBehaviour<DataType>
 {
-	case Detail(segue:String)
+	case Detail(segue:String,presentation:PresentationMode)
+	case Info(segue:String,presentation:PresentationMode)
 	case Action(action:(d:DataType)->())
 }
 protocol TableViewDelegateCommon: UITableViewDelegate{
@@ -110,6 +116,13 @@ extension TableViewDelegateCommon{
 		return UITableViewCellEditingStyle.None
 	}
 }
+class PopoverPresentationControllerDelegate:NSObject,UIPopoverPresentationControllerDelegate
+{
+	func adaptivePresentationStyleForPresentationController(controller: UIPresentationController!) -> UIModalPresentationStyle {
+		return .None
+	}
+}
+let popoverPresentationControllerDelegate=PopoverPresentationControllerDelegate()
 
 public class AutoSingleLevelTableViewManager<
 	DataType,
@@ -168,15 +181,28 @@ public class AutoSingleLevelTableViewManager<
 			}
 		}
 		
+		func didSelectObj(obj:Data)
+		{
+			self.clickedObj=obj
+			self.onClick?(row: obj)
+			tableView.indexPathsForSelectedRows?.forEach{ (indexPath) in
+				tableView.deselectRowAtIndexPath(indexPath, animated: true)
+			}
+		}
+		
 		tableView
 			.rx_modelSelected(Data.self)
-			.subscribeNext { (obj) -> Void in
-				self.clickedObj=obj
-				self.onClick?(row: obj)
-				tableView.indexPathsForSelectedRows?.forEach{ (indexPath) in
-					tableView.deselectRowAtIndexPath(indexPath, animated: true)
+			.subscribeNext(didSelectObj)
+			.addDisposableTo(disposeBag)
+		
+		tableView
+			.rx_itemAccessoryButtonTapped
+			.subscribeNext { (index) in
+				if let obj:Data=try? tableView.rx_modelAtIndexPath(index) {
+					tableView.selectRowAtIndexPath(index, animated: false, scrollPosition: UITableViewScrollPosition.None)
+					didSelectObj(obj)
 				}
-			}.addDisposableTo(disposeBag)
+		}
 		
 	}
 	
@@ -221,25 +247,57 @@ public class AutoSingleLevelTableViewManager<
 	
 	public func setupOnSelect(onSelect:OnSelectBehaviour<Data>)
 	{
+		func prepareSegue(segue:String,presentation:PresentationMode)
+		{
+			let detailSegue=segue
+			onClick={ _ in self.vc.performSegueWithIdentifier(segue, sender: nil) }
+			vc.rx_prepareForSegue.subscribeNext { (segue,_) in
+				guard let destVC=segue.destinationViewController as? UIViewController,
+					let identifier=segue.identifier else {return}
+				
+				if identifier==detailSegue {
+					switch presentation
+					{
+					case .Popover(let movableAnchor):
+						destVC.modalPresentationStyle = .Popover
+						destVC.popoverPresentationController!.delegate=popoverPresentationControllerDelegate
+						if let anchor=movableAnchor,
+							selected=self.tableView.indexPathForSelectedRow,
+							selectedCell=self.tableView.cellForRowAtIndexPath(selected)
+						{
+//							print("anchor.frame:"+NSStringFromCGRect(anchor.frame)+" selectedCell.frame:"+NSStringFromCGRect(selectedCell.frame))
+						
+							let cellCenter=CGPointMake(CGRectGetMidX(selectedCell.bounds),CGRectGetMidY(selectedCell.bounds))
+							let p=selectedCell.convertPoint(cellCenter, toView: anchor.superview)
+							anchor.frame=CGRectMake(p.x, p.y, 0, 0)
+							
+//							print("anchor.frame:"+NSStringFromCGRect(anchor.frame)+" selectedCell.frame:"+NSStringFromCGRect(selectedCell.frame))
+						}
+					default:
+						_=0
+					}
+					guard var dest=segue.destinationViewController as? DetailView
+						else {return}
+					dest.detailManager.object=self.clickedObj
+				}
+				}.addDisposableTo(disposeBag)
+		}
 		switch onSelect
 		{
-		case .Detail(let segue):
-			let detailSegue=segue
-			onClick={ row in
-				self.vc.performSegueWithIdentifier(segue, sender: nil)
-			}
+		case .Detail(let segue,let presentation):
 			let dec:CellDecorator={ (cell:UITableViewCell) in
 				cell.accessoryType=UITableViewCellAccessoryType.DisclosureIndicator
 			}
 			cellDecorators.append(dec)
-			vc.rx_prepareForSegue.subscribeNext { (segue,_) in
-				guard var dest=segue.destinationViewController as? DetailView,
-					let identifier=segue.identifier else {return}
-				if identifier==detailSegue
-				{
-					dest.detailManager.object=self.clickedObj
-				}
-				}.addDisposableTo(disposeBag)
+			prepareSegue(segue,presentation: presentation)
+			
+		case .Info(let segue,let presentation):
+			let dec:CellDecorator={ (cell:UITableViewCell) in
+				cell.accessoryType=UITableViewCellAccessoryType.DetailButton
+			}
+			cellDecorators.append(dec)
+			prepareSegue(segue,presentation: presentation)
+			
 		case .Action(let closure):
 			self.onClick=closure
 		}

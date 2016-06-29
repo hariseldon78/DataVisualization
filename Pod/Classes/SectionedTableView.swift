@@ -336,14 +336,22 @@ public class AutoSectionedTableViewManager<
 	var sectionDetailSegue:String?=nil
 	public func setupSectionOnSelect(onSelect:OnSelectBehaviour<Section>)
 	{
-		switch onSelect
+		func prepareSegue(segue:String)
 		{
-		case .Detail(let segue):
 			sectionDetailSegue=segue
 			onSectionClick = { row in
 				self.vc.performSegueWithIdentifier(segue, sender: nil)
 			}
 			listenForSegue()
+		}
+		switch onSelect
+		{
+		//FIXME: Supportare popover anche con sections
+		case .Detail(let segue,_):
+			prepareSegue(segue)
+		case .Info(let segue,_):
+			prepareSegue(segue)
+			
 		case .Action(let closure):
 			self.onSectionClick=closure
 		}
