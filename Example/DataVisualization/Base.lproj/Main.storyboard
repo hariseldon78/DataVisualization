@@ -713,6 +713,7 @@
                     <connections>
                         <outlet property="staticHeaderView" destination="ese-32-T7w" id="FA5-xJ-Ggr"/>
                         <outlet property="tableView" destination="eeS-Zv-R8D" id="v6O-qz-tf0"/>
+                        <segue destination="bda-FG-fWT" kind="show" identifier="detail" id="J3B-Au-i5W"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="ame-rf-VOt" sceneMemberID="firstResponder"/>
@@ -744,7 +745,7 @@
     <inferredMetricsTieBreakers>
         <segue reference="Ocb-JF-vfA"/>
         <segue reference="F8Q-eC-vSY"/>
-        <segue reference="bq7-cn-0fa"/>
+        <segue reference="J3B-Au-i5W"/>
         <segue reference="MvY-gL-nK7"/>
     </inferredMetricsTieBreakers>
 </document>

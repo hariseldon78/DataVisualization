@@ -20,7 +20,7 @@ class PlainViewController:UIViewController
 	override func viewDidLoad() {
 		super.viewDidLoad()
 		tvManager.setupTableView(tableView,vc:self)
-		tvManager.setupOnSelect(.Detail(segue:"detail"))
+		tvManager.setupOnSelect(.Detail(segue:"detail",presentation:.Push))
 	}
 }
 
@@ -50,7 +50,7 @@ class StaticViewController:UIViewController
 	override func viewDidLoad() {
 		super.viewDidLoad()
 		tvManager.setupTableView(tableView,vc:self)
-		tvManager.setupOnSelect(.Detail(segue:"detail"))
+		tvManager.setupOnSelect(.Info(segue:"detail",presentation:.Push))
 	}
 	override func viewDidAppear(animated: Bool) {
 		super.viewDidAppear(animated)
@@ -104,7 +104,7 @@ class FunkyViewController:UIViewController {
 	override func viewDidLoad() {
 		super.viewDidLoad()
 		tvManager.setupTableView(tableView,vc:self)
-		tvManager.setupOnSelect(.Detail(segue:"detail"))
+		tvManager.setupOnSelect(.Detail(segue:"detail",presentation:.Push))
 	}
 
 }
@@ -117,7 +117,7 @@ class PlainSectionedViewController:UIViewController {
 		super.viewDidLoad()
 		tvManager.setupTableView(tableView,vc:self)
 		tvManager.setupDataOnSelect(.SectionDetail(segue:"departmentDetail"))
-		tvManager.setupSectionOnSelect(.Detail(segue:"departmentDetail"))
+		tvManager.setupSectionOnSelect(.Detail(segue:"departmentDetail",presentation:.Push))
 	}
 }
 
