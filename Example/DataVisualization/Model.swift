@@ -31,9 +31,9 @@ struct Worker: WithCachedApi
 		}
 	}
 	
-	typealias CollectionViewModel=ConcreteViewModel<Worker,CollectionTitleCell>
-	static func defaultCollectionViewModel() -> CollectionViewModel {
-		return CollectionViewModel(cellName: "CollectionTitleCell") { (index, item, cell) -> Void in
+	typealias DefaultCollectionViewModel=ConcreteCollectionViewModel<Worker,CollectionTitleCell>
+	static func defaultCollectionViewModel() -> DefaultCollectionViewModel {
+		return DefaultCollectionViewModel(cellName: "CollectionTitleCell") { (index, item, cell) -> Void in
 			cell.title.text=item.name
 		}
 	}

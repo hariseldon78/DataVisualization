@@ -35,6 +35,14 @@ public protocol SectionViewModel:BaseViewModel {
 	func cellFactory(index:Int,item:Section,elements:[Element],cell:Cell)
 }
 
+public protocol CollectionViewModel:ViewModel {
+	static var columns:UInt {get}
+	static var horizontalBorder:CGFloat {get}
+	static var horizontalSpacing:CGFloat {get}
+	static var verticalBorder:CGFloat {get}
+	static var verticalSpacing:CGFloat {get}
+}
+
 public enum EmptyBehaviour {
 	case None
 	case LabelWithString(s:String)
@@ -92,6 +100,23 @@ public class ConcreteViewModel<Data,Cell:UIView>:BaseConcreteViewModel<Data,Cell
 	}
 }
 
+public class ConcreteCollectionViewModel<Data,Cell:UIView>:BaseConcreteViewModel<Data,Cell,(index:Int,item:Data,cell:Cell)->Void>,CollectionViewModel
+{
+	public override init(cellName:String,cellFactory:ClosureType) {
+		super.init(cellName:cellName,cellFactory:cellFactory)
+	}
+	public override init(cellFactory:ClosureType) {
+		super.init(cellFactory:cellFactory)
+	}
+	public func cellFactory(index: Int, item: Data, cell: Cell) {
+		self.cellFactoryClosure(index: index, item: item, cell: cell)
+	}
+	public class var columns: UInt {return 1}
+	public class var horizontalBorder:CGFloat {return 8}
+	public class var horizontalSpacing:CGFloat {return 8}
+	public class var verticalBorder:CGFloat {return 8}
+	public class var verticalSpacing:CGFloat {return 8}
+}
 public class ConcreteSectionViewModel<Section,Element,Cell:UIView>:BaseConcreteViewModel<Section,Cell,(index:Int,item:Section,elements:[Element],cell:Cell)->Void>,SectionViewModel
 {
 	
