@@ -35,6 +35,13 @@ struct Worker: WithCachedApi
 	static func defaultCollectionViewModel() -> DefaultCollectionViewModel {
 		return DefaultCollectionViewModel(cellName: "CollectionTitleCell") { (index, item, cell) -> Void in
 			cell.title.text=item.name
+			var s=String()
+			let max=Int(item.salary/100)*2
+			for _ in 0..<max {
+				s+=item.name
+				s+=" "
+			}
+			cell.details.text=s
 		}
 	}
 	

@@ -7,18 +7,23 @@
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
         <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
         <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" id="gTV-IL-0wX" customClass="CollectionTitleCell" customModule="DataVisualization_Example" customModuleProvider="target">
-            <rect key="frame" x="0.0" y="0.0" width="166" height="166"/>
+            <rect key="frame" x="0.0" y="0.0" width="166" height="216"/>
             <autoresizingMask key="autoresizingMask"/>
             <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
-                <rect key="frame" x="0.0" y="0.0" width="166" height="166"/>
+                <rect key="frame" x="0.0" y="0.0" width="166" height="216"/>
                 <subviews>
-                    <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" scrollEnabled="NO" editable="NO" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="VH3-Ib-nx3">
-                        <rect key="frame" x="8" y="8" width="150" height="150"/>
+                    <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" verticalHuggingPriority="251" scrollEnabled="NO" editable="NO" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="VH3-Ib-nx3">
+                        <rect key="frame" x="8" y="8" width="150" height="33"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
                             <constraint firstAttribute="width" constant="150" id="23L-Fn-qEU"/>
-                            <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="150" id="zkr-qQ-9n7"/>
                         </constraints>
+                        <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                        <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                    </textView>
+                    <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" scrollEnabled="NO" editable="NO" textAlignment="natural" selectable="NO" translatesAutoresizingMaskIntoConstraints="NO" id="m2t-61-3x5">
+                        <rect key="frame" x="8" y="49" width="150" height="159"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <fontDescription key="fontDescription" type="system" pointSize="14"/>
                         <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
                     </textView>
@@ -26,16 +31,20 @@
                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
             </view>
             <constraints>
+                <constraint firstItem="m2t-61-3x5" firstAttribute="top" secondItem="VH3-Ib-nx3" secondAttribute="bottom" constant="8" id="2dM-tr-IGR"/>
                 <constraint firstAttribute="trailing" secondItem="VH3-Ib-nx3" secondAttribute="trailing" constant="8" id="2tn-FT-z5X"/>
+                <constraint firstItem="m2t-61-3x5" firstAttribute="leading" secondItem="gTV-IL-0wX" secondAttribute="leading" constant="8" id="7Se-SU-Fk3"/>
+                <constraint firstAttribute="bottom" secondItem="m2t-61-3x5" secondAttribute="bottom" constant="8" id="9Gl-ZW-Wxf"/>
+                <constraint firstAttribute="trailing" secondItem="m2t-61-3x5" secondAttribute="trailing" constant="8" id="ASm-H0-QGB"/>
                 <constraint firstItem="VH3-Ib-nx3" firstAttribute="leading" secondItem="gTV-IL-0wX" secondAttribute="leading" constant="8" id="eno-at-iua"/>
-                <constraint firstAttribute="bottom" secondItem="VH3-Ib-nx3" secondAttribute="bottom" constant="8" id="fB4-6l-rd8"/>
                 <constraint firstItem="VH3-Ib-nx3" firstAttribute="top" secondItem="gTV-IL-0wX" secondAttribute="top" constant="8" id="jYE-Gf-dd6"/>
             </constraints>
-            <size key="customSize" width="191" height="182"/>
+            <size key="customSize" width="191" height="232"/>
             <connections>
+                <outlet property="details" destination="m2t-61-3x5" id="PwE-n6-dY6"/>
                 <outlet property="title" destination="VH3-Ib-nx3" id="VqZ-7d-V4a"/>
             </connections>
-            <point key="canvasLocation" x="264.5" y="563"/>
+            <point key="canvasLocation" x="264" y="588"/>
         </collectionViewCell>
     </objects>
 </document>

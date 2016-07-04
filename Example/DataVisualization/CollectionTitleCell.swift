@@ -11,6 +11,8 @@ import UIKit
 class CollectionTitleCell: UICollectionViewCell {
 
 	@IBOutlet weak var title: UITextView!
+	@IBOutlet weak var details: UITextView!
+	
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code
