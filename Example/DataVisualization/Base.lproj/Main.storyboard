@@ -87,6 +87,7 @@
                     <navigationItem key="navigationItem" title="plain" id="RAT-xR-Gze"/>
                     <connections>
                         <outlet property="collectionView" destination="J3P-3A-sEb" id="dXG-MA-y3p"/>
+                        <segue destination="bda-FG-fWT" kind="show" identifier="detail" id="Lmr-aU-E6o"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="aai-Jv-nkv" sceneMemberID="firstResponder"/>
@@ -743,9 +744,9 @@
         </scene>
     </scenes>
     <inferredMetricsTieBreakers>
-        <segue reference="Ocb-JF-vfA"/>
         <segue reference="F8Q-eC-vSY"/>
-        <segue reference="J3B-Au-i5W"/>
+        <segue reference="Ocb-JF-vfA"/>
         <segue reference="MvY-gL-nK7"/>
+        <segue reference="Lmr-aU-E6o"/>
     </inferredMetricsTieBreakers>
 </document>

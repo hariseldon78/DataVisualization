@@ -35,7 +35,7 @@ public typealias CellDecorator=(cell:UITableViewCell)->()
 public enum PresentationMode
 {
 	case Push
-	case Popover(movableAnchor:UIView?)
+//	case Popover(movableAnchor:UIView?)
 }
 public enum AccessoryStyle
 {
@@ -198,26 +198,6 @@ public class AutoSingleLevelTableViewManager<
 					let identifier=segue.identifier else {return}
 				
 				if identifier==detailSegue {
-					switch presentation
-					{
-					case .Popover(let movableAnchor):
-						destVC.modalPresentationStyle = .Popover
-						destVC.popoverPresentationController!.delegate=popoverPresentationControllerDelegate
-						if let anchor=movableAnchor,
-							selected=self.tableView.indexPathForSelectedRow,
-							selectedCell=self.tableView.cellForRowAtIndexPath(selected)
-						{
-//							print("anchor.frame:"+NSStringFromCGRect(anchor.frame)+" selectedCell.frame:"+NSStringFromCGRect(selectedCell.frame))
-						
-							let cellCenter=CGPointMake(CGRectGetMidX(selectedCell.bounds),CGRectGetMidY(selectedCell.bounds))
-							let p=selectedCell.convertPoint(cellCenter, toView: anchor.superview)
-							anchor.frame=CGRectMake(p.x, p.y, 0, 0)
-							
-//							print("anchor.frame:"+NSStringFromCGRect(anchor.frame)+" selectedCell.frame:"+NSStringFromCGRect(selectedCell.frame))
-						}
-					default:
-						_=0
-					}
 					guard var dest=segue.destinationViewController as? DetailView
 						else {return}
 					dest.detailManager.object=self.clickedObj

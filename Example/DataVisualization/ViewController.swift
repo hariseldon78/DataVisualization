@@ -33,7 +33,7 @@ class PlainCollectionViewController:UIViewController
 	override func viewDidLoad() {
 		super.viewDidLoad()
 		tvManager.setupCollectionView(collectionView,vc:self)
-//		tvManager.setupOnSelect(.Detail(segue:"detail"))
+		tvManager.setupOnSelect(.Segue(name:"detail",presentation:.Push))
 	}
 	
 }

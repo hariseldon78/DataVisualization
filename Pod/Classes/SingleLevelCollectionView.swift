@@ -128,6 +128,9 @@ public class AutoSingleLevelCollectionViewManager<
 	public let viewModel:DataViewModel
 	public var vc:UIViewController!
 	
+	var onClick:((row:Data)->())?=nil
+	var clickedObj:Data?
+
 	public required init(viewModel:DataViewModel){
 		self.viewModel=viewModel
 	}
@@ -144,28 +147,26 @@ public class AutoSingleLevelCollectionViewManager<
 		
 		registerDataCell(nib)
 		bindData()
-		self.collectionView.rx_setDelegate(self)
+		collectionView.rx_setDelegate(self)
+		
+		collectionView
+			.rx_modelSelected(Data.self)
+			.subscribeNext { (obj) in
+				self.clickedObj=obj
+				self.onClick?(row:obj)
+				collectionView.indexPathsForSelectedItems()?.forEach{ (indexPath) in
+					collectionView.deselectItemAtIndexPath(indexPath, animated: true)
+				}
+		}.addDisposableTo(disposeBag)
 	}
 	public func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAtIndexPath indexPath: NSIndexPath) -> CGSize {
 		// Set up desired width
 		let cols=DataViewModel.columns
 		let targetWidth = (collectionView.bounds.width - 2*DataViewModel.horizontalBorder - CGFloat(cols-1)*DataViewModel.horizontalSpacing) / CGFloat(cols)
-		
-		// Use fake cell to calculate height
-		//		let reuseIdentifier = "cell"
-		//		var cell: MyCollectionViewCell? = self.offscreenCells[reuseIdentifier] as? MyCollectionViewCell
-		//		if cell == nil {
-		//			cell = NSBundle.mainBundle().loadNibNamed("MyCollectionViewCell", owner: self, options: nil)[0] as? MyCollectionViewCell
-		//			self.offscreenCells[reuseIdentifier] = cell
-		//		}
-		//
-		//		// Config cell and let system determine size
-		//		cell!.configCell(titleData[indexPath.item] as String, content: contentData[indexPath.item] as String, titleFont: fontArray[indexPath.item] as String, contentFont: fontArray[indexPath.item] as String)
-		
+
 		if let cell=collectionView.cellForItemAtIndexPath(indexPath)
 		{
 			
-			// Cell's size is determined in nib file, need to set it's width (in this case), and inside, use this cell's width to set label's preferredMaxLayoutWidth, thus, height can be determined, this size will be returned for real cell initialization
 			cell.bounds = CGRectMake(0, 0, targetWidth, cell.bounds.height)
 			cell.contentView.bounds = cell.bounds
 			
@@ -197,4 +198,32 @@ public class AutoSingleLevelCollectionViewManager<
 		data.subscribeNext{ _ in
 		}.addDisposableTo(dataBindDisposeBag)
 	}
+	
+	public func setupOnSelect(onSelect:OnSelectBehaviour<Data>)
+	{
+		func prepareSegue(segue:String,presentation:PresentationMode)
+		{
+			let detailSegue=segue
+			onClick={ _ in self.vc.performSegueWithIdentifier(segue, sender: nil) }
+			vc.rx_prepareForSegue.subscribeNext { (segue,_) in
+				guard let destVC=segue.destinationViewController as? UIViewController,
+					let identifier=segue.identifier else {return}
+				
+				if identifier==detailSegue {
+					guard var dest=segue.destinationViewController as? DetailView
+						else {return}
+					dest.detailManager.object=self.clickedObj
+				}
+				}.addDisposableTo(disposeBag)
+		}
+		switch onSelect
+		{
+		case .Segue(let name,let presentation):
+			prepareSegue(name,presentation: presentation)
+			
+		case .Action(let closure):
+			self.onClick=closure
+		}
+	}
+	
 }
