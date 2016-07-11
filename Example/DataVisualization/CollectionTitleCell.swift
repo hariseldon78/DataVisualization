@@ -30,12 +30,14 @@ class CollectionTitleCell: UICollectionViewCell {
 	@IBOutlet weak var detailsHeight: NSLayoutConstraint!
     override func awakeFromNib() {
         super.awakeFromNib()
+		print("awakeFromNib")
         // Initialization code
 		
 		Observable<Int>
-			.timer(Double(random()%10), period: Double(random()%10), scheduler: MainScheduler.instance)
+			.timer(Double(random()%10+2), period: Double(random()%10+2), scheduler: MainScheduler.instance)
 			.subscribeNext { _ in
 				self.detailsWidth.constant=20.0+CGFloat(random()%300)
+				print("invalidateLayout")
 				self.collectionView?.collectionViewLayout.invalidateLayout()
 		}.addDisposableTo(disposeBag)
     }

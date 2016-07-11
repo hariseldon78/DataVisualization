@@ -161,6 +161,7 @@ public class AutoSingleLevelCollectionViewManager<
 	}
 	public func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAtIndexPath indexPath: NSIndexPath) -> CGSize {
 		// Set up desired width
+		print("sizeForItemAtIndexPath:\(indexPath)")
 		let cols=DataViewModel.columns
 		let targetWidth = (collectionView.bounds.width - 2*DataViewModel.horizontalBorder - CGFloat(cols-1)*DataViewModel.horizontalSpacing) / CGFloat(cols)
 
