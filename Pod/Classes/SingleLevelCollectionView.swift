@@ -138,7 +138,7 @@ public class AutoSingleLevelCollectionViewManager<
 	public func setupCollectionView(collectionView: UICollectionView,vc:UIViewController)
 	{
 		guard let nib=viewModel.cellNib else {
-			fatalError("No cellNib defined: are you using ConcreteViewModel properly?")
+			DataVisualization.fatalError("No cellNib defined: are you using ConcreteViewModel properly?")
 		}
 		
 		self.vc=vc

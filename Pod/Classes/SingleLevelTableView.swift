@@ -102,7 +102,7 @@ public class AutoSingleLevelTableViewManager<
 	public func setupTableView(tableView:UITableView,vc:UIViewController)
 	{
 		guard let nib=viewModel.cellNib else {
-			fatalError("No cellNib defined: are you using ConcreteViewModel properly?")
+			DataVisualization.fatalError("No cellNib defined: are you using ConcreteViewModel properly?")
 		}
 		
 		self.vc=vc
@@ -239,7 +239,7 @@ public class AutoSearchableSingleLevelTableViewManager<DataType,DataViewModel wh
 	public var filteringClosure:FilteringClosure
 	let searchStyle:SearchControllerStyle
 	public var search:Observable<String> {
-		guard let searchBar=searchController.searchBar as? CustomSearchBar else {fatalError()}
+		guard let searchBar=searchController.searchBar as? CustomSearchBar else {DataVisualization.fatalError()}
 		return searchBar.rx_textOrCancel.asObservable()
 	}
 	public override var data:Observable<[Data]> {

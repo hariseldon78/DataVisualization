@@ -55,11 +55,7 @@ class CustomSearchBar: UISearchBar {
 		
 		func bindingErrorToInterface(error: ErrorType) {
 			let error = "Binding error to UI: \(error)"
-			#if DEBUG
-				fatalError(error)
-			#else
-				print(error)
-			#endif
+			DataVisualization.nonFatalError(error)
 		}
 		
 		let cancelMeansNoText=rx_cancel.map{""}

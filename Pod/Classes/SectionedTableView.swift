@@ -190,7 +190,9 @@ public class AutoSectionedTableViewManager<
 	{
 		guard let dataNib=elementViewModel.cellNib,
 			sectionNib=sectionViewModel.cellNib
-			else {fatalError("No cellNib defined: are you using ConcreteViewModel properly?")}
+			else {
+				DataVisualization.fatalError("No cellNib defined: are you using ConcreteViewModel properly?")
+		}
 		
 		self.vc=vc
 		self.tableView=tableView
@@ -205,7 +207,9 @@ public class AutoSectionedTableViewManager<
 		dataSource.configureCell={
 			(dataSource,tableView,indexPath,item:Element) in
 			guard let cell=tableView.dequeueReusableCellWithIdentifier("cell")
-				else {fatalError("why no cell?")}
+				else {
+					DataVisualization.fatalError("why no cell?")
+			}
 			self.elementViewModel.cellFactory(
 				indexPath.row, item: item, cell: cell as! ElementViewModel.Cell)
 			cell.setNeedsUpdateConstraints()
@@ -270,7 +274,9 @@ public class AutoSectionedTableViewManager<
 		viewForHeaderInSection section: Int) -> UIView?
 	{
 		guard let hv=tableView.dequeueReusableHeaderFooterViewWithIdentifier("section")
-			else {fatalError("why no section cell?")}
+			else {
+				DataVisualization.fatalError("why no section cell?")
+		}
 		let sec=sections.value[section]
 		
 		sectionViewModel.cellFactory(section, item:sec.model, elements:sec.items, cell:hv as! SectionViewModel.Cell)
@@ -429,7 +435,7 @@ public class AutoSearchableSectionedTableViewManager<
 	public typealias DataFilteringClosure=(d:Element,s:String)->Bool
 	public typealias SectionFilteringClosure=(d:Section,s:String)->Bool
 	public var search:Observable<String> {
-		guard let searchBar=searchController.searchBar as? CustomSearchBar else {fatalError()}
+		guard let searchBar=searchController.searchBar as? CustomSearchBar else {DataVisualization.fatalError()}
 		return searchBar.rx_textOrCancel.asObservable()
 	}
 	public var allData:Observable<[SectionAndData]> {
