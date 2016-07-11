@@ -17,23 +17,18 @@
   },
   "requires_arc": true,
   "source_files": "Pod/Classes/**/*",
-  "resource_bundles": {
-    "DataVisualization": [
-      "Pod/Assets/*.png"
-    ]
-  },
   "dependencies": {
     "Cartography": [
 
     ],
     "RxDataSources": [
-      "~> 0.6"
+      "~> 0.9"
     ],
     "RxSwift": [
-      "~> 2.2"
+
     ],
     "RxCocoa": [
-      "~> 2.2"
+
     ]
   }
 }
