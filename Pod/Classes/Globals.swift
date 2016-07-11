@@ -8,7 +8,7 @@
 
 import Foundation
 
-class DataVisualization {
+public class DataVisualization {
 	static public var nonFatalErrorMessageHandler:((String)->())={ e  in
 		fatalError(e)
 	}
