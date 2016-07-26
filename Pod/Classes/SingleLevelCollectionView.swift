@@ -127,6 +127,7 @@ public class AutoSingleLevelCollectionViewManager<
 	public var dataBindDisposeBag=DisposeBag()
 	public let viewModel:DataViewModel
 	public var vc:UIViewController!
+	var cellSizesCache=[NSIndexPath:CGSize]()
 	
 	var onClick:((row:Data)->())?=nil
 	var clickedObj:Data?
@@ -161,13 +162,11 @@ public class AutoSingleLevelCollectionViewManager<
 	}
 	public func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAtIndexPath indexPath: NSIndexPath) -> CGSize {
 		// Set up desired width
-		print("sizeForItemAtIndexPath:\(indexPath)")
 		let cols=DataViewModel.columns
 		let targetWidth = (collectionView.bounds.width - 2*DataViewModel.horizontalBorder - CGFloat(cols-1)*DataViewModel.horizontalSpacing) / CGFloat(cols)
 
 		if let cell=collectionView.cellForItemAtIndexPath(indexPath)
 		{
-			
 			cell.bounds = CGRectMake(0, 0, targetWidth, cell.bounds.height)
 			cell.contentView.bounds = cell.bounds
 			
@@ -178,7 +177,11 @@ public class AutoSingleLevelCollectionViewManager<
 			var size = cell.contentView.systemLayoutSizeFittingSize(UILayoutFittingCompressedSize)
 			// Still need to force the width, since width can be smalled due to break mode of labels
 			size.width = targetWidth
+			
+			cellSizesCache[indexPath]=size
 			return size
+		} else if let cachedSize=cellSizesCache[indexPath] {
+			return cachedSize
 		}
 		return CGSizeMake(100, 100)
 	}
