@@ -49,7 +49,7 @@ struct Worker: WithCachedApi
 	let name:String
 	let salary:Double
 	let departmentId:UInt
-	static func api(viewForActivityIndicator: UIView?) -> Observable<[Worker]> {
+	static func api(viewForActivityIndicator: UIView?,params:[String:AnyObject]?=nil) -> Observable<[Worker]> {
 		var array=[
 			[
 				"id":0,
@@ -128,6 +128,18 @@ struct Worker: WithCachedApi
 			"departmentId":0
 			])
 
+		if let params=params,
+			name=params["name"] as? String,
+			salary=params["salary"] as? Double,
+			department=params["department"] as? UInt {
+				array.append([
+					"id":12,
+					"name":name,
+					"salary":salary,
+					"departmentId":department
+				])
+		}
+		
 		
 		return Observable.create({ (observer) -> Disposable in
 			assert(NSThread.currentThread() != NSThread.mainThread())

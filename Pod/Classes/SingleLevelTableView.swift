@@ -81,7 +81,7 @@ public class AutoSingleLevelTableViewManager<
 {
 	public typealias Data=DataType
 	public var data:Observable<[Data]> {
-		return DataType.api(tableView)
+		return DataType.api(tableView,params: apiParams)
 			.subscribeOn(backgroundScheduler)
 			.map {$0}
 			.shareReplayLatestWhileConnected()
@@ -92,12 +92,14 @@ public class AutoSingleLevelTableViewManager<
 	public let viewModel:DataViewModel
 	public var vc:UIViewController!
 	public var tableView:UITableView!
+	public let apiParams:[String:AnyObject]?
 	
 	var onClick:((row:Data)->())?=nil
 	var clickedObj:Data?
 	
-	public required init(viewModel:DataViewModel){
+	public required init(viewModel:DataViewModel,apiParams:[String:AnyObject]?=nil){
 		self.viewModel=viewModel
+		self.apiParams=apiParams
 	}
 	public func setupTableView(tableView:UITableView,vc:UIViewController)
 	{
@@ -243,7 +245,7 @@ public class AutoSearchableSingleLevelTableViewManager<DataType,DataViewModel wh
 		return searchBar.rx_textOrCancel.asObservable()
 	}
 	public override var data:Observable<[Data]> {
-		let allData=DataType.api(tableView)
+		let allData=DataType.api(tableView,params:apiParams)
 			.subscribeOn(backgroundScheduler)
 			.map{$0}
 			.observeOn(MainScheduler.instance)
@@ -263,10 +265,10 @@ public class AutoSearchableSingleLevelTableViewManager<DataType,DataViewModel wh
 		
 	}
 	
-	public init(viewModel:DataViewModel,filteringClosure:FilteringClosure,searchStyle:SearchControllerStyle = .SearchBarInNavigationBar) {
+	public init(viewModel:DataViewModel,filteringClosure:FilteringClosure,searchStyle:SearchControllerStyle = .SearchBarInNavigationBar,apiParams:[String:AnyObject]?=nil) {
 		self.searchStyle=searchStyle
 		self.filteringClosure=filteringClosure
-		super.init(viewModel: viewModel)
+		super.init(viewModel: viewModel,apiParams:apiParams)
 	}
 	public override func setupTableView(tableView:UITableView,vc:UIViewController)
 	{

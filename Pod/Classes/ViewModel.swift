@@ -132,7 +132,7 @@ public class ConcreteSectionViewModel<Section,Element,Cell:UIView>:BaseConcreteV
 }
 
 public protocol WithApi {
-	static func api(viewForActivityIndicator:UIView?)->Observable<[Self]>
+	static func api(viewForActivityIndicator:UIView?,params:[String:AnyObject]?)->Observable<[Self]>
 }
 public protocol Cached {
 	static func invalidateCache()

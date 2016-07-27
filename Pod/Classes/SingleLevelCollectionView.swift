@@ -116,8 +116,9 @@ public class AutoSingleLevelCollectionViewManager<
 	public var collectionView: UICollectionView!
 	public typealias Data=DataType
 	public typealias DataViewModel=DataViewModelType
+	public let apiParams:[String:AnyObject]?
 	public var data:Observable<[Data]> {
-		return DataType.api(collectionView)
+		return DataType.api(collectionView,params: apiParams)
 			.subscribeOn(backgroundScheduler)
 			.map {$0}
 			.shareReplayLatestWhileConnected()
@@ -132,8 +133,9 @@ public class AutoSingleLevelCollectionViewManager<
 	var onClick:((row:Data)->())?=nil
 	var clickedObj:Data?
 
-	public required init(viewModel:DataViewModel){
+	public required init(viewModel:DataViewModel,apiParams:[String:AnyObject]?=nil){
 		self.viewModel=viewModel
+		self.apiParams=apiParams
 	}
 	
 	public func setupCollectionView(collectionView: UICollectionView,vc:UIViewController)

@@ -16,7 +16,7 @@ class PlainViewController:UIViewController
 	@IBOutlet weak var tableView: UITableView!
 	var tvManager=AutoSearchableSingleLevelTableViewManager (viewModel: Worker.defaultViewModel(), filteringClosure: { (d:Worker, s:String) -> Bool in
 		return d.name.uppercaseString.containsString(s.uppercaseString)
-	})
+	}, apiParams: ["name":"ApiParams","salary":Double(4000.0),"department":UInt(8)])
 	override func viewDidLoad() {
 		super.viewDidLoad()
 		tvManager.setupTableView(tableView,vc:self)
