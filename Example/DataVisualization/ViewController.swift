@@ -14,13 +14,42 @@ import DataVisualization
 class PlainViewController:UIViewController
 {
 	@IBOutlet weak var tableView: UITableView!
-	var tvManager=AutoSearchableSingleLevelTableViewManager (viewModel: Worker.defaultViewModel(), filteringClosure: { (d:Worker, s:String) -> Bool in
-		return d.name.uppercaseString.containsString(s.uppercaseString)
-	}, apiParams: ["name":"ApiParams","salary":Double(4000.0),"department":UInt(8)])
+
+	var tvManager:AutoSearchableSingleLevelTableViewManager<Worker,Worker.DefaultViewModel>!
+	let dataExtractor=ApiExtractor<Worker>(apiParams:["name":"ApiParams","salary":Double(4000.0),"department":UInt(8)])
 	override func viewDidLoad() {
 		super.viewDidLoad()
+		tvManager=AutoSearchableSingleLevelTableViewManager(
+			viewModel: Worker.defaultViewModel(),
+			filteringClosure: { (d:Worker, s:String) -> Bool in
+				return d.name.uppercaseString.containsString(s.uppercaseString)
+			},
+			dataExtractor: dataExtractor)
 		tvManager.setupTableView(tableView,vc:self)
 		tvManager.setupOnSelect(.Detail,.Segue(name:"detail",presentation:.Push))
+	}
+}
+
+struct StaticData{
+	let s:String
+	typealias DefaultViewModel=ConcreteViewModel<StaticData,TitleCell>
+	static func defaultViewModel() -> DefaultViewModel {
+		return DefaultViewModel(cellName: "TitleCell") { (index, item, cell) in
+			cell.title.text=item.s
+		}
+	}
+}
+class NoApiViewController:UIViewController
+{
+	@IBOutlet weak var tableView: UITableView!
+	let staticList=[StaticData(s:"ciccio"),StaticData(s:"pasticcio"),StaticData(s:"gigino")]
+	var tvManager:AutoSingleLevelTableViewManager<StaticData,StaticData.DefaultViewModel>!
+	override func viewDidLoad() {
+		super.viewDidLoad()
+		tvManager=AutoSingleLevelTableViewManager(
+			viewModel: StaticData.defaultViewModel(),
+			dataExtractor: StaticExtractor(source:Observable.just(staticList)))
+		tvManager.setupTableView(tableView,vc:self)
 	}
 }
 
@@ -45,7 +74,7 @@ class StaticViewController:UIViewController
 	@IBOutlet var staticHeaderView: UIView!
 	var tvManager=AutoSearchableSingleLevelTableViewManager (viewModel: Worker.defaultViewModel(), filteringClosure: { (d:Worker, s:String) -> Bool in
 		return d.name.uppercaseString.containsString(s.uppercaseString)
-	})
+	},dataExtractor:ApiExtractor<Worker>())
 	
 	override func viewDidLoad() {
 		super.viewDidLoad()
@@ -64,7 +93,7 @@ class NoStoryboardViewController:UIViewController
 	@IBOutlet weak var tableView: UITableView!
 	var tvManager=AutoSearchableSingleLevelTableViewManager (viewModel: Worker.defaultViewModel(), filteringClosure: { (d:Worker, s:String) -> Bool in
 		return d.name.uppercaseString.containsString(s.uppercaseString)
-	})
+	},dataExtractor:ApiExtractor<Worker>())
 	init(){
 		super.init(nibName:"NibVC",bundle:NSBundle.mainBundle())
 	}
@@ -82,7 +111,7 @@ class PlainNoDetViewController:UIViewController
 {
 	
 	@IBOutlet weak var tableView: UITableView!
-	var tvManager=AutoSingleLevelTableViewManager(viewModel: Worker.defaultViewModel())
+	var tvManager=AutoSingleLevelTableViewManager(viewModel: Worker.defaultViewModel(),dataExtractor:ApiExtractor<Worker>())
 	override func viewDidLoad() {
 		super.viewDidLoad()
 		tvManager.setupTableView(tableView,vc:self)
@@ -100,7 +129,7 @@ class FunkyViewController:UIViewController {
 		(index:Int, item, cell:DataViewModel.Cell) -> Void in
 		cell.title.text=item.name
 		cell.subtitle.text="salary: €\(item.salary)"
-		})
+		},dataExtractor:ApiExtractor<Worker>())
 	override func viewDidLoad() {
 		super.viewDidLoad()
 		tvManager.setupTableView(tableView,vc:self)

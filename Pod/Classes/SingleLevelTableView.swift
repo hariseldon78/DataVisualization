@@ -19,7 +19,7 @@ public protocol Disposer {
 let backgroundScheduler=OperationQueueScheduler(operationQueue: NSOperationQueue())
 
 public protocol AutoSingleLevelDataView:Disposer {
-	typealias Data:WithApi
+	typealias Data/*:WithApi*/
 	typealias DataViewModel:ViewModel // where DataViewModel.Data==Data
 	
 	var viewModel:DataViewModel {get}
@@ -70,7 +70,6 @@ public class AutoSingleLevelTableViewManager<
 	DataType,
 	DataViewModel
 	where
-	DataType:WithApi,
 	DataViewModel:ViewModel,
 	DataViewModel.Data==DataType>
 	
@@ -81,25 +80,22 @@ public class AutoSingleLevelTableViewManager<
 {
 	public typealias Data=DataType
 	public var data:Observable<[Data]> {
-		return DataType.api(tableView,params: apiParams)
-			.subscribeOn(backgroundScheduler)
-			.map {$0}
-			.shareReplayLatestWhileConnected()
-			.observeOn(MainScheduler.instance)
+		return dataExtractor.data()
 	}
 	public let disposeBag=DisposeBag()
 	public var dataBindDisposeBag=DisposeBag()
 	public let viewModel:DataViewModel
 	public var vc:UIViewController!
 	public var tableView:UITableView!
-	public let apiParams:[String:AnyObject]?
+	public var dataExtractor:DataExtractorBase<Data>
 	
 	var onClick:((row:Data)->())?=nil
 	var clickedObj:Data?
 	
-	public required init(viewModel:DataViewModel,apiParams:[String:AnyObject]?=nil){
+	public required init(viewModel:DataViewModel,dataExtractor:DataExtractorBase<Data>){
 		self.viewModel=viewModel
-		self.apiParams=apiParams
+		self.dataExtractor=dataExtractor
+		self.dataExtractor.viewForActivityIndicator=tableView
 	}
 	public func setupTableView(tableView:UITableView,vc:UIViewController)
 	{
@@ -234,7 +230,15 @@ public class AutoSingleLevelTableViewManager<
 	
 }
 
-public class AutoSearchableSingleLevelTableViewManager<DataType,DataViewModel where DataType:WithApi,DataViewModel:ViewModel,DataViewModel.Data==DataType>:AutoSingleLevelTableViewManager<DataType,DataViewModel>,Searchable
+public class AutoSearchableSingleLevelTableViewManager<
+	DataType,
+	DataViewModel
+	where
+	DataViewModel:ViewModel,
+	DataViewModel.Data==DataType>
+	
+	: AutoSingleLevelTableViewManager<DataType,DataViewModel>,
+	Searchable
 {
 	public var searchController:UISearchController!
 	public typealias FilteringClosure=(d:DataType,s:String)->Bool
@@ -245,11 +249,7 @@ public class AutoSearchableSingleLevelTableViewManager<DataType,DataViewModel wh
 		return searchBar.rx_textOrCancel.asObservable()
 	}
 	public override var data:Observable<[Data]> {
-		let allData=DataType.api(tableView,params:apiParams)
-			.subscribeOn(backgroundScheduler)
-			.map{$0}
-			.observeOn(MainScheduler.instance)
-			.shareReplayLatestWhileConnected()
+		let allData=super.data
 		
 		let dataOrSearch=Observable.combineLatest(allData,search) {
 			(d:[Data],s:String)->[Data] in
@@ -265,10 +265,10 @@ public class AutoSearchableSingleLevelTableViewManager<DataType,DataViewModel wh
 		
 	}
 	
-	public init(viewModel:DataViewModel,filteringClosure:FilteringClosure,searchStyle:SearchControllerStyle = .SearchBarInNavigationBar,apiParams:[String:AnyObject]?=nil) {
+	public init(viewModel:DataViewModel,filteringClosure:FilteringClosure,searchStyle:SearchControllerStyle = .SearchBarInNavigationBar,dataExtractor:DataExtractorBase<Data>) {
 		self.searchStyle=searchStyle
 		self.filteringClosure=filteringClosure
-		super.init(viewModel: viewModel,apiParams:apiParams)
+		super.init(viewModel: viewModel,dataExtractor:dataExtractor)
 	}
 	public override func setupTableView(tableView:UITableView,vc:UIViewController)
 	{
