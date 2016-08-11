@@ -201,7 +201,23 @@ public class AutoSingleLevelCollectionViewManager<
 				self.collectionView.collectionViewLayout.invalidateLayout()
 		}.addDisposableTo(dataBindDisposeBag)
 		
-		data.subscribeNext{ _ in
+//		data.subscribeNext{ _ in
+//		}.addDisposableTo(dataBindDisposeBag)
+		
+		handleEmpty()
+	}
+	
+	func handleEmpty()
+	{
+		data
+			.map { $0.isEmpty }
+			.observeOn(MainScheduler.instance)
+			.subscribeNext{ empty in
+				if empty {
+					self.collectionView.backgroundView=self.viewModel.viewForEmptyList
+				} else {
+					self.collectionView.backgroundView=nil
+				}
 		}.addDisposableTo(dataBindDisposeBag)
 	}
 	
