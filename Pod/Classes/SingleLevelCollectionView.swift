@@ -104,7 +104,6 @@ public class AutoSingleLevelCollectionViewManager<
 	DataType,
 	DataViewModelType
 	where
-	DataType:WithApi,
 	DataViewModelType:CollectionViewModel,
 	DataViewModelType.Data==DataType>
 	
@@ -114,15 +113,17 @@ public class AutoSingleLevelCollectionViewManager<
 	ControllerWithCollectionView
 {
 	public var collectionView: UICollectionView!
+	public var dataExtractor:DataExtractorBase<Data>
 	public typealias Data=DataType
 	public typealias DataViewModel=DataViewModelType
-	public let apiParams:[String:AnyObject]?
 	public var data:Observable<[Data]> {
-		return DataType.api(collectionView,params: apiParams)
-			.subscribeOn(backgroundScheduler)
-			.map {$0}
-			.shareReplayLatestWhileConnected()
-			.observeOn(MainScheduler.instance)
+		return dataExtractor.data()
+			
+//			DataType.api(collectionView,params: apiParams)
+//			.subscribeOn(backgroundScheduler)
+//			.map {$0}
+//			.shareReplayLatestWhileConnected()
+//			.observeOn(MainScheduler.instance)
 	}
 	public let disposeBag=DisposeBag()
 	public var dataBindDisposeBag=DisposeBag()
@@ -133,9 +134,9 @@ public class AutoSingleLevelCollectionViewManager<
 	var onClick:((row:Data)->())?=nil
 	var clickedObj:Data?
 
-	public required init(viewModel:DataViewModel,apiParams:[String:AnyObject]?=nil){
+	public required init(viewModel:DataViewModel,dataExtractor:DataExtractorBase<Data>){
 		self.viewModel=viewModel
-		self.apiParams=apiParams
+		self.dataExtractor=dataExtractor
 	}
 	
 	public func setupCollectionView(collectionView: UICollectionView,vc:UIViewController)

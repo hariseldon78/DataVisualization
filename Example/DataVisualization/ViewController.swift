@@ -56,9 +56,7 @@ class NoApiViewController:UIViewController
 class PlainCollectionViewController:UIViewController
 {
 	@IBOutlet weak var collectionView: UICollectionView!
-	var tvManager=AutoSingleLevelCollectionViewManager (viewModel: Worker.defaultCollectionViewModel()/*, filteringClosure: { (d:Worker, s:String) -> Bool in
-		return d.name.uppercaseString.containsString(s.uppercaseString)
-	}*/)
+	var tvManager=AutoSingleLevelCollectionViewManager (viewModel: Worker.defaultCollectionViewModel(),dataExtractor:ApiExtractor())
 	override func viewDidLoad() {
 		super.viewDidLoad()
 		tvManager.setupCollectionView(collectionView,vc:self)
@@ -93,7 +91,7 @@ class NoStoryboardViewController:UIViewController
 	@IBOutlet weak var tableView: UITableView!
 	var tvManager=AutoSearchableSingleLevelTableViewManager (viewModel: Worker.defaultViewModel(), filteringClosure: { (d:Worker, s:String) -> Bool in
 		return d.name.uppercaseString.containsString(s.uppercaseString)
-	},dataExtractor:ApiExtractor<Worker>())
+	},dataExtractor:ApiExtractor())
 	init(){
 		super.init(nibName:"NibVC",bundle:NSBundle.mainBundle())
 	}
@@ -111,7 +109,7 @@ class PlainNoDetViewController:UIViewController
 {
 	
 	@IBOutlet weak var tableView: UITableView!
-	var tvManager=AutoSingleLevelTableViewManager(viewModel: Worker.defaultViewModel(),dataExtractor:ApiExtractor<Worker>())
+	var tvManager=AutoSingleLevelTableViewManager(viewModel: Worker.defaultViewModel(),dataExtractor:ApiExtractor())
 	override func viewDidLoad() {
 		super.viewDidLoad()
 		tvManager.setupTableView(tableView,vc:self)
@@ -129,7 +127,7 @@ class FunkyViewController:UIViewController {
 		(index:Int, item, cell:DataViewModel.Cell) -> Void in
 		cell.title.text=item.name
 		cell.subtitle.text="salary: €\(item.salary)"
-		},dataExtractor:ApiExtractor<Worker>())
+		},dataExtractor:ApiExtractor())
 	override func viewDidLoad() {
 		super.viewDidLoad()
 		tvManager.setupTableView(tableView,vc:self)
