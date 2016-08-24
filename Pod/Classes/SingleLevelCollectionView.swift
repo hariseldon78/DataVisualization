@@ -151,6 +151,8 @@ public class AutoSingleLevelCollectionViewManager<
 		
 		registerDataCell(nib)
 		bindData()
+		
+		collectionView.delegate=nil
 		collectionView.rx_setDelegate(self)
 		
 		collectionView

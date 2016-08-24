@@ -105,7 +105,8 @@ public class AutoSingleLevelTableViewManager<
 		
 		self.vc=vc
 		self.tableView=tableView
-
+		
+		tableView.delegate=nil
 		tableView.rx_setDelegate(self)
 		
 		registerDataCell(nib)
