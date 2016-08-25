@@ -8,8 +8,8 @@ end
 target 'DataVisualization_Tests' do
   pod "DataVisualization", :path => "../"
 
-  pod 'Quick', '~> 0.8.0'
-#  pod 'Nimble', '3.0.0'
+  pod 'Quick'
+  pod 'Nimble'
 #  pod 'FBSnapshotTestCase'
 #  pod 'Nimble-Snapshots'
 

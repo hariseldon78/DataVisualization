@@ -1,10 +1,10 @@
-// https://github.com/Quick/Quick
-
-import Quick
+//// https://github.com/Quick/Quick
+//
+//import Quick
 //import Nimble
-import DataVisualization
-
-class TableOfContentsSpec: QuickSpec {
+//import DataVisualization
+//
+//class TableOfContentsSpec: QuickSpec {
 //    override func spec() {
 //        describe("these will fail") {
 //
@@ -47,4 +47,4 @@ class TableOfContentsSpec: QuickSpec {
 //            }
 //        }
 //    }
-}
+//}

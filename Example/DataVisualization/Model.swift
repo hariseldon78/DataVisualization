@@ -35,6 +35,7 @@ struct Worker: WithCachedApi
 	static func defaultCollectionViewModel() -> DefaultCollectionViewModel {
 		return DefaultCollectionViewModel(cellName: "CollectionTitleCell") { (index, item, cell) -> Void in
 			cell.title.text=item.name
+			cell.indexPath=NSIndexPath(forItem: index,inSection: 0)
 			var s=String()
 			let max=Int(item.salary/100)*2
 			for _ in 0..<max {

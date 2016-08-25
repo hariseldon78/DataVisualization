@@ -28,6 +28,8 @@ class CollectionTitleCell: UICollectionViewCell {
 	
 	@IBOutlet weak var detailsWidth: NSLayoutConstraint!
 	@IBOutlet weak var detailsHeight: NSLayoutConstraint!
+	
+	var indexPath:NSIndexPath?
     override func awakeFromNib() {
         super.awakeFromNib()
 		print("awakeFromNib")
@@ -37,8 +39,15 @@ class CollectionTitleCell: UICollectionViewCell {
 			.timer(Double(random()%10+2), period: Double(random()%10+2), scheduler: MainScheduler.instance)
 			.subscribeNext { _ in
 				self.detailsWidth.constant=20.0+CGFloat(random()%300)
-				print("invalidateLayout")
-				self.collectionView?.collectionViewLayout.invalidateLayout()
+//				if let ip=self.indexPath {
+//					print("invalidateLayoutWithContext \(self.indexPath)")
+//					let context=UICollectionViewLayoutInvalidationContext()
+//					context.invalidateItemsAtIndexPaths([ip])
+//					self.collectionView?.collectionViewLayout.invalidateLayoutWithContext(context)
+//				} else {
+					print("invalidateLayout")
+					self.collectionView?.collectionViewLayout.invalidateLayout()
+//				}
 		}.addDisposableTo(disposeBag)
     }
 

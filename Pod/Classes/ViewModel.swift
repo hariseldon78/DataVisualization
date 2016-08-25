@@ -35,12 +35,16 @@ public protocol SectionViewModel:BaseViewModel {
 	func cellFactory(index:Int,item:Section,elements:[Element],cell:Cell)
 }
 
+public struct CellSpacings {
+	var horizontalBorder:CGFloat
+	var horizontalSpacing:CGFloat
+	var verticalBorder:CGFloat
+	var verticalSpacing:CGFloat
+}
+
 public protocol CollectionViewModel:ViewModel {
 	static var columns:UInt {get}
-	static var horizontalBorder:CGFloat {get}
-	static var horizontalSpacing:CGFloat {get}
-	static var verticalBorder:CGFloat {get}
-	static var verticalSpacing:CGFloat {get}
+	static var spacings:CellSpacings {get}
 }
 
 public enum EmptyBehaviour {
@@ -112,10 +116,11 @@ public class ConcreteCollectionViewModel<Data,Cell:UIView>:BaseConcreteViewModel
 		self.cellFactoryClosure(index: index, item: item, cell: cell)
 	}
 	public class var columns: UInt {return 1}
-	public class var horizontalBorder:CGFloat {return 8}
-	public class var horizontalSpacing:CGFloat {return 8}
-	public class var verticalBorder:CGFloat {return 8}
-	public class var verticalSpacing:CGFloat {return 8}
+	public class var spacings:CellSpacings {
+		return CellSpacings(horizontalBorder: 8,
+		                    horizontalSpacing: 8,
+		                    verticalBorder: 8,
+		                    verticalSpacing: 8)}
 }
 public class ConcreteSectionViewModel<Section,Element,Cell:UIView>:BaseConcreteViewModel<Section,Cell,(index:Int,item:Section,elements:[Element],cell:Cell)->Void>,SectionViewModel
 {

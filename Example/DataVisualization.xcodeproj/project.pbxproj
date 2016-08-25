@@ -18,6 +18,7 @@
 		FB2E892E1D19F5B200883E3A /* CollectionTitleCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB2E892C1D19F5B200883E3A /* CollectionTitleCell.swift */; };
 		FB2E892F1D19F5B200883E3A /* CollectionTitleCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = FB2E892D1D19F5B200883E3A /* CollectionTitleCell.xib */; };
 		FB300EB01C3DFDEF00DC6AE5 /* NibVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = FB300EAE1C3DFDEE00DC6AE5 /* NibVC.xib */; };
+		FBBB78C61D6E57BB0065A33C /* CacheTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBBB78C41D6E57B60065A33C /* CacheTests.swift */; };
 		FBBE179A1C307FE3005E1E5C /* FunkyCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBBE17981C307FE3005E1E5C /* FunkyCell.swift */; };
 		FBBE179B1C307FE3005E1E5C /* FunkyCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = FBBE17991C307FE3005E1E5C /* FunkyCell.xib */; };
 		FBC024DD1C303BAF00F4700D /* Model.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBC024DC1C303BAF00F4700D /* Model.swift */; };
@@ -66,6 +67,7 @@
 		FB3A2CF41C5F7AB000222592 /* dv-screenshot-sec.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "dv-screenshot-sec.png"; sourceTree = "<group>"; };
 		FB3A2CF51C5F7AB000222592 /* dv-screenshot-static.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "dv-screenshot-static.png"; sourceTree = "<group>"; };
 		FBB768FE1C49356B00FC1816 /* rxSwiftExperiments.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; name = rxSwiftExperiments.playground; path = DataVisualization/rxSwiftExperiments.playground; sourceTree = "<group>"; };
+		FBBB78C41D6E57B60065A33C /* CacheTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CacheTests.swift; sourceTree = "<group>"; };
 		FBBE17981C307FE3005E1E5C /* FunkyCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FunkyCell.swift; sourceTree = "<group>"; };
 		FBBE17991C307FE3005E1E5C /* FunkyCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = FunkyCell.xib; sourceTree = "<group>"; };
 		FBC024DC1C303BAF00F4700D /* Model.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Model.swift; sourceTree = "<group>"; };
@@ -158,6 +160,7 @@
 			isa = PBXGroup;
 			children = (
 				607FACEB1AFB9204008FA782 /* Tests.swift */,
+				FBBB78C41D6E57B60065A33C /* CacheTests.swift */,
 				607FACE91AFB9204008FA782 /* Supporting Files */,
 			);
 			path = Tests;
@@ -434,6 +437,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FBBB78C61D6E57BB0065A33C /* CacheTests.swift in Sources */,
 				607FACEC1AFB9204008FA782 /* Tests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

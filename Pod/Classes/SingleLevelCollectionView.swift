@@ -54,47 +54,36 @@ extension ControllerWithCollectionView where Self:Disposer
 	}
 }
 
-public protocol CollectionViewDelegate:UICollectionViewDelegate,UICollectionViewDelegateFlowLayout
+public protocol CollectionViewDelegate:UICollectionViewDelegate/*,UICollectionViewDelegateFlowLayout*/
 {
 	var collectionView:UICollectionView! {get}
 	typealias DataViewModel:CollectionViewModel
-	func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAtIndexPath indexPath: NSIndexPath) -> CGSize
+//	func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAtIndexPath indexPath: NSIndexPath) -> CGSize
 }
-public extension CollectionViewDelegate
-{
-	func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAtIndexPath indexPath: NSIndexPath) -> CGSize {
-		// Set up desired width
-		let cols=DataViewModel.columns
-		let targetWidth = (collectionView.bounds.width - 2*DataViewModel.horizontalBorder - CGFloat(cols-1)*DataViewModel.horizontalSpacing) / CGFloat(cols)
-		
-		// Use fake cell to calculate height
-//		let reuseIdentifier = "cell"
-//		var cell: MyCollectionViewCell? = self.offscreenCells[reuseIdentifier] as? MyCollectionViewCell
-//		if cell == nil {
-//			cell = NSBundle.mainBundle().loadNibNamed("MyCollectionViewCell", owner: self, options: nil)[0] as? MyCollectionViewCell
-//			self.offscreenCells[reuseIdentifier] = cell
-//		}
+//public extension CollectionViewDelegate
+//{
+//	func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAtIndexPath indexPath: NSIndexPath) -> CGSize {
+//		// Set up desired width
+//		let cols=DataViewModel.columns
+//		let targetWidth = (collectionView.bounds.width - 2*DataViewModel.horizontalBorder - CGFloat(cols-1)*DataViewModel.horizontalSpacing) / CGFloat(cols)
+//
+//		let cell=collectionView.cellForItemAtIndexPath(indexPath)!
 //		
-//		// Config cell and let system determine size
-//		cell!.configCell(titleData[indexPath.item] as String, content: contentData[indexPath.item] as String, titleFont: fontArray[indexPath.item] as String, contentFont: fontArray[indexPath.item] as String)
-		
-		let cell=collectionView.cellForItemAtIndexPath(indexPath)!
-		
-		// Cell's size is determined in nib file, need to set it's width (in this case), and inside, use this cell's width to set label's preferredMaxLayoutWidth, thus, height can be determined, this size will be returned for real cell initialization
-		cell.bounds = CGRectMake(0, 0, targetWidth, cell.bounds.height)
-		cell.contentView.bounds = cell.bounds
-		
-		// Layout subviews, this will let labels on this cell to set preferredMaxLayoutWidth
-		cell.setNeedsLayout()
-		cell.layoutIfNeeded()
-		
-		var size = cell.contentView.systemLayoutSizeFittingSize(UILayoutFittingCompressedSize)
-		// Still need to force the width, since width can be smalled due to break mode of labels
-		size.width = targetWidth
-		return size
-		
-	}
-}
+//		// Cell's size is determined in nib file, need to set it's width (in this case), and inside, use this cell's width to set label's preferredMaxLayoutWidth, thus, height can be determined, this size will be returned for real cell initialization
+//		cell.bounds = CGRectMake(0, 0, targetWidth, cell.bounds.height)
+//		cell.contentView.bounds = cell.bounds
+//		
+//		// Layout subviews, this will let labels on this cell to set preferredMaxLayoutWidth
+//		cell.setNeedsLayout()
+//		cell.layoutIfNeeded()
+//		
+//		var size = cell.contentView.systemLayoutSizeFittingSize(UILayoutFittingCompressedSize)
+//		// Still need to force the width, since width can be smalled due to break mode of labels
+//		size.width = targetWidth
+//		return size
+//		
+//	}
+//}
 
 public protocol AutoSingleLevelCollectionView:AutoSingleLevelDataView {
 	func setupCollectionView(collectionView: UICollectionView,vc:UIViewController)
@@ -148,6 +137,7 @@ public class AutoSingleLevelCollectionViewManager<
 		self.vc=vc
 		self.collectionView=collectionView
 		
+		collectionView.collectionViewLayout=DynamicCollectionViewLayout()
 		
 		registerDataCell(nib)
 		bindData()
@@ -165,31 +155,31 @@ public class AutoSingleLevelCollectionViewManager<
 				}
 		}.addDisposableTo(disposeBag)
 	}
-	public func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAtIndexPath indexPath: NSIndexPath) -> CGSize {
-		// Set up desired width
-		let cols=DataViewModel.columns
-		let targetWidth = (collectionView.bounds.width - 2*DataViewModel.horizontalBorder - CGFloat(cols-1)*DataViewModel.horizontalSpacing) / CGFloat(cols)
-
-		if let cell=collectionView.cellForItemAtIndexPath(indexPath)
-		{
-			cell.bounds = CGRectMake(0, 0, targetWidth, cell.bounds.height)
-			cell.contentView.bounds = cell.bounds
-			
-			// Layout subviews, this will let labels on this cell to set preferredMaxLayoutWidth
-			cell.setNeedsLayout()
-			cell.layoutIfNeeded()
-			
-			var size = cell.contentView.systemLayoutSizeFittingSize(UILayoutFittingCompressedSize)
-			// Still need to force the width, since width can be smalled due to break mode of labels
-			size.width = targetWidth
-			
-			cellSizesCache[indexPath]=size
-			return size
-		} else if let cachedSize=cellSizesCache[indexPath] {
-			return cachedSize
-		}
-		return CGSizeMake(100, 100)
-	}
+//	public func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAtIndexPath indexPath: NSIndexPath) -> CGSize {
+//		// Set up desired width
+//		let cols=DataViewModel.columns
+//		let targetWidth = (collectionView.bounds.width - 2*DataViewModel.spacings.horizontalBorder - CGFloat(cols-1)*DataViewModel.spacings.horizontalSpacing) / CGFloat(cols)
+//
+//		if let cell=collectionView.cellForItemAtIndexPath(indexPath)
+//		{
+//			cell.bounds = CGRectMake(0, 0, targetWidth, cell.bounds.height)
+//			cell.contentView.bounds = cell.bounds
+//			
+//			// Layout subviews, this will let labels on this cell to set preferredMaxLayoutWidth
+//			cell.setNeedsLayout()
+//			cell.layoutIfNeeded()
+//			
+//			var size = cell.contentView.systemLayoutSizeFittingSize(UILayoutFittingCompressedSize)
+//			// Still need to force the width, since width can be smalled due to break mode of labels
+//			size.width = targetWidth
+//			
+//			cellSizesCache[indexPath]=size
+//			return size
+//		} else if let cachedSize=cellSizesCache[indexPath] {
+//			return cachedSize
+//		}
+//		return CGSizeMake(100, 100)
+//	}
 
 
 	func bindData()

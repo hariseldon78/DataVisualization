@@ -5,7 +5,8 @@ PODS:
     - RxCocoa
     - RxDataSources (~> 0.9)
     - RxSwift
-  - Quick (0.8.0)
+  - Nimble (4.1.0)
+  - Quick (0.9.3)
   - RxCocoa (2.6.0):
     - RxSwift (~> 2.5)
   - RxDataSources (0.9):
@@ -15,7 +16,8 @@ PODS:
 
 DEPENDENCIES:
   - DataVisualization (from `../`)
-  - Quick (~> 0.8.0)
+  - Nimble
+  - Quick
   - RxCocoa
   - RxSwift
 
@@ -26,11 +28,12 @@ EXTERNAL SOURCES:
 SPEC CHECKSUMS:
   Cartography: 70af183a248547694a8cfaa6b989cb7e04589985
   DataVisualization: efd443c377b8f972db708fd88d03a40e613f1a2f
-  Quick: 563d0f6ec5f72e394645adb377708639b7dd38ab
+  Nimble: 97a0a4cae5124c117115634b2d055d8c97d0af19
+  Quick: 13a2a2b19a5d8e3ed4fd0c36ee46597fd77ebf71
   RxCocoa: 89ab00d5753502520227940e3a0e0a0413683c6b
   RxDataSources: e169bba94a7be584df7c1e1487fa56edc8753ae6
   RxSwift: 77f3a0b15324baa7a1c9bfa9f199648a82424e26
 
-PODFILE CHECKSUM: 76245ef768c18118bf048009c6095a46188890a6
+PODFILE CHECKSUM: c7d6069d79baf000c672ff125d3ada5384390a8b
 
 COCOAPODS: 1.0.1
