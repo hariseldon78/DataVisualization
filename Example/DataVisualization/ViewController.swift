@@ -55,14 +55,16 @@ class NoApiViewController:UIViewController
 
 class PlainCollectionViewController:UIViewController
 {
+	let 🗑=DisposeBag()
 	@IBOutlet weak var collectionView: UICollectionView!
 	var tvManager=AutoSingleLevelCollectionViewManager (viewModel: Worker.defaultCollectionViewModel(),dataExtractor:ApiExtractor())
+	
 	override func viewDidLoad() {
 		super.viewDidLoad()
-		tvManager.setupCollectionView(collectionView,vc:self)
+
+		tvManager.setupCollectionView( collectionView,vc:self)
 		tvManager.setupOnSelect(.Segue(name:"detail",presentation:.Push))
 	}
-	
 }
 
 

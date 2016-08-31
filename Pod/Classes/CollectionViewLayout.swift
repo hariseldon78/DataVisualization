@@ -7,6 +7,8 @@
 //
 
 import Foundation
+import RxSwift
+import RxCocoa
 
 extension Array {
 	mutating func extend(toSize:Int,fillValue:Element)
@@ -18,57 +20,48 @@ extension Array {
 		}
 	}
 }
-
-public struct CachedSequence<T>
-{
-	var values=[T]()
-	public var dirty=[Bool]()
-	let calculateValue:(index:Int)->T
-	let dummyValue:T
-	init(calculateValue:(index:Int)->T,dummyValue:T)
-	{
-		self.calculateValue=calculateValue
-		self.dummyValue=dummyValue
+struct Zip3Generator
+	<
+	A: GeneratorType,
+	B: GeneratorType,
+	C: GeneratorType
+>: GeneratorType {
+	
+	private var first: A
+	private var second: B
+	private var third: C
+	
+	private var index = 0
+	
+	init(_ first: A, _ second: B, _ third: C) {
+		self.first = first
+		self.second = second
+		self.third = third
 	}
-	mutating func setDirty(index:Int,value:Bool)
-	{
-		dirty.extend(index+1, fillValue: true)
-		dirty[index]=value
-	}
-	func isDirty(index:Int)->Bool
-	{
-		return dirty.count>index && dirty[index] || dirty.count<=index
-	}
-	mutating public func get(index:Int)->T
-	{
-		if isDirty(index) {
-			values.extend(index+1, fillValue: dummyValue)
-			values[index]=calculateValue(index:index)
-			setDirty(index, value: false)
+	
+	mutating func next() -> (A.Element, B.Element, C.Element)? {
+		if let a = first.next(), b = second.next(), c = third.next() {
+			return (a, b, c)
 		}
-		return values[index]
-	}
-	mutating func invalidate()
-	{
-		dirty=[Bool]()
-	}
-	mutating func invalidate(index:Int)
-	{
-		setDirty(index, value: true)
-	}
-	mutating func invalidate(range:Range<Int>)
-	{
-		dirty.extend(range.endIndex, fillValue: true)
-		for index in range
-		{
-			dirty[index]=true
-		}
+		return nil
 	}
 }
 
+func zip<A: SequenceType, B: SequenceType, C: SequenceType>(a: A, b: B, c: C) -> GeneratorSequence<Zip3Generator<A.Generator, B.Generator, C.Generator>> {
+	return GeneratorSequence(Zip3Generator(a.generate(), b.generate(), c.generate()))
+}
+
+struct IntGenerator:GeneratorType {
+	private var index = -1
+	mutating func next() -> Int? {
+		index+=1
+		return index
+	}
+}
 
 public class DynamicCollectionViewLayout: UICollectionViewLayout
 {
+	let 🗑=DisposeBag()
 	var contentWidth:CGFloat {
 		let insets=collectionView!.contentInset
 		return collectionView!.bounds.size.width-insets.left-insets.right
@@ -78,28 +71,42 @@ public class DynamicCollectionViewLayout: UICollectionViewLayout
 		return CGSize(width: contentWidth, height: contentHeight)
 	}
 	let ySpacing:CGFloat
-	var cellSizes:CachedSequence<CGSize>!
-	
-	init(ySpacing:CGFloat=8) {
+	var cellSizes:Driver<[CGSize]>
+	init(cellSizes:Driver<[CGSize]>,ySpacing:CGFloat=8) {
 		self.ySpacing=ySpacing
+		self.cellSizes=cellSizes
 		super.init()
-		cellSizes=CachedSequence<CGSize>(calculateValue: {
-			index in
-			let indexPath=NSIndexPath(forItem: index, inSection: 0)
-			guard let cell=self.collectionView!.cellForItemAtIndexPath(indexPath) else {return CGSizeZero }
-			
-//			cell.bounds = CGRectMake(0, 0, self.contentWidth, cell.bounds.height)
-//			cell.contentView.bounds = cell.bounds
-//			
-//			// Layout subviews, this will let labels on this cell to set preferredMaxLayoutWidth
-//			cell.setNeedsLayout()
-//			cell.layoutIfNeeded()
-			
-			var size = cell.contentView.systemLayoutSizeFittingSize(UILayoutFittingCompressedSize)
-			// Still need to force the width, since width can be smalled due to break mode of labels
-			size.width = self.contentWidth
-			return size
-		},dummyValue: CGSizeZero)
+		
+		let yOffsets:Driver<[CGFloat]>=cellSizes.map {
+			(sizes:[CGSize]) in
+			var offsets=[CGFloat]()
+			offsets.append(ySpacing)
+			for i in 0 ..< sizes.count-1 {
+				offsets.append(offsets.last!+ySpacing+sizes[i].height)
+			}
+			self.contentHeight=offsets.last!+ySpacing+(sizes.last?.height ?? 0)
+			return offsets
+		}
+		
+		let cellsInfo:Driver<[(Int,CGSize,CGFloat)]>=Driver
+			.combineLatest(cellSizes, yOffsets) {
+				let zipped=Array(zip(GeneratorSequence(IntGenerator()),b:$0,c:$1))
+				return zipped
+		}
+		
+		cellsInfo
+			.asObservable()
+			.subscribeNext { (cellInfo) in
+				self.attributesCache=cellInfo.map { (index,size,y) in
+					print(index,size,y)
+					let origin=CGPoint(x:self.collectionView?.contentInset.left ?? 0, y:y)
+					let frame=CGRect(origin: origin, size: size)
+					let attr=UICollectionViewLayoutAttributes(forCellWithIndexPath: NSIndexPath(forItem: index, inSection: 0))
+					attr.frame=frame
+					return attr
+				}
+				self.invalidateLayout()
+			}.addDisposableTo(🗑)
 	}
 	
 	required public init?(coder aDecoder: NSCoder) {
@@ -107,20 +114,6 @@ public class DynamicCollectionViewLayout: UICollectionViewLayout
 	}
 	
 	var attributesCache=[UICollectionViewLayoutAttributes]()
-	public override func prepareLayout() {
-		var y=CGFloat(0)
-		attributesCache.removeAll()
-		for item in 0..<collectionView!.numberOfItemsInSection(0)
-		{
-			let origin=CGPoint(x:collectionView!.contentInset.left, y:y)
-			let frame=CGRect(origin: origin, size: cellSizes.get(item))
-			y += ySpacing+frame.size.height
-			let attr=UICollectionViewLayoutAttributes(forCellWithIndexPath: NSIndexPath(forItem: item, inSection: 0))
-			attr.frame=frame
-			attributesCache.append(attr)
-		}
-		contentHeight=y
-	}
 	
 	public override func layoutAttributesForElementsInRect(rect: CGRect) -> [UICollectionViewLayoutAttributes]? {
 		
@@ -133,19 +126,4 @@ public class DynamicCollectionViewLayout: UICollectionViewLayout
 		}
 		return layoutAttributes
 	}
-
-	public override func invalidateLayout() {
-		cellSizes.invalidate()
-		super.invalidateLayout()
-	}
-	
-	public override func invalidateLayoutWithContext(context: UICollectionViewLayoutInvalidationContext) {
-		cellSizes.invalidate()
-//		context.invalidatedItemIndexPaths?.forEach{ (ip) in
-//			cellSizes.invalidate(ip.item)
-//		}
-		super.invalidateLayoutWithContext(context)
-	}
-	
-	
 }

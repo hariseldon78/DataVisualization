@@ -45,6 +45,7 @@ public struct CellSpacings {
 public protocol CollectionViewModel:ViewModel {
 	static var columns:UInt {get}
 	static var spacings:CellSpacings {get}
+	func cellSize(index:Int,item:Data,maxWidth:CGFloat)->CGSize
 }
 
 public enum EmptyBehaviour {
@@ -91,7 +92,7 @@ public class BaseConcreteViewModel<_Data,_Cell:UIView,_ClosureType>
 	}
 
 }
-public class ConcreteViewModel<Data,Cell:UIView>:BaseConcreteViewModel<Data,Cell,(index:Int,item:Data,cell:Cell)->Void>,ViewModel
+public class ConcreteViewModel<Data,Cell:UITableViewCell>:BaseConcreteViewModel<Data,Cell,(index:Int,item:Data,cell:Cell)->Void>,ViewModel
 {
 	public override init(cellName:String,cellFactory:ClosureType) {
 		super.init(cellName:cellName,cellFactory:cellFactory)
@@ -104,12 +105,14 @@ public class ConcreteViewModel<Data,Cell:UIView>:BaseConcreteViewModel<Data,Cell
 	}
 }
 
-public class ConcreteCollectionViewModel<Data,Cell:UIView>:BaseConcreteViewModel<Data,Cell,(index:Int,item:Data,cell:Cell)->Void>,CollectionViewModel
+public class ConcreteCollectionViewModel<Data,Cell:UICollectionViewCell>:BaseConcreteViewModel<Data,Cell,(index:Int,item:Data,cell:Cell)->Void>,CollectionViewModel
 {
 	public override init(cellName:String,cellFactory:ClosureType) {
+		cellForSizeCalculations=UINib(nibName: cellName, bundle: nil).instantiateWithOwner(nil, options: nil)[0] as! Cell
 		super.init(cellName:cellName,cellFactory:cellFactory)
 	}
 	public override init(cellFactory:ClosureType) {
+		cellForSizeCalculations=Cell()
 		super.init(cellFactory:cellFactory)
 	}
 	public func cellFactory(index: Int, item: Data, cell: Cell) {
@@ -121,6 +124,13 @@ public class ConcreteCollectionViewModel<Data,Cell:UIView>:BaseConcreteViewModel
 		                    horizontalSpacing: 8,
 		                    verticalBorder: 8,
 		                    verticalSpacing: 8)}
+	private let cellForSizeCalculations:Cell
+	public func cellSize(index: Int, item: Data, maxWidth: CGFloat)->CGSize {
+		let cell=cellForSizeCalculations
+		cellFactory(index, item: item, cell: cell)
+		return cell.contentView.systemLayoutSizeFittingSize(UILayoutFittingCompressedSize)
+	}
+	
 }
 public class ConcreteSectionViewModel<Section,Element,Cell:UIView>:BaseConcreteViewModel<Section,Cell,(index:Int,item:Section,elements:[Element],cell:Cell)->Void>,SectionViewModel
 {

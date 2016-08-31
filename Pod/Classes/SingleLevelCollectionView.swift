@@ -107,12 +107,6 @@ public class AutoSingleLevelCollectionViewManager<
 	public typealias DataViewModel=DataViewModelType
 	public var data:Observable<[Data]> {
 		return dataExtractor.data()
-			
-//			DataType.api(collectionView,params: apiParams)
-//			.subscribeOn(backgroundScheduler)
-//			.map {$0}
-//			.shareReplayLatestWhileConnected()
-//			.observeOn(MainScheduler.instance)
 	}
 	public let disposeBag=DisposeBag()
 	public var dataBindDisposeBag=DisposeBag()
@@ -137,7 +131,22 @@ public class AutoSingleLevelCollectionViewManager<
 		self.vc=vc
 		self.collectionView=collectionView
 		
-		collectionView.collectionViewLayout=DynamicCollectionViewLayout()
+		let cellSizes=data.map{ (elements)->[CGSize] in
+			return Array(zip(GeneratorSequence(IntGenerator()),elements)).map {
+				(index,element) in
+				let cols=CGFloat(DataViewModel.columns)
+				let w=self.collectionView.bounds.size.width
+				let hBd=DataViewModel.spacings.horizontalBorder
+				let hSp=DataViewModel.spacings.horizontalSpacing
+				// expression too complex
+				let w1=w-hBd*2
+				let spac=hSp*(cols-1)
+				let w2=w1-spac
+				let maxW=w2/cols
+				return self.viewModel.cellSize(index, item: element, maxWidth: maxW)
+			}
+		}
+		collectionView.collectionViewLayout=DynamicCollectionViewLayout(cellSizes:cellSizes.asDriver(onErrorJustReturn:[CGSizeZero]))
 		
 		registerDataCell(nib)
 		bindData()
@@ -191,11 +200,8 @@ public class AutoSingleLevelCollectionViewManager<
 				cell.setNeedsUpdateConstraints()
 				cell.updateConstraintsIfNeeded()
 				
-				self.collectionView.collectionViewLayout.invalidateLayout()
+//				self.collectionView.collectionViewLayout.invalidateLayout()
 		}.addDisposableTo(dataBindDisposeBag)
-		
-//		data.subscribeNext{ _ in
-//		}.addDisposableTo(dataBindDisposeBag)
 		
 		handleEmpty()
 	}
