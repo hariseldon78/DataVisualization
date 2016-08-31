@@ -46,6 +46,7 @@ public protocol CollectionViewModel:ViewModel {
 	static var columns:UInt {get}
 	static var spacings:CellSpacings {get}
 	func cellSize(index:Int,item:Data,maxWidth:CGFloat)->CGSize
+	var cellResizeEvents:PublishSubject<Void> {get}
 }
 
 public enum EmptyBehaviour {
@@ -105,7 +106,7 @@ public class ConcreteViewModel<Data,Cell:UITableViewCell>:BaseConcreteViewModel<
 	}
 }
 
-public class ConcreteCollectionViewModel<Data,Cell:UICollectionViewCell>:BaseConcreteViewModel<Data,Cell,(index:Int,item:Data,cell:Cell)->Void>,CollectionViewModel
+public class ConcreteCollectionViewModel<Data,Cell:UICollectionViewCell>:BaseConcreteViewModel<Data,Cell,(index:Int,item:Data,cell:Cell,resizeEventsSink:PublishSubject<Void>)->Void>,CollectionViewModel
 {
 	public override init(cellName:String,cellFactory:ClosureType) {
 		cellForSizeCalculations=UINib(nibName: cellName, bundle: nil).instantiateWithOwner(nil, options: nil)[0] as! Cell
@@ -116,7 +117,7 @@ public class ConcreteCollectionViewModel<Data,Cell:UICollectionViewCell>:BaseCon
 		super.init(cellFactory:cellFactory)
 	}
 	public func cellFactory(index: Int, item: Data, cell: Cell) {
-		self.cellFactoryClosure(index: index, item: item, cell: cell)
+		self.cellFactoryClosure(index: index, item: item, cell: cell, resizeEventsSink: cellResizeEvents)
 	}
 	public class var columns: UInt {return 1}
 	public class var spacings:CellSpacings {
@@ -130,6 +131,7 @@ public class ConcreteCollectionViewModel<Data,Cell:UICollectionViewCell>:BaseCon
 		cellFactory(index, item: item, cell: cell)
 		return cell.contentView.systemLayoutSizeFittingSize(UILayoutFittingCompressedSize)
 	}
+	public let cellResizeEvents=PublishSubject<Void>()
 	
 }
 public class ConcreteSectionViewModel<Section,Element,Cell:UIView>:BaseConcreteViewModel<Section,Cell,(index:Int,item:Section,elements:[Element],cell:Cell)->Void>,SectionViewModel

@@ -120,6 +120,8 @@ public class AutoSingleLevelCollectionViewManager<
 	public required init(viewModel:DataViewModel,dataExtractor:DataExtractorBase<Data>){
 		self.viewModel=viewModel
 		self.dataExtractor=dataExtractor
+		super.init()
+		data.debug("data")
 	}
 	
 	public func setupCollectionView(collectionView: UICollectionView,vc:UIViewController)
@@ -130,8 +132,8 @@ public class AutoSingleLevelCollectionViewManager<
 		
 		self.vc=vc
 		self.collectionView=collectionView
-		
-		let cellSizes=data.map{ (elements)->[CGSize] in
+		let dataOrResize=Driver.combineLatest(data.asDriver(onErrorJustReturn: [DataType]()),viewModel.cellResizeEvents.asDriver(onErrorJustReturn: ()),resultSelector:{ $0.0 })
+		let cellSizes=dataOrResize.map{ (elements)->[CGSize] in
 			return Array(zip(GeneratorSequence(IntGenerator()),elements)).map {
 				(index,element) in
 				let cols=CGFloat(DataViewModel.columns)
@@ -139,15 +141,15 @@ public class AutoSingleLevelCollectionViewManager<
 				let hBd=DataViewModel.spacings.horizontalBorder
 				let hSp=DataViewModel.spacings.horizontalSpacing
 				// expression too complex
-				let w1=w-hBd*2
-				let spac=hSp*(cols-1)
-				let w2=w1-spac
-				let maxW=w2/cols
-				return self.viewModel.cellSize(index, item: element, maxWidth: maxW)
+				return self.viewModel.cellSize(index, item: element, maxWidth: (w-hBd*2-hSp*(cols-1))/cols)
 			}
 		}
+		cellSizes.debug("cellSizes")
 		collectionView.collectionViewLayout=DynamicCollectionViewLayout(cellSizes:cellSizes.asDriver(onErrorJustReturn:[CGSizeZero]))
+		viewModel.cellResizeEvents.onNext()
 		
+		viewModel.cellResizeEvents.subscribeNext { self.collectionView.collectionViewLayout.invalidateLayout()	}
+
 		registerDataCell(nib)
 		bindData()
 		
@@ -164,32 +166,6 @@ public class AutoSingleLevelCollectionViewManager<
 				}
 		}.addDisposableTo(disposeBag)
 	}
-//	public func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAtIndexPath indexPath: NSIndexPath) -> CGSize {
-//		// Set up desired width
-//		let cols=DataViewModel.columns
-//		let targetWidth = (collectionView.bounds.width - 2*DataViewModel.spacings.horizontalBorder - CGFloat(cols-1)*DataViewModel.spacings.horizontalSpacing) / CGFloat(cols)
-//
-//		if let cell=collectionView.cellForItemAtIndexPath(indexPath)
-//		{
-//			cell.bounds = CGRectMake(0, 0, targetWidth, cell.bounds.height)
-//			cell.contentView.bounds = cell.bounds
-//			
-//			// Layout subviews, this will let labels on this cell to set preferredMaxLayoutWidth
-//			cell.setNeedsLayout()
-//			cell.layoutIfNeeded()
-//			
-//			var size = cell.contentView.systemLayoutSizeFittingSize(UILayoutFittingCompressedSize)
-//			// Still need to force the width, since width can be smalled due to break mode of labels
-//			size.width = targetWidth
-//			
-//			cellSizesCache[indexPath]=size
-//			return size
-//		} else if let cachedSize=cellSizesCache[indexPath] {
-//			return cachedSize
-//		}
-//		return CGSizeMake(100, 100)
-//	}
-
 
 	func bindData()
 	{
@@ -200,7 +176,6 @@ public class AutoSingleLevelCollectionViewManager<
 				cell.setNeedsUpdateConstraints()
 				cell.updateConstraintsIfNeeded()
 				
-//				self.collectionView.collectionViewLayout.invalidateLayout()
 		}.addDisposableTo(dataBindDisposeBag)
 		
 		handleEmpty()

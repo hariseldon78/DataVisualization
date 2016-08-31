@@ -61,11 +61,18 @@ struct IntGenerator:GeneratorType {
 
 public class DynamicCollectionViewLayout: UICollectionViewLayout
 {
+	enum CollectionViewLayoutEvent {
+		case None
+		
+		case InvalidateLayout
+	}
+	
 	let 🗑=DisposeBag()
 	var contentWidth:CGFloat {
 		let insets=collectionView!.contentInset
 		return collectionView!.bounds.size.width-insets.left-insets.right
 	}
+//	let layoutEvents=PublishSubject<CollectionViewLayoutEvent>()
 	var contentHeight=CGFloat(0)
 	public override func collectionViewContentSize() -> CGSize {
 		return CGSize(width: contentWidth, height: contentHeight)
@@ -76,6 +83,8 @@ public class DynamicCollectionViewLayout: UICollectionViewLayout
 		self.ySpacing=ySpacing
 		self.cellSizes=cellSizes
 		super.init()
+		
+//		layoutEvents.debug("layoutEvents")
 		
 		let yOffsets:Driver<[CGFloat]>=cellSizes.map {
 			(sizes:[CGSize]) in
@@ -89,13 +98,15 @@ public class DynamicCollectionViewLayout: UICollectionViewLayout
 		}
 		
 		let cellsInfo:Driver<[(Int,CGSize,CGFloat)]>=Driver
-			.combineLatest(cellSizes, yOffsets) {
-				let zipped=Array(zip(GeneratorSequence(IntGenerator()),b:$0,c:$1))
+			.combineLatest(cellSizes, yOffsets/*, layoutEvents.asDriver(onErrorJustReturn: .None).filter{$0 != .None }*/) {
+				(size,y) in
+				let zipped=Array(zip(GeneratorSequence(IntGenerator()),b:size,c:y))
 				return zipped
 		}
 		
 		cellsInfo
 			.asObservable()
+			.debug("cellsInfo")
 			.subscribeNext { (cellInfo) in
 				self.attributesCache=cellInfo.map { (index,size,y) in
 					print(index,size,y)
@@ -116,14 +127,12 @@ public class DynamicCollectionViewLayout: UICollectionViewLayout
 	var attributesCache=[UICollectionViewLayoutAttributes]()
 	
 	public override func layoutAttributesForElementsInRect(rect: CGRect) -> [UICollectionViewLayoutAttributes]? {
-		
-		var layoutAttributes = [UICollectionViewLayoutAttributes]()
-		
-		for attributes in attributesCache {
-			if CGRectIntersectsRect(attributes.frame, rect) {
-				layoutAttributes.append(attributes)
-			}
-		}
-		return layoutAttributes
+		return attributesCache.filter{ CGRectIntersectsRect($0.frame, rect)	}
 	}
+//	public override func invalidateLayout() {
+//		layoutEvents.onNext(.InvalidateLayout)
+//		super.invalidateLayout()
+//	}
+	
+	
 }
