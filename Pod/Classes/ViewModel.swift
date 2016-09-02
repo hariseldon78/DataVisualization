@@ -128,6 +128,7 @@ public class ConcreteCollectionViewModel<Data,Cell:UICollectionViewCell>:BaseCon
 	private let cellForSizeCalculations:Cell
 	public func cellSize(index: Int, item: Data, maxWidth: CGFloat)->CGSize {
 		let cell=cellForSizeCalculations
+		cell.contentView.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("[cell(maxWidth)]", options: NSLayoutFormatOptions(), metrics: ["maxWidth":maxWidth], views: ["cell":cell.contentView]))
 		cellFactory(index, item: item, cell: cell)
 		return cell.contentView.systemLayoutSizeFittingSize(UILayoutFittingCompressedSize)
 	}

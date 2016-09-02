@@ -72,33 +72,31 @@ public class DynamicCollectionViewLayout: UICollectionViewLayout
 		let insets=collectionView!.contentInset
 		return collectionView!.bounds.size.width-insets.left-insets.right
 	}
-//	let layoutEvents=PublishSubject<CollectionViewLayoutEvent>()
+
 	var contentHeight=CGFloat(0)
 	public override func collectionViewContentSize() -> CGSize {
 		return CGSize(width: contentWidth, height: contentHeight)
 	}
-	let ySpacing:CGFloat
+	let spacings:CellSpacings
 	var cellSizes:Driver<[CGSize]>
-	init(cellSizes:Driver<[CGSize]>,ySpacing:CGFloat=8) {
-		self.ySpacing=ySpacing
+	init(cellSizes:Driver<[CGSize]>,spacings:CellSpacings) {
+		self.spacings=spacings
 		self.cellSizes=cellSizes
 		super.init()
-		
-//		layoutEvents.debug("layoutEvents")
 		
 		let yOffsets:Driver<[CGFloat]>=cellSizes.map {
 			(sizes:[CGSize]) in
 			var offsets=[CGFloat]()
-			offsets.append(ySpacing)
+			offsets.append(spacings.verticalBorder/*+(self.collectionView?.contentInset.top ?? 0) pare che sia già calcolato...*/)
 			for i in 0 ..< sizes.count-1 {
-				offsets.append(offsets.last!+ySpacing+sizes[i].height)
+				offsets.append(offsets.last!+self.spacings.verticalSpacing+sizes[i].height)
 			}
-			self.contentHeight=offsets.last!+ySpacing+(sizes.last?.height ?? 0)
+			self.contentHeight=offsets.last!+(sizes.last?.height ?? 0)+self.spacings.verticalBorder+(self.collectionView?.contentInset.bottom ?? 0)
 			return offsets
 		}
 		
 		let cellsInfo:Driver<[(Int,CGSize,CGFloat)]>=Driver
-			.combineLatest(cellSizes, yOffsets/*, layoutEvents.asDriver(onErrorJustReturn: .None).filter{$0 != .None }*/) {
+			.combineLatest(cellSizes, yOffsets) {
 				(size,y) in
 				let zipped=Array(zip(GeneratorSequence(IntGenerator()),b:size,c:y))
 				return zipped
@@ -110,7 +108,7 @@ public class DynamicCollectionViewLayout: UICollectionViewLayout
 			.subscribeNext { (cellInfo) in
 				self.attributesCache=cellInfo.map { (index,size,y) in
 					print(index,size,y)
-					let origin=CGPoint(x:self.collectionView?.contentInset.left ?? 0, y:y)
+					let origin=CGPoint(x:(self.collectionView?.contentInset.left ?? 0) + self.spacings.horizontalBorder, y:y)
 					let frame=CGRect(origin: origin, size: size)
 					let attr=UICollectionViewLayoutAttributes(forCellWithIndexPath: NSIndexPath(forItem: index, inSection: 0))
 					attr.frame=frame
@@ -129,10 +127,4 @@ public class DynamicCollectionViewLayout: UICollectionViewLayout
 	public override func layoutAttributesForElementsInRect(rect: CGRect) -> [UICollectionViewLayoutAttributes]? {
 		return attributesCache.filter{ CGRectIntersectsRect($0.frame, rect)	}
 	}
-//	public override func invalidateLayout() {
-//		layoutEvents.onNext(.InvalidateLayout)
-//		super.invalidateLayout()
-//	}
-	
-	
 }

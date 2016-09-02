@@ -145,7 +145,7 @@ public class AutoSingleLevelCollectionViewManager<
 			}
 		}
 		cellSizes.debug("cellSizes")
-		collectionView.collectionViewLayout=DynamicCollectionViewLayout(cellSizes:cellSizes.asDriver(onErrorJustReturn:[CGSizeZero]))
+		collectionView.collectionViewLayout=DynamicCollectionViewLayout(cellSizes:cellSizes.asDriver(onErrorJustReturn:[CGSizeZero]),spacings:DataViewModel.spacings)
 		viewModel.cellResizeEvents.onNext()
 		
 		viewModel.cellResizeEvents.subscribeNext { self.collectionView.collectionViewLayout.invalidateLayout()	}
