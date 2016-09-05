@@ -107,6 +107,8 @@ public class AutoSingleLevelCollectionViewManager<
 	public typealias DataViewModel=DataViewModelType
 	public var data:Observable<[Data]> {
 		return dataExtractor.data()
+			.observeOn(MainScheduler.instance)
+			.subscribeOn(MainScheduler.instance)
 	}
 	public let disposeBag=DisposeBag()
 	public var dataBindDisposeBag=DisposeBag()
@@ -148,8 +150,8 @@ public class AutoSingleLevelCollectionViewManager<
 		collectionView.collectionViewLayout=DynamicCollectionViewLayout(cellSizes:cellSizes.asDriver(onErrorJustReturn:[CGSizeZero]),spacings:DataViewModel.spacings)
 		viewModel.cellResizeEvents.onNext()
 		
-		viewModel.cellResizeEvents.subscribeNext { self.collectionView.collectionViewLayout.invalidateLayout()	}
-
+		viewModel.cellResizeEvents.subscribeNext { self.collectionView.collectionViewLayout.invalidateLayout()	}.addDisposableTo(disposeBag)
+		data.subscribeNext {_ in self.collectionView.collectionViewLayout.invalidateLayout() }.addDisposableTo(disposeBag)
 		registerDataCell(nib)
 		bindData()
 		
@@ -185,7 +187,6 @@ public class AutoSingleLevelCollectionViewManager<
 	{
 		data
 			.map { $0.isEmpty }
-			.observeOn(MainScheduler.instance)
 			.subscribeNext{ empty in
 				if empty {
 					self.collectionView.backgroundView=self.viewModel.viewForEmptyList

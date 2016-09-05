@@ -104,6 +104,8 @@ public class DynamicCollectionViewLayout: UICollectionViewLayout
 		
 		cellsInfo
 			.asObservable()
+			.observeOn(MainScheduler.instance)
+			.subscribeOn(MainScheduler.instance)
 			.debug("cellsInfo")
 			.subscribeNext { (cellInfo) in
 				self.attributesCache=cellInfo.map { (index,size,y) in
@@ -125,6 +127,11 @@ public class DynamicCollectionViewLayout: UICollectionViewLayout
 	var attributesCache=[UICollectionViewLayoutAttributes]()
 	
 	public override func layoutAttributesForElementsInRect(rect: CGRect) -> [UICollectionViewLayoutAttributes]? {
-		return attributesCache.filter{ CGRectIntersectsRect($0.frame, rect)	}
+		guard collectionView?.numberOfSections()>0 else { return [UICollectionViewLayoutAttributes]() }
+		let count=collectionView?.dataSource?.collectionView(collectionView!, numberOfItemsInSection: 0) ?? 0
+		let subset=attributesCache[0..<min(count,attributesCache.count)]
+		let ret=subset.filter{ CGRectIntersectsRect($0.frame, rect)	}
+		print("layoutAttributesForElementsInRect(rect:\(rect))->\(ret)")
+		return ret
 	}
 }
