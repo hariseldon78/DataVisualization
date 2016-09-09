@@ -27,19 +27,15 @@ extension ControllerWithCollectionView where Self:Disposer
 {
 	func setupRefreshControl(invalidateCacheAndReBindData:()->())
 	{
-//		// devo usare un tvc dummy perchè altrimenti RefreshControl si comporta male, il frame non è impostato correttamente.
-//		let rc=UIRefreshControl()
-//		let dummyTvc=UITableViewController()
-//		rc.backgroundColor=UIColor.clearColor()
-//		vc.addChildViewController(dummyTvc)
-//		dummyTvc.tableView=tableView
-//		tableView.bounces=true
-//		tableView.alwaysBounceVertical=true
-//		dummyTvc.refreshControl=rc
-//		rc.rx_controlEvent(UIControlEvents.ValueChanged).subscribeNext{ _ in
-//			invalidateCacheAndReBindData()
-//			rc.endRefreshing()
-//			}.addDisposableTo(disposeBag)
+		let rc=UIRefreshControl()
+		rc.backgroundColor=UIColor.clearColor()
+		collectionView.bounces=true
+		collectionView.alwaysBounceVertical=true
+		collectionView.addSubview(rc)
+		rc.rx_controlEvent(UIControlEvents.ValueChanged).subscribeNext{ _ in
+			invalidateCacheAndReBindData()
+			rc.endRefreshing()
+			}.addDisposableTo(disposeBag)
 	}
 	
 	func registerDataCell(nib: Either<UINib, UIView.Type>)
@@ -54,36 +50,11 @@ extension ControllerWithCollectionView where Self:Disposer
 	}
 }
 
-public protocol CollectionViewDelegate:UICollectionViewDelegate/*,UICollectionViewDelegateFlowLayout*/
-{
+public protocol CollectionViewDelegate:UICollectionViewDelegate {
 	var collectionView:UICollectionView! {get}
 	typealias DataViewModel:CollectionViewModel
-//	func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAtIndexPath indexPath: NSIndexPath) -> CGSize
 }
-//public extension CollectionViewDelegate
-//{
-//	func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAtIndexPath indexPath: NSIndexPath) -> CGSize {
-//		// Set up desired width
-//		let cols=DataViewModel.columns
-//		let targetWidth = (collectionView.bounds.width - 2*DataViewModel.horizontalBorder - CGFloat(cols-1)*DataViewModel.horizontalSpacing) / CGFloat(cols)
-//
-//		let cell=collectionView.cellForItemAtIndexPath(indexPath)!
-//		
-//		// Cell's size is determined in nib file, need to set it's width (in this case), and inside, use this cell's width to set label's preferredMaxLayoutWidth, thus, height can be determined, this size will be returned for real cell initialization
-//		cell.bounds = CGRectMake(0, 0, targetWidth, cell.bounds.height)
-//		cell.contentView.bounds = cell.bounds
-//		
-//		// Layout subviews, this will let labels on this cell to set preferredMaxLayoutWidth
-//		cell.setNeedsLayout()
-//		cell.layoutIfNeeded()
-//		
-//		var size = cell.contentView.systemLayoutSizeFittingSize(UILayoutFittingCompressedSize)
-//		// Still need to force the width, since width can be smalled due to break mode of labels
-//		size.width = targetWidth
-//		return size
-//		
-//	}
-//}
+
 
 public protocol AutoSingleLevelCollectionView:AutoSingleLevelDataView {
 	func setupCollectionView(collectionView: UICollectionView,vc:UIViewController)
@@ -154,6 +125,15 @@ public class AutoSingleLevelCollectionViewManager<
 		data.subscribeNext {_ in self.collectionView.collectionViewLayout.invalidateLayout() }.addDisposableTo(disposeBag)
 		registerDataCell(nib)
 		bindData()
+		
+		if let Cached=Data.self as? WithCachedApi.Type
+		{
+			setupRefreshControl{
+				Cached.invalidateCache()
+				self.dataBindDisposeBag=DisposeBag() // butto via la vecchia subscription
+				self.bindData() // rifaccio la subscription
+			}
+		}
 		
 		collectionView.delegate=nil
 		collectionView.rx_setDelegate(self)
