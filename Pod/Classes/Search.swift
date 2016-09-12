@@ -163,7 +163,7 @@ extension Searchable
 					superview.addSubview(searchBar)
 					// deve stare alla stessa altezza dei pulsanti
 					
-					print(NSStringFromCGRect(btnFrame))
+//					print(NSStringFromCGRect(btnFrame))
 					constrain(searchBar){
 						//						$0.top 		== $0.superview!.top+btnFrame.origin.y
 						//						$0.height 	== btnFrame.size.height

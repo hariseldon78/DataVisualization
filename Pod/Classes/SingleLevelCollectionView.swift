@@ -94,7 +94,6 @@ public class AutoSingleLevelCollectionViewManager<
 		self.viewModel=viewModel
 		self.dataExtractor=dataExtractor
 		super.init()
-		data.debug("data")
 	}
 	
 	public func setupCollectionView(collectionView: UICollectionView,vc:UIViewController)
@@ -117,7 +116,6 @@ public class AutoSingleLevelCollectionViewManager<
 				return self.viewModel.cellSize(index, item: element, maxWidth: (w-hBd*2-hSp*(cols-1))/cols)
 			}
 		}
-		cellSizes.debug("cellSizes")
 		collectionView.collectionViewLayout=DynamicCollectionViewLayout(cellSizes:cellSizes.asDriver(onErrorJustReturn:[CGSizeZero]),spacings:DataViewModel.spacings)
 		viewModel.cellResizeEvents.onNext()
 		

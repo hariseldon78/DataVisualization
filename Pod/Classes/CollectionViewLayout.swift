@@ -106,10 +106,8 @@ public class DynamicCollectionViewLayout: UICollectionViewLayout
 			.asObservable()
 			.observeOn(MainScheduler.instance)
 			.subscribeOn(MainScheduler.instance)
-			.debug("cellsInfo")
 			.subscribeNext { (cellInfo) in
 				self.attributesCache=cellInfo.map { (index,size,y) in
-					print(index,size,y)
 					let origin=CGPoint(x:(self.collectionView?.contentInset.left ?? 0) + self.spacings.horizontalBorder, y:y)
 					let frame=CGRect(origin: origin, size: size)
 					let attr=UICollectionViewLayoutAttributes(forCellWithIndexPath: NSIndexPath(forItem: index, inSection: 0))
@@ -131,7 +129,7 @@ public class DynamicCollectionViewLayout: UICollectionViewLayout
 		let count=collectionView?.dataSource?.collectionView(collectionView!, numberOfItemsInSection: 0) ?? 0
 		let subset=attributesCache[0..<min(count,attributesCache.count)]
 		let ret=subset.filter{ CGRectIntersectsRect($0.frame, rect)	}
-		print("layoutAttributesForElementsInRect(rect:\(rect))->\(ret)")
+//		print("layoutAttributesForElementsInRect(rect:\(rect))->\(ret)")
 		return ret
 	}
 }
