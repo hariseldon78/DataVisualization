@@ -67,6 +67,20 @@ class PlainCollectionViewController:UIViewController
 	}
 }
 
+class EmptyCollectionViewController:UIViewController
+{
+	let 🗑=DisposeBag()
+	@IBOutlet weak var collectionView: UICollectionView!
+	var tvManager=AutoSingleLevelCollectionViewManager (viewModel: Worker.defaultCollectionViewModel(),dataExtractor:StaticExtractor(source: Observable.just([Worker]())))
+	
+	override func viewDidLoad() {
+		super.viewDidLoad()
+		
+		tvManager.setupCollectionView( collectionView,vc:self)
+		tvManager.setupOnSelect(.Segue(name:"detail",presentation:.Push))
+	}
+}
+
 
 class StaticViewController:UIViewController
 {

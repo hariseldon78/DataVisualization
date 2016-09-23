@@ -87,11 +87,13 @@ public class DynamicCollectionViewLayout: UICollectionViewLayout
 		let yOffsets:Driver<[CGFloat]>=cellSizes.map {
 			(sizes:[CGSize]) in
 			var offsets=[CGFloat]()
-			offsets.append(spacings.verticalBorder/*+(self.collectionView?.contentInset.top ?? 0) pare che sia già calcolato...*/)
-			for i in 0 ..< sizes.count-1 {
-				offsets.append(offsets.last!+self.spacings.verticalSpacing+sizes[i].height)
+			if sizes.count>0 {
+				offsets.append(spacings.verticalBorder/*+(self.collectionView?.contentInset.top ?? 0) pare che sia già calcolato...*/)
+				for i in 0 ..< sizes.count-1 {
+					offsets.append(offsets.last!+self.spacings.verticalSpacing+sizes[i].height)
+				}
 			}
-			self.contentHeight=offsets.last!+(sizes.last?.height ?? 0)+self.spacings.verticalBorder+(self.collectionView?.contentInset.bottom ?? 0)
+			self.contentHeight=(offsets.last ?? 0)+(sizes.last?.height ?? 0)+self.spacings.verticalBorder+(self.collectionView?.contentInset.bottom ?? 0)
 			return offsets
 		}
 		
