@@ -133,7 +133,7 @@ struct Worker: WithCachedApi
 		if let params=params,
 			let name=params["name"] as? String,
 			let salary=params["salary"] as? Double,
-			let department=params["department"] as? UInt {
+			let department=params["department"] as? Int {
 				array.append([
 					"id":12,
 					"name":name,
@@ -153,8 +153,8 @@ struct Worker: WithCachedApi
 						let salary:Double=w["salary"] as? Double,
 						let dep:UInt=w["departmentId"] as? UInt
 						else {fatalError()}
-					
-					return Worker(id: id , name: name, salary: salary, departmentId: dep)
+
+					return Worker(id: UInt(id) , name: name, salary: salary, departmentId: UInt(dep))
 			}
 			observer.onNext(data)
 			observer.onCompleted()
