@@ -16,17 +16,17 @@ class PlainViewController:UIViewController
 	@IBOutlet weak var tableView: UITableView!
 
 	var tvManager:AutoSearchableSingleLevelTableViewManager<Worker,Worker.DefaultViewModel>!
-	let dataExtractor=ApiExtractor<Worker>(apiParams:["name":"ApiParams","salary":Double(4000.0),"department":UInt(8)])
+	let dataExtractor=ApiExtractor<Worker>(apiParams:["name":"ApiParams" as AnyObject,"salary":Double(4000.0) as AnyObject,"department":UInt(8) as AnyObject])
 	override func viewDidLoad() {
 		super.viewDidLoad()
 		tvManager=AutoSearchableSingleLevelTableViewManager(
 			viewModel: Worker.defaultViewModel(),
 			filteringClosure: { (d:Worker, s:String) -> Bool in
-				return d.name.uppercaseString.containsString(s.uppercaseString)
+				return d.name.localizedUppercase.contains(s.localizedUppercase)
 			},
 			dataExtractor: dataExtractor)
 		tvManager.setupTableView(tableView,vc:self)
-		tvManager.setupOnSelect(.Detail,.Segue(name:"detail",presentation:.Push))
+		tvManager.setupOnSelect(.detail,.segue(name:"detail",presentation:.push))
 	}
 }
 
@@ -63,7 +63,7 @@ class PlainCollectionViewController:UIViewController
 		super.viewDidLoad()
 
 		tvManager.setupCollectionView( collectionView,vc:self)
-		tvManager.setupOnSelect(.Segue(name:"detail",presentation:.Push))
+		tvManager.setupOnSelect(.segue(name:"detail",presentation:.push))
 	}
 }
 
@@ -77,7 +77,7 @@ class EmptyCollectionViewController:UIViewController
 		super.viewDidLoad()
 		
 		tvManager.setupCollectionView( collectionView,vc:self)
-		tvManager.setupOnSelect(.Segue(name:"detail",presentation:.Push))
+		tvManager.setupOnSelect(.segue(name:"detail",presentation:.push))
 	}
 }
 
@@ -87,15 +87,15 @@ class StaticViewController:UIViewController
 	@IBOutlet weak var tableView: UITableView!
 	@IBOutlet var staticHeaderView: UIView!
 	var tvManager=AutoSearchableSingleLevelTableViewManager (viewModel: Worker.defaultViewModel(), filteringClosure: { (d:Worker, s:String) -> Bool in
-		return d.name.uppercaseString.containsString(s.uppercaseString)
+		return d.name.localizedUppercase.contains(s.localizedUppercase)
 	},dataExtractor:ApiExtractor<Worker>())
 	
 	override func viewDidLoad() {
 		super.viewDidLoad()
 		tvManager.setupTableView(tableView,vc:self)
-		tvManager.setupOnSelect(.Info,.Segue(name:"detail",presentation:.Push))
+		tvManager.setupOnSelect(.info,.segue(name:"detail",presentation:.push))
 	}
-	override func viewDidAppear(animated: Bool) {
+	override func viewDidAppear(_ animated: Bool) {
 		super.viewDidAppear(animated)
 		tableView.tableHeaderView=staticHeaderView
 		
@@ -106,10 +106,10 @@ class NoStoryboardViewController:UIViewController
 {
 	@IBOutlet weak var tableView: UITableView!
 	var tvManager=AutoSearchableSingleLevelTableViewManager (viewModel: Worker.defaultViewModel(), filteringClosure: { (d:Worker, s:String) -> Bool in
-		return d.name.uppercaseString.containsString(s.uppercaseString)
+		return d.name.localizedUppercase.contains(s.localizedUppercase)
 	},dataExtractor:ApiExtractor())
 	init(){
-		super.init(nibName:"NibVC",bundle:NSBundle.mainBundle())
+		super.init(nibName:"NibVC",bundle:Bundle.main)
 	}
 
 	required init?(coder aDecoder: NSCoder) {
@@ -129,10 +129,10 @@ class PlainNoDetViewController:UIViewController
 	override func viewDidLoad() {
 		super.viewDidLoad()
 		tvManager.setupTableView(tableView,vc:self)
-		tvManager.setupOnSelect(.Detail,.Action(action: { (d:Worker) -> () in
+		tvManager.setupOnSelect(.detail,.action(action: { (d:Worker) -> () in
 			dump(d)
 			let vc=NoStoryboardViewController()
-			self.presentViewController(vc, animated: true, completion: nil)
+			self.present(vc, animated: true, completion: nil)
 		}))
 	}
 }
@@ -147,7 +147,7 @@ class FunkyViewController:UIViewController {
 	override func viewDidLoad() {
 		super.viewDidLoad()
 		tvManager.setupTableView(tableView,vc:self)
-		tvManager.setupOnSelect(.Detail,.Segue(name:"detail",presentation:.Push))
+		tvManager.setupOnSelect(.detail,.segue(name:"detail",presentation:.push))
 	}
 
 }
@@ -159,8 +159,8 @@ class PlainSectionedViewController:UIViewController {
 	override func viewDidLoad() {
 		super.viewDidLoad()
 		tvManager.setupTableView(tableView,vc:self)
-		tvManager.setupDataOnSelect(.Info,.Segue(name:"workerDetail",presentation:.Push))
-		tvManager.setupSectionOnSelect(.Segue(name:"departmentDetail",presentation:.Push))
+		tvManager.setupDataOnSelect(.info,.segue(name:"workerDetail",presentation:.push))
+		tvManager.setupSectionOnSelect(.segue(name:"departmentDetail",presentation:.push))
 	}
 }
 
@@ -173,20 +173,20 @@ class SearchSectionedViewController:UIViewController {
 		sectionViewModel: Department.defaultSectionViewModel(),
 		sectioner: CollapsableSectioner(original:WorkerSectioner()),
 		dataFilteringClosure: { (d, s) -> Bool in
-			return d.name.uppercaseString.containsString(s.uppercaseString)
+			return d.name.localizedUppercase.contains(s.localizedUppercase)
 		},
 		sectionFilteringClosure: { (d, s) -> Bool in
-			return d.name.uppercaseString.containsString(s.uppercaseString)
+			return d.name.localizedUppercase.contains(s.localizedUppercase)
 	})
 	
 	
 	override func viewDidLoad() {
 		super.viewDidLoad()
 		tvManager.setupTableView(tableView,vc:self)
-		tvManager.setupDataOnSelect(.Detail,.SectionSegue(name:"departmentDetail",presentation:.Push))
-		tvManager.setupSectionOnSelect(OnSelectBehaviour<Department>.Action(action: { (d) in
+		tvManager.setupDataOnSelect(.detail,.sectionSegue(name:"departmentDetail",presentation:.push))
+		tvManager.setupSectionOnSelect(OnSelectBehaviour<Department>.action(action: { (d) in
 			// TODO: creare una behaviouraction ad hoc, o almeno un methodo in CollapsableSectionerProtocol
-			if let s=self.tvManager.sectioner.selectedSection.value where s==d
+			if let s=self.tvManager.sectioner.selectedSection.value , s==d
 			{
 				self.tvManager.sectioner.selectedSection.value=nil
 			}
@@ -198,10 +198,10 @@ class SearchSectionedViewController:UIViewController {
 		tvManager.search.asObservable()
 			.map{!$0.isEmpty}
 			.distinctUntilChanged()
-			.subscribeNext {
+			.subscribe(onNext: {
 				print("showAll=\($0)")
 				self.tvManager.sectioner.showAll.value=$0
-		}.addDisposableTo(disposeBag)
+		}).addDisposableTo(disposeBag)
 		
 		
 	}
@@ -222,20 +222,20 @@ class SearchSectionedFunkyViewController:UIViewController {
 		sectionViewModel: Department.defaultSectionViewModel(),
 		sectioner: CollapsableSectioner(original:WorkerSectioner()),
 		dataFilteringClosure: { (d, s) -> Bool in
-			return d.name.uppercaseString.containsString(s.uppercaseString)
+			return d.name.localizedUppercase.contains(s.localizedUppercase)
 		},
 		sectionFilteringClosure: { (d, s) -> Bool in
-			return d.name.uppercaseString.containsString(s.uppercaseString)
+			return d.name.localizedUppercase.contains(s.localizedUppercase)
 	})
 	
 	
 	override func viewDidLoad() {
 		super.viewDidLoad()
 		tvManager.setupTableView(tableView,vc:self)
-		tvManager.setupDataOnSelect(.Info,.SectionSegue(name:"departmentDetail",presentation:.Push))
-		tvManager.setupSectionOnSelect(OnSelectBehaviour<Department>.Action(action: { (d) in
+		tvManager.setupDataOnSelect(.info,.sectionSegue(name:"departmentDetail",presentation:.push))
+		tvManager.setupSectionOnSelect(OnSelectBehaviour<Department>.action(action: { (d) in
 			// TODO: creare una behaviouraction ad hoc, o almeno un methodo in CollapsableSectionerProtocol
-			if let s=self.tvManager.sectioner.selectedSection.value where s==d
+			if let s=self.tvManager.sectioner.selectedSection.value , s==d
 			{
 				self.tvManager.sectioner.selectedSection.value=nil
 			}
@@ -247,10 +247,10 @@ class SearchSectionedFunkyViewController:UIViewController {
 		tvManager.search.asObservable()
 			.map{!$0.isEmpty}
 			.distinctUntilChanged()
-			.subscribeNext {
+			.subscribe(onNext: {
 				print("showAll=\($0)")
 				self.tvManager.sectioner.showAll.value=$0
-			}.addDisposableTo(disposeBag)
+			}).addDisposableTo(disposeBag)
 		
 		
 	}
@@ -266,9 +266,9 @@ class WorkerDetail1:UIViewController,DetailView
 	override func viewDidLoad() {
 		super.viewDidLoad()
 		(detailManager as! DetailManager<Worker>).binder={ (obj:Observable<Worker>, disposeBag:DisposeBag) -> () in
-			obj.map { $0.name }.bindTo(self.label1.rx_text).addDisposableTo(disposeBag)
-			obj.map { "salary: €\($0.salary)" }.bindTo(self.label2.rx_text).addDisposableTo(disposeBag)
-			obj.map { "dep: \($0.departmentId)" }.bindTo(self.label3.rx_text).addDisposableTo(disposeBag)
+			obj.map { $0.name }.bindTo(self.label1.rx.text).addDisposableTo(disposeBag)
+			obj.map { "salary: €\($0.salary)" }.bindTo(self.label2.rx.text).addDisposableTo(disposeBag)
+			obj.map { "dep: \($0.departmentId)" }.bindTo(self.label3.rx.text).addDisposableTo(disposeBag)
 		}
 		detailManager.viewDidLoad()
 	}
@@ -284,8 +284,8 @@ class WorkerDetail2:UIViewController,DetailView
 	override func viewDidLoad() {
 		super.viewDidLoad()
 		(detailManager as! DetailManager<Worker>).binder={ (obj:Observable<Worker>, disposeBag:DisposeBag) -> () in
-			obj.map { $0.name }.bindTo(self.label1.rx_text).addDisposableTo(disposeBag)
-			obj.map { Float($0.salary) }.bindTo(self.slider1.rx_value).addDisposableTo(disposeBag)
+			obj.map { $0.name }.bindTo(self.label1.rx.text).addDisposableTo(disposeBag)
+			obj.map { Float($0.salary) }.bindTo(self.slider1.rx.value).addDisposableTo(disposeBag)
 		}
 		detailManager.viewDidLoad()
 
@@ -303,8 +303,8 @@ class DepartmentDetail1:UIViewController,DetailView
 	override func viewDidLoad() {
 		super.viewDidLoad()
 		(detailManager as! DetailManager<Department>).binder={ (obj:Observable<Department>, disposeBag:DisposeBag) -> () in
-			obj.map { $0.name }.bindTo(self.label1.rx_text).addDisposableTo(disposeBag)
-			obj.map { "\($0.id)" }.bindTo(self.label2.rx_text).addDisposableTo(disposeBag)
+			obj.map { $0.name }.bindTo(self.label1.rx.text).addDisposableTo(disposeBag)
+			obj.map { "\($0.id)" }.bindTo(self.label2.rx.text).addDisposableTo(disposeBag)
 		}
 		detailManager.viewDidLoad()
 	}

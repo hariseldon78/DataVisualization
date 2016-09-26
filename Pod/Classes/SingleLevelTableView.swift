@@ -16,57 +16,57 @@ public protocol Disposer {
 }
 
 
-let backgroundScheduler=OperationQueueScheduler(operationQueue: NSOperationQueue())
+let backgroundScheduler=OperationQueueScheduler(operationQueue: OperationQueue())
 
 public protocol AutoSingleLevelDataView:Disposer {
-	typealias Data/*:WithApi*/
-	typealias DataViewModel:ViewModel // where DataViewModel.Data==Data
+	associatedtype Data/*:WithApi*/
+	associatedtype DataViewModel:ViewModel // where DataViewModel.Data==Data
 	
 	var viewModel:DataViewModel {get}
 	var data:Observable<[Data]> {get}
 }
 
 public protocol AutoSingleLevelTableView:AutoSingleLevelDataView {
-	func setupTableView(tableView:UITableView,vc:UIViewController)
+	func setupTableView(_ tableView:UITableView,vc:UIViewController)
 }
 
-public typealias CellDecorator=(cell:UITableViewCell)->()
+public typealias CellDecorator=(_ cell:UITableViewCell)->()
 
 public enum PresentationMode
 {
-	case Push
+	case push
 //	case Popover(movableAnchor:UIView?)
 }
 public enum AccessoryStyle
 {
-	case Info
-	case Detail
-	case None
+	case info
+	case detail
+	case none
 }
 
 public enum OnSelectBehaviour<DataType>
 {
-	case Segue(name:String,presentation:PresentationMode)
-	case Action(action:(d:DataType)->())
+	case segue(name:String,presentation:PresentationMode)
+	case action(action:(_ d:DataType)->())
 }
 protocol TableViewDelegateCommon: UITableViewDelegate{
-	func tableView(tableView: UITableView, editingStyleForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCellEditingStyle
+	func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCellEditingStyle
 }
 extension TableViewDelegateCommon{
 // NON SI PUO' IMPLEMENTARE DIRETTAMENTE I METODI O NON VERRANNO CHIAMATI DAL DELEGATE PROXY
-	func _tableView(tableView: UITableView, editingStyleForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCellEditingStyle {
-		return UITableViewCellEditingStyle.None
+	func _tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCellEditingStyle {
+		return UITableViewCellEditingStyle.none
 	}
 }
 class PopoverPresentationControllerDelegate:NSObject,UIPopoverPresentationControllerDelegate
 {
-	func adaptivePresentationStyleForPresentationController(controller: UIPresentationController!) -> UIModalPresentationStyle {
-		return .None
+	func adaptivePresentationStyle(for controller: UIPresentationController!) -> UIModalPresentationStyle {
+		return .none
 	}
 }
 let popoverPresentationControllerDelegate=PopoverPresentationControllerDelegate()
 
-public class AutoSingleLevelTableViewManager<
+open class AutoSingleLevelTableViewManager<
 	DataType,
 	DataViewModel
 	where
@@ -79,17 +79,17 @@ public class AutoSingleLevelTableViewManager<
 	ControllerWithTableView
 {
 	public typealias Data=DataType
-	public var data:Observable<[Data]> {
+	open var data:Observable<[Data]> {
 		return dataExtractor.data()
 	}
-	public let disposeBag=DisposeBag()
-	public var dataBindDisposeBag=DisposeBag()
-	public let viewModel:DataViewModel
-	public var vc:UIViewController!
-	public var tableView:UITableView!
-	public var dataExtractor:DataExtractorBase<Data>
+	open let disposeBag=DisposeBag()
+	open var dataBindDisposeBag=DisposeBag()
+	open let viewModel:DataViewModel
+	open var vc:UIViewController!
+	open var tableView:UITableView!
+	open var dataExtractor:DataExtractorBase<Data>
 	
-	var onClick:((row:Data)->())?=nil
+	var onClick:((_ row:Data)->())?=nil
 	var clickedObj:Data?
 	
 	public required init(viewModel:DataViewModel,dataExtractor:DataExtractorBase<Data>){
@@ -97,7 +97,7 @@ public class AutoSingleLevelTableViewManager<
 		self.dataExtractor=dataExtractor
 		self.dataExtractor.viewForActivityIndicator=tableView
 	}
-	public func setupTableView(tableView:UITableView,vc:UIViewController)
+	open func setupTableView(_ tableView:UITableView,vc:UIViewController)
 	{
 		guard let nib=viewModel.cellNib else {
 			DataVisualization.fatalError("No cellNib defined: are you using ConcreteViewModel properly?")
@@ -107,13 +107,13 @@ public class AutoSingleLevelTableViewManager<
 		self.tableView=tableView
 		
 		tableView.delegate=nil
-		tableView.rx_setDelegate(self)
+		tableView.rx.setDelegate(self)
 		
 		registerDataCell(nib)
 		setupRowSize()
 		bindData()
 		
-		if let Cached=Data.self as? WithCachedApi.Type
+		if let Cached=Data.self as? Cached.Type
 		{
 			setupRefreshControl{
 				Cached.invalidateCache()
@@ -122,25 +122,25 @@ public class AutoSingleLevelTableViewManager<
 			}
 		}
 		
-		func didSelectObj(obj:Data)
+		func didSelectObj(_ obj:Data)
 		{
 			self.clickedObj=obj
-			self.onClick?(row: obj)
+			self.onClick?(obj)
 			tableView.indexPathsForSelectedRows?.forEach{ (indexPath) in
-				tableView.deselectRowAtIndexPath(indexPath, animated: true)
+				tableView.deselectRow(at: indexPath, animated: true)
 			}
 		}
 		
 		tableView
-			.rx_modelSelected(Data.self)
+			.rx.modelSelected(Data.self)
 			.subscribeNext(didSelectObj)
 			.addDisposableTo(disposeBag)
 		
 		tableView
-			.rx_itemAccessoryButtonTapped
+			.rx.itemAccessoryButtonTapped
 			.subscribeNext { (index) in
 				if let obj:Data=try? tableView.rx_modelAtIndexPath(index) {
-					tableView.selectRowAtIndexPath(index, animated: false, scrollPosition: UITableViewScrollPosition.None)
+					tableView.selectRow(at: index, animated: false, scrollPosition: UITableViewScrollPosition.none)
 					didSelectObj(obj)
 				}
 		}
@@ -155,15 +155,15 @@ public class AutoSingleLevelTableViewManager<
 				cell.setNeedsUpdateConstraints()
 				cell.updateConstraintsIfNeeded()
 				self.cellDecorators.forEach({ dec in
-					dec(cell: cell)
+					dec(cell)
 				})
 			}
 			.addDisposableTo(dataBindDisposeBag)
 		
 		handleEmpty()
 	}
-	public func tableView(tableView: UITableView, editingStyleForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCellEditingStyle {
-		return _tableView(tableView, editingStyleForRowAtIndexPath: indexPath)
+	open func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCellEditingStyle {
+		return _tableView(tableView, editingStyleForRowAt: indexPath)
 	}
 	
 	func handleEmpty()
@@ -184,20 +184,20 @@ public class AutoSingleLevelTableViewManager<
 			}.addDisposableTo(dataBindDisposeBag)
 		
 	}
-	public var cellDecorators:[CellDecorator]=[]
+	open var cellDecorators:[CellDecorator]=[]
 	
-	public func setupOnSelect(accessory:AccessoryStyle,_ onSelect:OnSelectBehaviour<Data>)
+	open func setupOnSelect(_ accessory:AccessoryStyle,_ onSelect:OnSelectBehaviour<Data>)
 	{
-		func prepareSegue(segue:String,presentation:PresentationMode)
+		func prepareSegue(_ segue:String,presentation:PresentationMode)
 		{
 			let detailSegue=segue
-			onClick={ _ in self.vc.performSegueWithIdentifier(segue, sender: nil) }
+			onClick={ _ in self.vc.performSegue(withIdentifier: segue, sender: nil) }
 			vc.rx_prepareForSegue.subscribeNext { (segue,_) in
-				guard let destVC=segue.destinationViewController as? UIViewController,
+				guard let destVC=segue.destination as? UIViewController,
 					let identifier=segue.identifier else {return}
 				
 				if identifier==detailSegue {
-					guard var dest=segue.destinationViewController as? DetailView
+					guard var dest=segue.destination as? DetailView
 						else {return}
 					dest.detailManager.object=self.clickedObj
 				}
@@ -205,25 +205,25 @@ public class AutoSingleLevelTableViewManager<
 		}
 		switch accessory
 		{
-		case .Detail:
+		case .detail:
 			let dec:CellDecorator={ (cell:UITableViewCell) in
-				cell.accessoryType=UITableViewCellAccessoryType.DisclosureIndicator
+				cell.accessoryType=UITableViewCellAccessoryType.disclosureIndicator
 			}
 			cellDecorators.append(dec)
-		case .Info:
+		case .info:
 			let dec:CellDecorator={ (cell:UITableViewCell) in
-				cell.accessoryType=UITableViewCellAccessoryType.DetailButton
+				cell.accessoryType=UITableViewCellAccessoryType.detailButton
 			}
 			cellDecorators.append(dec)
-		case .None:
+		case .none:
 			_=0
 		}
 		switch onSelect
 		{
-		case .Segue(let name,let presentation):
+		case .segue(let name,let presentation):
 			prepareSegue(name,presentation: presentation)
 			
-		case .Action(let closure):
+		case .action(let closure):
 			self.onClick=closure
 		}
 	}
@@ -231,7 +231,7 @@ public class AutoSingleLevelTableViewManager<
 	
 }
 
-public class AutoSearchableSingleLevelTableViewManager<
+open class AutoSearchableSingleLevelTableViewManager<
 	DataType,
 	DataViewModel
 	where
@@ -241,15 +241,15 @@ public class AutoSearchableSingleLevelTableViewManager<
 	: AutoSingleLevelTableViewManager<DataType,DataViewModel>,
 	Searchable
 {
-	public var searchController:UISearchController!
-	public typealias FilteringClosure=(d:DataType,s:String)->Bool
-	public var filteringClosure:FilteringClosure
+	open var searchController:UISearchController!
+	public typealias FilteringClosure=(_ d:DataType,_ s:String)->Bool
+	open var filteringClosure:FilteringClosure
 	let searchStyle:SearchControllerStyle
-	public var search:Observable<String> {
+	open var search:Observable<String> {
 		guard let searchBar=searchController.searchBar as? CustomSearchBar else {DataVisualization.fatalError()}
 		return searchBar.rx_textOrCancel.asObservable()
 	}
-	public override var data:Observable<[Data]> {
+	open override var data:Observable<[Data]> {
 		let allData=super.data
 		
 		let dataOrSearch=Observable.combineLatest(allData,search) {
@@ -257,7 +257,7 @@ public class AutoSearchableSingleLevelTableViewManager<
 			switch s {
 			case "": return d
 			default:
-				return d.filter {elem in self.filteringClosure(d:elem,s:s)}
+				return d.filter {elem in self.filteringClosure(elem,s)}
 			}
 			}.shareReplayLatestWhileConnected()
 			.observeOn(MainScheduler.instance)
@@ -266,12 +266,16 @@ public class AutoSearchableSingleLevelTableViewManager<
 		
 	}
 	
-	public init(viewModel:DataViewModel,filteringClosure:FilteringClosure,searchStyle:SearchControllerStyle = .SearchBarInNavigationBar,dataExtractor:DataExtractorBase<Data>) {
+	public init(viewModel:DataViewModel,filteringClosure:@escaping FilteringClosure,searchStyle:SearchControllerStyle = .searchBarInNavigationBar,dataExtractor:DataExtractorBase<Data>) {
 		self.searchStyle=searchStyle
 		self.filteringClosure=filteringClosure
 		super.init(viewModel: viewModel,dataExtractor:dataExtractor)
 	}
-	public override func setupTableView(tableView:UITableView,vc:UIViewController)
+	
+	public required init(viewModel: DataViewModel, dataExtractor: DataExtractorBase<Data>) {
+		fatalError("init(viewModel:dataExtractor:) has not been implemented")
+	}
+	open override func setupTableView(_ tableView:UITableView,vc:UIViewController)
 	{
 		self.vc=vc
 		self.tableView=tableView

@@ -14,9 +14,9 @@ import DataVisualization
 var cached=true
 
 extension Array{
-	mutating func maybeAppend(e:Element,p:Double=0.5)
+	mutating func maybeAppend(_ e:Element,p:Double=0.5)
 	{
-		if Double(random()%100)<p*100.0
+		if Double(arc4random()%100)<p*100.0
 		{
 			append(e)
 		}
@@ -35,7 +35,7 @@ struct Worker: WithCachedApi
 	static func defaultCollectionViewModel() -> DefaultCollectionViewModel {
 		return DefaultCollectionViewModel(cellName: "CollectionTitleCell") { (index, item, cell, resizeSink) -> Void in
 			cell.title.text=item.name
-			cell.indexPath=NSIndexPath(forItem: index,inSection: 0)
+			cell.indexPath=IndexPath(item: index,section: 0)
 			cell.resizeSink=resizeSink
 			var s=String()
 			let max=Int(item.salary/100)*2
@@ -51,7 +51,7 @@ struct Worker: WithCachedApi
 	let name:String
 	let salary:Double
 	let departmentId:UInt
-	static func api(viewForActivityIndicator: UIView?,params:[String:AnyObject]?=nil) -> Observable<[Worker]> {
+	static func api(_ viewForActivityIndicator: UIView?,params:[String:AnyObject]?=nil) -> Observable<[Worker]> {
 		var array=[
 			[
 				"id":0,
@@ -131,9 +131,9 @@ struct Worker: WithCachedApi
 			])
 
 		if let params=params,
-			name=params["name"] as? String,
-			salary=params["salary"] as? Double,
-			department=params["department"] as? UInt {
+			let name=params["name"] as? String,
+			let salary=params["salary"] as? Double,
+			let department=params["department"] as? UInt {
 				array.append([
 					"id":12,
 					"name":name,
@@ -144,21 +144,21 @@ struct Worker: WithCachedApi
 		
 		
 		return Observable.create({ (observer) -> Disposable in
-			assert(NSThread.currentThread() != NSThread.mainThread())
-			NSThread.sleepForTimeInterval(2)
+			assert(Thread.current != Thread.main)
+			Thread.sleep(forTimeInterval: 2)
 			let data=array
 				.map{ w->Worker in
 					guard let id:UInt=w["id"] as? UInt,
-						name:String=w["name"] as? String,
-						salary:Double=w["salary"] as? Double,
-						dep:UInt=w["departmentId"] as? UInt
+						let name:String=w["name"] as? String,
+						let salary:Double=w["salary"] as? Double,
+						let dep:UInt=w["departmentId"] as? UInt
 						else {fatalError()}
 					
 					return Worker(id: id , name: name, salary: salary, departmentId: dep)
 			}
 			observer.onNext(data)
 			observer.onCompleted()
-			return AnonymousDisposable {}
+			return Disposables.create {}
 		})
 	}
 	static func invalidateCache() {
@@ -167,7 +167,7 @@ struct Worker: WithCachedApi
 }
 
 struct Department:CollapsableSection {
-	var collapseState:SectionCollapseState = .Expanded
+	var collapseState:SectionCollapseState = .expanded
 	var elementsCount:Int=0
 	typealias DefaultSectionViewModel=ConcreteSectionViewModel<Department,Worker,TitleHeader>
 	static func defaultSectionViewModel() -> DefaultSectionViewModel {
@@ -207,11 +207,11 @@ class WorkerSectioner:Sectioner,Cached
 	var _refresher=Variable(0)
 	var sections:Observable<[SectionAndData]> {
 		return Observable.combineLatest(_viewForActivityIndicator.asObservable(), _refresher.asObservable()){ $0.0 }
-			.observeOn(OperationQueueScheduler(operationQueue:NSOperationQueue()))
+			.observeOn(OperationQueueScheduler(operationQueue:OperationQueue()))
 			.map{ (v) in
 				Data.api(v)
 			}
-			.subscribeOn(OperationQueueScheduler(operationQueue:NSOperationQueue()))
+			.subscribeOn(OperationQueueScheduler(operationQueue:OperationQueue()))
 			.flatMap { $0 }
 			.map { (w:[Worker]) in
 				let ret=w
@@ -219,7 +219,7 @@ class WorkerSectioner:Sectioner,Cached
 					.reduce([]) { (deps:[UInt], dep) in
 						deps.contains(dep) ? deps : deps+dep
 					}.map{ dep in
-						(Department(collapseState:.Expanded, id: dep, name: "dep n°\(dep)"),
+						(Department(collapseState:.expanded, id: dep, name: "dep n°\(dep)"),
 							w.filter{ $0.departmentId==dep })
 				}
 				return ret

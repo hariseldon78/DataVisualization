@@ -18,12 +18,12 @@ public protocol DetailManagerType
 	var object:Any? {get set}
 	func viewDidLoad()
 }
-public class DetailManager<Data>:DetailManagerType
+open class DetailManager<Data>:DetailManagerType
 {
 	public init(){}
 	let disposeBag=DisposeBag()
 	var objObs:Variable<Data>!
-	public var object:Any? {didSet{
+	open var object:Any? {didSet{
 		guard let w=object as? Data else {
 			DataVisualization.nonFatalError("wrong type passed to detailManager")
 			return
@@ -32,11 +32,11 @@ public class DetailManager<Data>:DetailManagerType
 		else { objObs.value=w }
 		}
 	}
-	public typealias Binder=(obj:Observable<Data>,disposeBag:DisposeBag)->()
-	public var binder:Binder?
-	public func viewDidLoad() {
+	public typealias Binder=(_ obj:Observable<Data>,_ disposeBag:DisposeBag)->()
+	open var binder:Binder?
+	open func viewDidLoad() {
 		let obj=objObs.asObservable().observeOn(MainScheduler.instance)
-		binder?(obj:obj,disposeBag:disposeBag)
+		binder?(obj,disposeBag)
 	}
 	
 }

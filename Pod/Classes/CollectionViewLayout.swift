@@ -9,29 +9,49 @@
 import Foundation
 import RxSwift
 import RxCocoa
+fileprivate func < <T : Comparable>(lhs: T?, rhs: T?) -> Bool {
+  switch (lhs, rhs) {
+  case let (l?, r?):
+    return l < r
+  case (nil, _?):
+    return true
+  default:
+    return false
+  }
+}
+
+fileprivate func > <T : Comparable>(lhs: T?, rhs: T?) -> Bool {
+  switch (lhs, rhs) {
+  case let (l?, r?):
+    return l > r
+  default:
+    return rhs < lhs
+  }
+}
+
 
 extension Array {
-	mutating func extend(toSize:Int,fillValue:Element)
+	mutating func extend(_ toSize:Int,fillValue:Element)
 	{
 		if count<toSize
 		{
 			reserveCapacity(toSize)
-			appendContentsOf(Array<Element>(count: toSize-count, repeatedValue: fillValue))
+			append(contentsOf: Array<Element>(repeating: fillValue, count: toSize-count))
 		}
 	}
 }
 struct Zip3Generator
 	<
-	A: GeneratorType,
-	B: GeneratorType,
-	C: GeneratorType
->: GeneratorType {
+	A: IteratorProtocol,
+	B: IteratorProtocol,
+	C: IteratorProtocol
+>: IteratorProtocol {
 	
-	private var first: A
-	private var second: B
-	private var third: C
+	fileprivate var first: A
+	fileprivate var second: B
+	fileprivate var third: C
 	
-	private var index = 0
+	fileprivate var index = 0
 	
 	init(_ first: A, _ second: B, _ third: C) {
 		self.first = first
@@ -40,31 +60,31 @@ struct Zip3Generator
 	}
 	
 	mutating func next() -> (A.Element, B.Element, C.Element)? {
-		if let a = first.next(), b = second.next(), c = third.next() {
+		if let a = first.next(), let b = second.next(), let c = third.next() {
 			return (a, b, c)
 		}
 		return nil
 	}
 }
 
-func zip<A: SequenceType, B: SequenceType, C: SequenceType>(a: A, b: B, c: C) -> GeneratorSequence<Zip3Generator<A.Generator, B.Generator, C.Generator>> {
-	return GeneratorSequence(Zip3Generator(a.generate(), b.generate(), c.generate()))
+func zip<A: Sequence, B: Sequence, C: Sequence>(_ a: A, b: B, c: C) -> IteratorSequence<Zip3Generator<A.Iterator, B.Iterator, C.Iterator>> {
+	return IteratorSequence(Zip3Generator(a.makeIterator(), b.makeIterator(), c.makeIterator()))
 }
 
-struct IntGenerator:GeneratorType {
-	private var index = -1
+struct IntGenerator:IteratorProtocol {
+	fileprivate var index = -1
 	mutating func next() -> Int? {
 		index+=1
 		return index
 	}
 }
 
-public class DynamicCollectionViewLayout: UICollectionViewLayout
+open class DynamicCollectionViewLayout: UICollectionViewLayout
 {
 	enum CollectionViewLayoutEvent {
-		case None
+		case none
 		
-		case InvalidateLayout
+		case invalidateLayout
 	}
 	
 	let 🗑=DisposeBag()
@@ -74,7 +94,7 @@ public class DynamicCollectionViewLayout: UICollectionViewLayout
 	}
 
 	var contentHeight=CGFloat(0)
-	public override func collectionViewContentSize() -> CGSize {
+	open override var collectionViewContentSize : CGSize {
 		return CGSize(width: contentWidth, height: contentHeight)
 	}
 	let spacings:CellSpacings
@@ -100,7 +120,7 @@ public class DynamicCollectionViewLayout: UICollectionViewLayout
 		let cellsInfo:Driver<[(Int,CGSize,CGFloat)]>=Driver
 			.combineLatest(cellSizes, yOffsets) {
 				(size,y) in
-				let zipped=Array(zip(GeneratorSequence(IntGenerator()),b:size,c:y))
+				let zipped=Array(zip(IteratorSequence(IntGenerator()),b:size,c:y))
 				return zipped
 		}
 		
@@ -112,7 +132,7 @@ public class DynamicCollectionViewLayout: UICollectionViewLayout
 				self.attributesCache=cellInfo.map { (index,size,y) in
 					let origin=CGPoint(x:(self.collectionView?.contentInset.left ?? 0) + self.spacings.horizontalBorder, y:y)
 					let frame=CGRect(origin: origin, size: size)
-					let attr=UICollectionViewLayoutAttributes(forCellWithIndexPath: NSIndexPath(forItem: index, inSection: 0))
+					let attr=UICollectionViewLayoutAttributes(forCellWith: IndexPath(item: index, section: 0))
 					attr.frame=frame
 					return attr
 				}
@@ -126,11 +146,11 @@ public class DynamicCollectionViewLayout: UICollectionViewLayout
 	
 	var attributesCache=[UICollectionViewLayoutAttributes]()
 	
-	public override func layoutAttributesForElementsInRect(rect: CGRect) -> [UICollectionViewLayoutAttributes]? {
-		guard collectionView?.numberOfSections()>0 else { return [UICollectionViewLayoutAttributes]() }
+	open override func layoutAttributesForElements(in rect: CGRect) -> [UICollectionViewLayoutAttributes]? {
+		guard collectionView?.numberOfSections>0 else { return [UICollectionViewLayoutAttributes]() }
 		let count=collectionView?.dataSource?.collectionView(collectionView!, numberOfItemsInSection: 0) ?? 0
 		let subset=attributesCache[0..<min(count,attributesCache.count)]
-		let ret=subset.filter{ CGRectIntersectsRect($0.frame, rect)	}
+		let ret=subset.filter{ $0.frame.intersects(rect)	}
 		return ret
 	}
 }

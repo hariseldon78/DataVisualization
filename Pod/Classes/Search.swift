@@ -13,63 +13,63 @@ import Cartography
 
 public enum SearchControllerStyle
 {
-	case SearchBarInTableHeader
-	case SearchBarInNavigationBar
+	case searchBarInTableHeader
+	case searchBarInNavigationBar
 }
 
 // non dovrebbe essere pubblico
 protocol Searchable:class,ControllerWithTableView,Disposer
 {
 	var searchController:UISearchController! {get set}
-	func setupSearchController(style:SearchControllerStyle)
+	func setupSearchController(_ style:SearchControllerStyle)
 }
 extension UIImage {
-	class func imageWithColor(color: UIColor) -> UIImage {
-		let rect = CGRectMake(0.0, 0.0, 1.0, 1.0)
+	class func imageWithColor(_ color: UIColor) -> UIImage {
+		let rect = CGRect(x: 0.0, y: 0.0, width: 1.0, height: 1.0)
 		UIGraphicsBeginImageContext(rect.size)
 		let context = UIGraphicsGetCurrentContext()
 		
-		CGContextSetFillColorWithColor(context, color.CGColor)
-		CGContextFillRect(context, rect)
+		context?.setFillColor(color.cgColor)
+		context?.fill(rect)
 		
 		let image = UIGraphicsGetImageFromCurrentImageContext()
 		UIGraphicsEndImageContext()
 		
-		return image
+		return image!
 	}
 }
 class CustomSearchBar: UISearchBar {
 	
-	override func setShowsCancelButton(showsCancelButton: Bool, animated: Bool) {
+	override func setShowsCancelButton(_ showsCancelButton: Bool, animated: Bool) {
 		super.setShowsCancelButton(false, animated: false)
 	}
-	public let cancelSubject = PublishSubject<Int>()
-	public var rx_cancel: ControlEvent<Void> {
-		let source=rx_delegate.observe("searchBarCancelButtonClicked:").map{_ in _=0}
+	open let cancelSubject = PublishSubject<Int>()
+	open var rx_cancel: ControlEvent<Void> {
+		let source=rx.delegate.observe("searchBarCancelButtonClicked:").map{_ in _=0}
 		let events = Observable.of(source,cancelSubject.asObservable().map{_ in  _=0}).merge()
 		//			[source, cancelSubject].toObservable().merge()
 		return ControlEvent(events: events)
 	}
 	
-	public var rx_textOrCancel: ControlProperty<String> {
+	open var rx_textOrCancel: ControlProperty<String> {
 		
-		func bindingErrorToInterface(error: ErrorType) {
+		func bindingErrorToInterface(_ error: Error) {
 			let error = "Binding error to UI: \(error)"
 			DataVisualization.nonFatalError(error)
 		}
 		
 		let cancelMeansNoText=rx_cancel.map{""}
 		let source:Observable<String>=Observable.of(
-			rx_text.asObservable(),
+			rx.text.asObservable(),
 			cancelMeansNoText)
 			.merge()
 		return ControlProperty(values: source, valueSink: AnyObserver { [weak self] event in
 			switch event {
-			case .Next(let value):
+			case .next(let value):
 				self?.text = value
-			case .Error(let error):
+			case .error(let error):
 				bindingErrorToInterface(error)
-			case .Completed:
+			case .completed:
 				break
 			}
 			})
@@ -81,7 +81,7 @@ class CustomSearchController: UISearchController, UISearchBarDelegate {
 	
 	lazy var _searchBar: CustomSearchBar = {
 		[unowned self] in
-		let customSearchBar = CustomSearchBar(frame: CGRectZero)
+		let customSearchBar = CustomSearchBar(frame: CGRect.zero)
 		customSearchBar.delegate = self
 		return customSearchBar
 		}()
@@ -94,7 +94,7 @@ class CustomSearchController: UISearchController, UISearchBarDelegate {
 	override init(searchResultsController: UIViewController?) {
 		super.init(searchResultsController: searchResultsController)
 	}
-	override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: NSBundle?) {
+	override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
 		super.init(nibName:nibNameOrNil,bundle:nibBundleOrNil)
 	}
 	required override init?(coder aDecoder: NSCoder) {
@@ -105,22 +105,22 @@ extension Searchable
 {
 	
 	/// To be called in viewDidLoad
-	func setupSearchController(style:SearchControllerStyle)
+	func setupSearchController(_ style:SearchControllerStyle)
 	{
 		searchController=({
 			
 			let sc=CustomSearchController(searchResultsController: nil)
 			switch style{
-			case .SearchBarInTableHeader:
+			case .searchBarInTableHeader:
 				sc.hidesNavigationBarDuringPresentation=false
 				sc.dimsBackgroundDuringPresentation=false
-				sc.searchBar.searchBarStyle=UISearchBarStyle.Minimal
+				sc.searchBar.searchBarStyle=UISearchBarStyle.minimal
 				sc.searchBar.backgroundColor=UIColor(white: 1.0, alpha: 0.95)
 				sc.searchBar.sizeToFit()
-			case .SearchBarInNavigationBar:
+			case .searchBarInNavigationBar:
 				sc.hidesNavigationBarDuringPresentation=false
 				sc.dimsBackgroundDuringPresentation=false
-				sc.searchBar.searchBarStyle=UISearchBarStyle.Prominent
+				sc.searchBar.searchBarStyle=UISearchBarStyle.prominent
 				//				sc.searchBar.tintColor=UIColor(white:0.9, alpha:1.0) // non bianco altrimenti non si vede il cursore (influisce sul cursore e sul testo del pulsante cancel)
 				sc.searchBar.sizeToFit()
 			}
@@ -128,36 +128,36 @@ extension Searchable
 			
 			}())
 		switch style{
-		case .SearchBarInTableHeader:
+		case .searchBarInTableHeader:
 			self.tableView.tableHeaderView=self.searchController.searchBar
-		case .SearchBarInNavigationBar:
+		case .searchBarInNavigationBar:
 			var buttons=self.vc.navigationItem.rightBarButtonItems ?? [UIBarButtonItem]()
-			let searchButton=UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Search, target: nil, action: nil)
-			searchButton.rx_tap.subscribeNext{
+			let searchButton=UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.search, target: nil, action: nil)
+			searchButton.rx.tap.subscribeNext{
 				guard let searchBar=self.searchController.searchBar as? CustomSearchBar else {return}
 				if self.vc.navigationItem.titleView==nil
 				{
 					guard let navBar=self.vc.navigationController?.navigationBar else {return}
 					let buttonFrames = navBar.subviews.filter({
 						$0 is UIControl
-					}).sort({
+					}).sorted(by: {
 						$0.frame.origin.x < $1.frame.origin.x
 					}).map({
-						$0.convertRect($0.bounds, toView:nil)
+						$0.convert($0.bounds, to:nil)
 					})
 					let btnFrame=buttonFrames[buttonFrames.count-1]
-					let containerFrame=CGRectMake(0, 0, navBar.frame.size.width, btnFrame.size.height)
+					let containerFrame=CGRect(x:0, y:0, width:navBar.frame.size.width, height:btnFrame.size.height)
 					let superview=UIView(frame:containerFrame)
-					superview.backgroundColor=UIColor.clearColor()
+					superview.backgroundColor=UIColor.clear
 					superview.clipsToBounds=true
 					
 					//					searchBar.backgroundColor=UIColor.redColor()
 					//					searchBar.barTintColor=UIColor.whiteColor()
-					var textFieldInsideSearchBar = searchBar.valueForKey("searchField") as? UITextField
-					textFieldInsideSearchBar?.textColor = UIColor.blackColor()
-					searchBar.tintColor=UIColor.blackColor() // colora il cursore e testo cancel
+					var textFieldInsideSearchBar = searchBar.value(forKey: "searchField") as? UITextField
+					textFieldInsideSearchBar?.textColor = UIColor.black
+					searchBar.tintColor=UIColor.black // colora il cursore e testo cancel
 					
-					searchBar.backgroundImage=UIImage.imageWithColor(UIColor.clearColor())
+					searchBar.backgroundImage=UIImage.imageWithColor(UIColor.clear)
 					//					searchBar.showsCancelButton=false
 					self.vc.navigationItem.titleView=superview
 					superview.addSubview(searchBar)
@@ -188,7 +188,7 @@ extension Searchable
 		vc.rx_viewWillDisappear.subscribeNext{ _ in
 			switch style{
 			default:
-				self.searchController.active=false
+				self.searchController.isActive=false
 				self.searchController.searchBar.endEditing(true)
 				if self.isSearching
 				{

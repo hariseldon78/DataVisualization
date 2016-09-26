@@ -8,40 +8,40 @@
 
 import Foundation
 
-public class DataVisualization {
-	static public var nonFatalErrorMessageHandler:((String)->())={ e  in
+open class DataVisualization {
+	static open var nonFatalErrorMessageHandler:((String)->())={ e  in
 		fatalError(e)
 	}
-	static public var nonFatalErrorHandler:((NSError)->())={ e in
+	static open var nonFatalErrorHandler:((NSError)->())={ e in
 		nonFatalErrorMessageHandler(e.localizedDescription)
 	}
 	
-	static public var fatalErrorMessageHandler:((String)->())={ e  in
+	static open var fatalErrorMessageHandler:((String)->())={ e  in
 		fatalError(e)
 	}
-	static public var fatalErrorHandler:((NSError)->())={ e in
+	static open var fatalErrorHandler:((NSError)->())={ e in
 		fatalErrorMessageHandler(e.localizedDescription)
 	}
 	
-	@noreturn public class func nonFatalError(error:NSError)
+	open class func nonFatalError(_ error:NSError) -> Never
 	{
 		nonFatalErrorHandler(error)
 		exit(1)
 	}
 	
-	@noreturn public class func nonFatalError(string:String="")
+	open class func nonFatalError(_ string:String="") -> Never
 	{
 		nonFatalErrorMessageHandler(string)
 		exit(1)
 	}
 	
-	@noreturn public class func fatalError(error:NSError)
+	open class func fatalError(_ error:NSError) -> Never
 	{
 		fatalErrorHandler(error)
 		exit(1)
 	}
 	
-	@noreturn public class func fatalError(string:String="")
+	open class func fatalError(_ string:String="") -> Never
 	{
 		fatalErrorMessageHandler(string)
 		exit(1)

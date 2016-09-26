@@ -12,12 +12,12 @@ import RxCocoa
 
 public enum Either<T1,T2>
 {
-	case First(T1)
-	case Second(T2)
+	case first(T1)
+	case second(T2)
 }
 
 public protocol BaseViewModel {
-	typealias Cell:UIView
+	associatedtype Cell:UIView
 	var cellNib:Either<UINib,UIView.Type>?  {get}
 	var viewForEmptyList:UIView? {get}
 	var viewForEmptySearch:UIView? {get}
@@ -25,14 +25,14 @@ public protocol BaseViewModel {
 
 
 public protocol ViewModel:BaseViewModel {
-	typealias Data
-	func cellFactory(index:Int,item:Data,cell:Cell)
+	associatedtype Data
+	func cellFactory(_ index:Int,item:Data,cell:Cell)
 }
 
 public protocol SectionViewModel:BaseViewModel {
-	typealias Section
-	typealias Element
-	func cellFactory(index:Int,item:Section,elements:[Element],cell:Cell)
+	associatedtype Section
+	associatedtype Element
+	func cellFactory(_ index:Int,item:Section,elements:[Element],cell:Cell)
 }
 
 public struct CellSpacings {
@@ -45,116 +45,117 @@ public struct CellSpacings {
 public protocol CollectionViewModel:ViewModel {
 	static var columns:UInt {get}
 	static var spacings:CellSpacings {get}
-	func cellSize(index:Int,item:Data,maxWidth:CGFloat)->CGSize
+	func cellSize(_ index:Int,item:Data,maxWidth:CGFloat)->CGSize
 	var cellResizeEvents:PublishSubject<Void> {get}
 }
 
 public enum EmptyBehaviour {
-	case None
-	case LabelWithString(s:String)
-	case CustomView(v:UIView)
+	case none
+	case labelWithString(s:String)
+	case customView(v:UIView)
 	func getView()->UIView?
 	{
 		switch self {
-		case .None:
+		case .none:
 			return nil
-		case .LabelWithString(let s):
+		case .labelWithString(let s):
 			let lab=UILabel()
 			lab.text=NSLocalizedString(s, comment: "")
-			lab.textAlignment = .Center
+			lab.textAlignment = .center
 			return lab
-		case .CustomView(let v):
+		case .customView(let v):
 			return v
 		}
 	}
 
 }
-public class BaseConcreteViewModel<_Data,_Cell:UIView,_ClosureType>
+open class BaseConcreteViewModel<_Data,_Cell:UIView,_ClosureType>
 {
 	public typealias Cell=_Cell
 	public typealias ClosureType=_ClosureType
-	public var cellNib:Either<UINib,UIView.Type>?
+	open var cellNib:Either<UINib,UIView.Type>?
 	
-	public var emptyBehaviour=EmptyBehaviour.LabelWithString(s: "La lista è vuota")
-	public var viewForEmptyList:UIView? { return emptyBehaviour.getView() }
+	open var emptyBehaviour=EmptyBehaviour.labelWithString(s: "La lista è vuota")
+	open var viewForEmptyList:UIView? { return emptyBehaviour.getView() }
 	
-	public var emptySearchBehaviour=EmptyBehaviour.LabelWithString(s: "Nessun elemento corrisponde alla ricerca")
-	public var viewForEmptySearch:UIView? { return emptySearchBehaviour.getView() }
+	open var emptySearchBehaviour=EmptyBehaviour.labelWithString(s: "Nessun elemento corrisponde alla ricerca")
+	open var viewForEmptySearch:UIView? { return emptySearchBehaviour.getView() }
 	
 	public typealias Data=_Data
 		var cellFactoryClosure:ClosureType
 	public init(cellName:String,cellFactory:ClosureType) {
 		self.cellFactoryClosure=cellFactory
-		cellNib = .First(UINib(nibName: cellName, bundle: nil))
+		cellNib = .first(UINib(nibName: cellName, bundle: nil))
 	}
 	public init(cellFactory:ClosureType) {
 		self.cellFactoryClosure=cellFactory
-		cellNib = Either.Second(Cell.self)
+		cellNib = Either.second(Cell.self)
 	}
 
 }
-public class ConcreteViewModel<Data,Cell:UITableViewCell>:BaseConcreteViewModel<Data,Cell,(index:Int,item:Data,cell:Cell)->Void>,ViewModel
+open class ConcreteViewModel<Data,Cell:UITableViewCell>:BaseConcreteViewModel<Data,Cell,(_ index:Int,_ item:Data,_ cell:Cell)->Void>,ViewModel
 {
-	public override init(cellName:String,cellFactory:ClosureType) {
+	public override init(cellName:String,cellFactory:@escaping ClosureType) {
 		super.init(cellName:cellName,cellFactory:cellFactory)
 	}
-	public override init(cellFactory:ClosureType) {
+	public override init(cellFactory:@escaping ClosureType) {
 		super.init(cellFactory:cellFactory)
 	}
-	public func cellFactory(index: Int, item: Data, cell: Cell) {
-		self.cellFactoryClosure(index: index, item: item, cell: cell)
+	open func cellFactory(_ index: Int, item: Data, cell: Cell) {
+		self.cellFactoryClosure(index, item, cell)
 	}
 }
-
-public class ConcreteCollectionViewModel<Data,Cell:UICollectionViewCell>:BaseConcreteViewModel<Data,Cell,(index:Int,item:Data,cell:Cell,resizeEventsSink:PublishSubject<Void>)->Void>,CollectionViewModel
+public typealias CollectionClosureType<Cell,Data>=(_ index:Int,_ item:Data,_ cell:Cell,_ resizeEventsSink:PublishSubject<Void>)->Void
+open class ConcreteCollectionViewModel<Data,Cell:UICollectionViewCell>:BaseConcreteViewModel<Data,Cell,CollectionClosureType<Cell,Data>>,CollectionViewModel
 {
-	public override init(cellName:String,cellFactory:ClosureType) {
-		cellForSizeCalculations=UINib(nibName: cellName, bundle: nil).instantiateWithOwner(nil, options: nil)[0] as! Cell
+	public override init(cellName: String, cellFactory: @escaping ClosureType) {
+		cellForSizeCalculations=UINib(nibName: cellName, bundle: nil).instantiate(withOwner: nil, options: nil)[0] as! Cell
 		super.init(cellName:cellName,cellFactory:cellFactory)
 	}
-	public override init(cellFactory:ClosureType) {
+
+	public override init(cellFactory: @escaping ClosureType) {
 		cellForSizeCalculations=Cell()
 		super.init(cellFactory:cellFactory)
 	}
-	public func cellFactory(index: Int, item: Data, cell: Cell) {
-		self.cellFactoryClosure(index: index, item: item, cell: cell, resizeEventsSink: cellResizeEvents)
+	open func cellFactory(_ index: Int, item: Data, cell: Cell) {
+		self.cellFactoryClosure(index, item, cell, cellResizeEvents)
 	}
-	public class var columns: UInt {return 1}
-	public class var spacings:CellSpacings {
+	open class var columns: UInt {return 1}
+	open class var spacings:CellSpacings {
 		return CellSpacings(horizontalBorder: 8,
 		                    horizontalSpacing: 8,
 		                    verticalBorder: 8,
 		                    verticalSpacing: 8)}
-	private let cellForSizeCalculations:Cell
-	public func cellSize(index: Int, item: Data, maxWidth: CGFloat)->CGSize {
+	fileprivate let cellForSizeCalculations:Cell
+	open func cellSize(_ index: Int, item: Data, maxWidth: CGFloat)->CGSize {
 		let cell=cellForSizeCalculations
-		cell.contentView.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("[cell(maxWidth)]", options: NSLayoutFormatOptions(), metrics: ["maxWidth":maxWidth], views: ["cell":cell.contentView]))
+		cell.contentView.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "[cell(maxWidth)]", options: NSLayoutFormatOptions(), metrics: ["maxWidth":maxWidth], views: ["cell":cell.contentView]))
 		cellFactory(index, item: item, cell: cell)
-		return cell.contentView.systemLayoutSizeFittingSize(UILayoutFittingCompressedSize)
+		return cell.contentView.systemLayoutSizeFitting(UILayoutFittingCompressedSize)
 	}
-	public let cellResizeEvents=PublishSubject<Void>()
+	open let cellResizeEvents=PublishSubject<Void>()
 	
 }
-public class ConcreteSectionViewModel<Section,Element,Cell:UIView>:BaseConcreteViewModel<Section,Cell,(index:Int,item:Section,elements:[Element],cell:Cell)->Void>,SectionViewModel
+open class ConcreteSectionViewModel<Section,Element,Cell:UIView>:BaseConcreteViewModel<Section,Cell,(_ index:Int,_ item:Section,_ elements:[Element],_ cell:Cell)->Void>,SectionViewModel
 {
 	
-	public override init(cellName:String,cellFactory:ClosureType) {
+	public override init(cellName:String,cellFactory:@escaping ClosureType) {
 		super.init(cellName:cellName,cellFactory:cellFactory)
 	}
-	public override init(cellFactory:ClosureType) {
+	public override init(cellFactory:@escaping ClosureType) {
 		super.init(cellFactory:cellFactory)
 	}
-	public func cellFactory(index:Int,item:Section,elements:[Element],cell:Cell) {
-		self.cellFactoryClosure(index:index, item:item, elements:elements, cell:cell)
+	open func cellFactory(_ index:Int,item:Section,elements:[Element],cell:Cell) {
+		self.cellFactoryClosure(index, item, elements, cell)
 	}
 }
 
 public protocol WithApi {
-	static func api(viewForActivityIndicator:UIView?,params:[String:AnyObject]?)->Observable<[Self]>
+	static func api(_ viewForActivityIndicator:UIView?,params:[String:AnyObject]?)->Observable<[Self]>
 }
 public protocol ApiResolver {
 	associatedtype DataType
-	func apiOrSource(source:Observable<[DataType]>?,viewForActivityIndicator: UIView?, params: [String : AnyObject]?) -> Observable<[DataType]>
+	func apiOrSource(_ source:Observable<[DataType]>?,viewForActivityIndicator: UIView?, params: [String : AnyObject]?) -> Observable<[DataType]>
 	var typeHasApi:Bool {get}
 	
 }
@@ -197,25 +198,25 @@ public protocol DataExtractor {
 	func data()->Observable<[DataType]>
 }
 
-public class DataExtractorBase<_DataType>:DataExtractor{
+open class DataExtractorBase<_DataType>:DataExtractor{
 	public typealias DataType=_DataType
 	var viewForActivityIndicator:UIView?
-	public func data()->Observable<[DataType]> {fatalError("Base class, don't use me")}
+	open func data()->Observable<[DataType]> {fatalError("Base class, don't use me")}
 }
 
-public class StaticExtractor<_DataType>:DataExtractorBase<_DataType> {
+open class StaticExtractor<_DataType>:DataExtractorBase<_DataType> {
 	let source:Observable<[DataType]>
 	
 	public init(source:Observable<[_DataType]>){
 		self.source=source
 	}
-	public override func data()->Observable<[DataType]>
+	open override func data()->Observable<[DataType]>
 	{
 		return source.shareReplayLatestWhileConnected()
 	}
 }
 
-public class ApiExtractor<_DataType where _DataType:WithApi>:DataExtractorBase<_DataType> {
+open class ApiExtractor<_DataType>:DataExtractorBase<_DataType> where _DataType:WithApi {
 	let apiParams:[String:AnyObject]?
 	
 	public init(apiParams: [String : AnyObject]?=nil)
@@ -223,7 +224,7 @@ public class ApiExtractor<_DataType where _DataType:WithApi>:DataExtractorBase<_
 		self.apiParams=apiParams
 	}
 	
-	public override func data()->Observable<[DataType]>
+	open override func data()->Observable<[DataType]>
 	{
 		return  DataType.api(viewForActivityIndicator, params: apiParams)
 			.subscribeOn(backgroundScheduler)

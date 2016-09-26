@@ -1,39 +1,39 @@
 PODS:
-  - Cartography (0.6.0)
+  - Cartography (1.0.0)
   - DataVisualization (0.1.0):
     - Cartography
-    - RxCocoa
-    - RxDataSources (~> 0.9)
-    - RxSwift
-  - Nimble (4.1.0)
-  - Quick (0.9.3)
-  - RxCocoa (2.6.0):
-    - RxSwift (~> 2.5)
-  - RxDataSources (0.9):
-    - RxCocoa (~> 2.2)
-    - RxSwift (~> 2.2)
-  - RxSwift (2.6.0)
+    - RxCocoa (~> 3.0.0-beta.1)
+    - RxDataSources (~> 1.0.0-beta.2)
+    - RxSwift (~> 3.0.0-beta.1)
+  - Nimble (5.0.0)
+  - Quick (0.10.0)
+  - RxCocoa (3.0.0-beta.1):
+    - RxSwift (~> 3.0.0-beta.1)
+  - RxDataSources (1.0.0-beta.2):
+    - RxCocoa (~> 3.0.0-beta.1)
+    - RxSwift (~> 3.0.0-beta.1)
+  - RxSwift (3.0.0-beta.1)
 
 DEPENDENCIES:
   - DataVisualization (from `../`)
   - Nimble
   - Quick
-  - RxCocoa
-  - RxSwift
+  - RxCocoa (~> 3.0.0-beta.1)
+  - RxSwift (~> 3.0.0-beta.1)
 
 EXTERNAL SOURCES:
   DataVisualization:
     :path: "../"
 
 SPEC CHECKSUMS:
-  Cartography: 70af183a248547694a8cfaa6b989cb7e04589985
-  DataVisualization: efd443c377b8f972db708fd88d03a40e613f1a2f
-  Nimble: 97a0a4cae5124c117115634b2d055d8c97d0af19
-  Quick: 13a2a2b19a5d8e3ed4fd0c36ee46597fd77ebf71
-  RxCocoa: 89ab00d5753502520227940e3a0e0a0413683c6b
-  RxDataSources: e169bba94a7be584df7c1e1487fa56edc8753ae6
-  RxSwift: 77f3a0b15324baa7a1c9bfa9f199648a82424e26
+  Cartography: e576cf19c0c1f201686180bcf4537f981574ce8d
+  DataVisualization: dd33549e24615de49654ae0c46e1a0cf82c1d677
+  Nimble: 56fc9f5020effa2206de22c3dd910f4fb011b92f
+  Quick: 5d290df1c69d5ee2f0729956dcf0fd9a30447eaa
+  RxCocoa: 8cecf331302b8ae5381bbab1bccba4ede2eae6a8
+  RxDataSources: 1cd87dc97fd46be002942eb1dcb1b432535141dd
+  RxSwift: '0823e8d7969c23bfa9ddfb2afa4881e424a1a710'
 
-PODFILE CHECKSUM: c7d6069d79baf000c672ff125d3ada5384390a8b
+PODFILE CHECKSUM: cd37a7f549f250bf215f710ebea44309d8059888
 
 COCOAPODS: 1.0.1

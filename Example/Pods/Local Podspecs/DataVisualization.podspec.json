@@ -22,13 +22,13 @@
 
     ],
     "RxDataSources": [
-      "~> 0.9"
+      "~> 1.0.0-beta.2"
     ],
     "RxSwift": [
-
+      "~> 3.0.0-beta.1"
     ],
     "RxCocoa": [
-
+      "~> 3.0.0-beta.1"
     ]
   }
 }

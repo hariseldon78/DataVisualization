@@ -29,7 +29,7 @@ class CollectionTitleCell: UICollectionViewCell {
 	@IBOutlet weak var detailsWidth: NSLayoutConstraint!
 	@IBOutlet weak var detailsHeight: NSLayoutConstraint!
 	
-	var indexPath:NSIndexPath?
+	var indexPath:IndexPath?
 	var resizeSink:PublishSubject<Void>?
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -37,14 +37,14 @@ class CollectionTitleCell: UICollectionViewCell {
         // Initialization code
 		
 		Observable<Int>
-			.timer(Double(random()%10+2), period: Double(random()%10+2), scheduler: MainScheduler.instance)
-			.subscribeNext { _ in
-				self.detailsWidth.constant=20.0+CGFloat(random()%300)
+			.timer(Double(arc4random()%10+2), period: Double(arc4random()%10+2), scheduler: MainScheduler.instance)
+			.subscribe(onNext: { _ in
+				self.detailsWidth.constant=20.0+CGFloat(arc4random()%300)
 				self.resizeSink?.onNext()
 //				print("invalidateLayout")
 //				self.collectionView?.collectionViewLayout.invalidateLayout()
 //				
-			}.addDisposableTo(disposeBag)
+			}).addDisposableTo(disposeBag)
 	}
 	
 }

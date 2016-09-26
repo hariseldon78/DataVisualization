@@ -20,47 +20,47 @@ protocol ControllerWithCollectionView
 	var collectionView:UICollectionView! {get}
 	var vc:UIViewController! {get}
 	
-	func registerDataCell(nib: Either<UINib, UIView.Type>)
+	func registerDataCell(_ nib: Either<UINib, UIView.Type>)
 }
 
 extension ControllerWithCollectionView where Self:Disposer
 {
-	func setupRefreshControl(invalidateCacheAndReBindData:()->())
+	func setupRefreshControl(_ invalidateCacheAndReBindData:@escaping ()->())
 	{
 		let rc=UIRefreshControl()
-		rc.backgroundColor=UIColor.clearColor()
+		rc.backgroundColor=UIColor.clear
 		collectionView.bounces=true
 		collectionView.alwaysBounceVertical=true
 		collectionView.addSubview(rc)
-		rc.rx_controlEvent(UIControlEvents.ValueChanged).subscribeNext{ _ in
+		rc.rx.controlEvent(UIControlEvents.valueChanged).subscribeNext{ _ in
 			invalidateCacheAndReBindData()
 			rc.endRefreshing()
 			}.addDisposableTo(disposeBag)
 	}
 	
-	func registerDataCell(nib: Either<UINib, UIView.Type>)
+	func registerDataCell(_ nib: Either<UINib, UIView.Type>)
 	{
 		switch nib
 		{
-		case .First(let nib):
-			collectionView.registerNib(nib, forCellWithReuseIdentifier: "cell")
-		case .Second(let clazz):
-			collectionView.registerClass(clazz, forCellWithReuseIdentifier: "cell")
+		case .first(let nib):
+			collectionView.register(nib, forCellWithReuseIdentifier: "cell")
+		case .second(let clazz):
+			collectionView.register(clazz, forCellWithReuseIdentifier: "cell")
 		}
 	}
 }
 
 public protocol CollectionViewDelegate:UICollectionViewDelegate {
 	var collectionView:UICollectionView! {get}
-	typealias DataViewModel:CollectionViewModel
+	associatedtype DataViewModel:CollectionViewModel
 }
 
 
 public protocol AutoSingleLevelCollectionView:AutoSingleLevelDataView {
-	func setupCollectionView(collectionView: UICollectionView,vc:UIViewController)
+	func setupCollectionView(_ collectionView: UICollectionView,vc:UIViewController)
 }
 
-public class AutoSingleLevelCollectionViewManager<
+open class AutoSingleLevelCollectionViewManager<
 	DataType,
 	DataViewModelType
 	where
@@ -72,22 +72,22 @@ public class AutoSingleLevelCollectionViewManager<
 	CollectionViewDelegate,
 	ControllerWithCollectionView
 {
-	public var collectionView: UICollectionView!
-	public var dataExtractor:DataExtractorBase<Data>
+	open var collectionView: UICollectionView!
+	open var dataExtractor:DataExtractorBase<Data>
 	public typealias Data=DataType
 	public typealias DataViewModel=DataViewModelType
-	public var data:Observable<[Data]> {
+	open var data:Observable<[Data]> {
 		return dataExtractor.data()
 			.observeOn(MainScheduler.instance)
 			.subscribeOn(MainScheduler.instance)
 	}
-	public let disposeBag=DisposeBag()
-	public var dataBindDisposeBag=DisposeBag()
-	public let viewModel:DataViewModel
-	public var vc:UIViewController!
-	var cellSizesCache=[NSIndexPath:CGSize]()
+	open let disposeBag=DisposeBag()
+	open var dataBindDisposeBag=DisposeBag()
+	open let viewModel:DataViewModel
+	open var vc:UIViewController!
+	var cellSizesCache=[IndexPath:CGSize]()
 	
-	var onClick:((row:Data)->())?=nil
+	var onClick:((_ row:Data)->())?=nil
 	var clickedObj:Data?
 
 	public required init(viewModel:DataViewModel,dataExtractor:DataExtractorBase<Data>){
@@ -96,7 +96,7 @@ public class AutoSingleLevelCollectionViewManager<
 		super.init()
 	}
 	
-	public func setupCollectionView(collectionView: UICollectionView,vc:UIViewController)
+	open func setupCollectionView(_ collectionView: UICollectionView,vc:UIViewController)
 	{
 		guard let nib=viewModel.cellNib else {
 			DataVisualization.fatalError("No cellNib defined: are you using ConcreteViewModel properly?")
@@ -106,7 +106,7 @@ public class AutoSingleLevelCollectionViewManager<
 		self.collectionView=collectionView
 		let dataOrResize=Driver.combineLatest(data.asDriver(onErrorJustReturn: [DataType]()),viewModel.cellResizeEvents.asDriver(onErrorJustReturn: ()),resultSelector:{ $0.0 })
 		let cellSizes=dataOrResize.map{ (elements)->[CGSize] in
-			return Array(zip(GeneratorSequence(IntGenerator()),elements)).map {
+			return Array(zip(IteratorSequence(IntGenerator()),elements)).map {
 				(index,element) in
 				let cols=CGFloat(DataViewModel.columns)
 				let w=self.collectionView.bounds.size.width
@@ -116,7 +116,7 @@ public class AutoSingleLevelCollectionViewManager<
 				return self.viewModel.cellSize(index, item: element, maxWidth: (w-hBd*2-hSp*(cols-1))/cols)
 			}
 		}
-		collectionView.collectionViewLayout=DynamicCollectionViewLayout(cellSizes:cellSizes.asDriver(onErrorJustReturn:[CGSizeZero]),spacings:DataViewModel.spacings)
+		collectionView.collectionViewLayout=DynamicCollectionViewLayout(cellSizes:cellSizes.asDriver(onErrorJustReturn:[CGSize.zero]),spacings:DataViewModel.spacings)
 		viewModel.cellResizeEvents.onNext()
 		
 		viewModel.cellResizeEvents.subscribeNext { self.collectionView.collectionViewLayout.invalidateLayout()	}.addDisposableTo(disposeBag)
@@ -124,7 +124,7 @@ public class AutoSingleLevelCollectionViewManager<
 		registerDataCell(nib)
 		bindData()
 		
-		if let Cached=Data.self as? WithCachedApi.Type
+		if let Cached=Data.self as? Cached.Type
 		{
 			setupRefreshControl{
 				Cached.invalidateCache()
@@ -134,15 +134,15 @@ public class AutoSingleLevelCollectionViewManager<
 		}
 		
 		collectionView.delegate=nil
-		collectionView.rx_setDelegate(self)
+		collectionView.rx.setDelegate(self)
 		
 		collectionView
-			.rx_modelSelected(Data.self)
+			.rx.modelSelected(Data.self)
 			.subscribeNext { (obj) in
 				self.clickedObj=obj
-				self.onClick?(row:obj)
-				collectionView.indexPathsForSelectedItems()?.forEach{ (indexPath) in
-					collectionView.deselectItemAtIndexPath(indexPath, animated: true)
+				self.onClick?(obj)
+				collectionView.indexPathsForSelectedItems?.forEach{ (indexPath) in
+					collectionView.deselectItem(at: indexPath, animated: true)
 				}
 		}.addDisposableTo(disposeBag)
 	}
@@ -174,18 +174,18 @@ public class AutoSingleLevelCollectionViewManager<
 		}.addDisposableTo(dataBindDisposeBag)
 	}
 	
-	public func setupOnSelect(onSelect:OnSelectBehaviour<Data>)
+	open func setupOnSelect(_ onSelect:OnSelectBehaviour<Data>)
 	{
-		func prepareSegue(segue:String,presentation:PresentationMode)
+		func prepareSegue(_ segue:String,presentation:PresentationMode)
 		{
 			let detailSegue=segue
-			onClick={ _ in self.vc.performSegueWithIdentifier(segue, sender: nil) }
+			onClick={ _ in self.vc.performSegue(withIdentifier: segue, sender: nil) }
 			vc.rx_prepareForSegue.subscribeNext { (segue,_) in
-				guard let destVC=segue.destinationViewController as? UIViewController,
+				guard let destVC=segue.destination as? UIViewController,
 					let identifier=segue.identifier else {return}
 				
 				if identifier==detailSegue {
-					guard var dest=segue.destinationViewController as? DetailView
+					guard var dest=segue.destination as? DetailView
 						else {return}
 					dest.detailManager.object=self.clickedObj
 				}
@@ -193,10 +193,10 @@ public class AutoSingleLevelCollectionViewManager<
 		}
 		switch onSelect
 		{
-		case .Segue(let name,let presentation):
+		case .segue(let name,let presentation):
 			prepareSegue(name,presentation: presentation)
 			
-		case .Action(let closure):
+		case .action(let closure):
 			self.onClick=closure
 		}
 	}

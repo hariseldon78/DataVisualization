@@ -39,8 +39,8 @@ Pod::Spec.new do |s|
   # s.public_header_files = 'Pod/Classes/**/*.h'
   # s.frameworks = 'UIKit', 'MapKit'
   s.dependency 'Cartography'
-  s.dependency 'RxDataSources', '~> 0.9'
-  s.dependency 'RxSwift'
-  s.dependency 'RxCocoa'
+  s.dependency 'RxDataSources', '~> 1.0.0-beta.2'
+  s.dependency 'RxSwift',    '~> 3.0.0-beta.1'
+  s.dependency 'RxCocoa',    '~> 3.0.0-beta.1'
 
 end
