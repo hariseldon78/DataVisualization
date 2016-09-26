@@ -131,7 +131,6 @@ public class DynamicCollectionViewLayout: UICollectionViewLayout
 		let count=collectionView?.dataSource?.collectionView(collectionView!, numberOfItemsInSection: 0) ?? 0
 		let subset=attributesCache[0..<min(count,attributesCache.count)]
 		let ret=subset.filter{ CGRectIntersectsRect($0.frame, rect)	}
-//		print("layoutAttributesForElementsInRect(rect:\(rect))->\(ret)")
 		return ret
 	}
 }
