@@ -151,7 +151,7 @@ open class ConcreteSectionViewModel<Section,Element,Cell:UIView>:BaseConcreteVie
 }
 
 public protocol WithApi {
-	static func api(_ viewForActivityIndicator:UIView?,params:[String:AnyObject]?)->Observable<[Self]>
+	static func api(_ viewForActivityIndicator:UIView?,params:[String:Any]?)->Observable<[Self]>
 }
 public protocol ApiResolver {
 	associatedtype DataType
@@ -217,9 +217,9 @@ open class StaticExtractor<_DataType>:DataExtractorBase<_DataType> {
 }
 
 open class ApiExtractor<_DataType>:DataExtractorBase<_DataType> where _DataType:WithApi {
-	let apiParams:[String:AnyObject]?
+	let apiParams:[String:Any]?
 	
-	public init(apiParams: [String : AnyObject]?=nil)
+	public init(apiParams: [String : Any]?=nil)
 	{
 		self.apiParams=apiParams
 	}

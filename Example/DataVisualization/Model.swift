@@ -51,7 +51,7 @@ struct Worker: WithCachedApi
 	let name:String
 	let salary:Double
 	let departmentId:UInt
-	static func api(_ viewForActivityIndicator: UIView?,params:[String:AnyObject]?=nil) -> Observable<[Worker]> {
+	static func api(_ viewForActivityIndicator: UIView?,params:[String:Any]?=nil) -> Observable<[Worker]> {
 		var array=[
 			[
 				"id":0,
@@ -148,10 +148,10 @@ struct Worker: WithCachedApi
 			Thread.sleep(forTimeInterval: 2)
 			let data=array
 				.map{ w->Worker in
-					guard let id:UInt=w["id"] as? UInt,
+					guard let id:Int=w["id"] as? Int,
 						let name:String=w["name"] as? String,
 						let salary:Double=w["salary"] as? Double,
-						let dep:UInt=w["departmentId"] as? UInt
+						let dep:Int=w["departmentId"] as? Int
 						else {fatalError()}
 
 					return Worker(id: UInt(id) , name: name, salary: salary, departmentId: UInt(dep))
