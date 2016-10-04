@@ -18,15 +18,14 @@ extension Array {
 
 extension UIViewController
 {
-	var rx_raw_viewDidLoad:Observable<[AnyObject]> {return rx.sentMessage("viewDidLoad")}
+	var rx_raw_viewDidLoad:Observable<[Any]> {return rx.sentMessage("viewDidLoad")}
 	
-	var rx_raw_viewWillAppear:Observable<[AnyObject]> {return rx.sentMessage("viewWillAppear:")}
-	var rx_raw_viewDidAppear:Observable<[AnyObject]> {return rx.sentMessage("viewDidAppear:")}
-	var rx_raw_viewWillDisappear:Observable<[AnyObject]> {return rx.sentMessage("viewWillDisappear:")}
-	var rx_raw_viewDidDisappear:Observable<[AnyObject]> {return rx.sentMessage("viewDidDisappear:")}
+	var rx_raw_viewWillAppear:Observable<[Any]> {return rx.sentMessage("viewWillAppear:")}
+	var rx_raw_viewDidAppear:Observable<[Any]> {return rx.sentMessage("viewDidAppear:")}
+	var rx_raw_viewWillDisappear:Observable<[Any]> {return rx.sentMessage("viewWillDisappear:")}
+	var rx_raw_viewDidDisappear:Observable<[Any]> {return rx.sentMessage("viewDidDisappear:")}
 
-//	var rx_raw_performSegueWithIdentifier:Observable<[AnyObject]> {return rx_sentMessage("performSegueWithIdentifier:sender:")}
-	var rx_raw_prepareForSegue:Observable<[AnyObject]> {return rx.sentMessage("prepareForSegue:sender:")}
+	var rx_raw_prepareForSegue:Observable<[Any]> {return rx.sentMessage("prepareForSegue:sender:")}
 	
 	var rx_viewWillAppear:Observable<Bool> {
 		return rx_raw_viewWillAppear.map{ (args)in
