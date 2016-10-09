@@ -254,6 +254,12 @@ open class AutoSectionedTableViewManager<
 				self.sections.value=secs.map{ (s,d) in
 					RxSectionModel(model: s, items: d)
 				}
+				self.tableView.dataSource=nil
+				self.sections.asObservable()
+					.observeOn(MainScheduler.instance)
+					.bindTo(self.tableView.rx_itemsWithDataSource(self.dataSource))
+					.addDisposableTo(self.dataBindDisposeBag)
+				
 				self.emptyList=secs.isEmpty
 				if self.emptyList {
 					self.tableView.backgroundView=self.sectionViewModel.viewForEmptyList
@@ -263,10 +269,6 @@ open class AutoSectionedTableViewManager<
 			}
 			.addDisposableTo(dataBindDisposeBag)
 		
-		sections.asObservable()
-			.observeOn(MainScheduler.instance)
-			.bindTo(tableView.rx_itemsWithDataSource(dataSource))
-			.addDisposableTo(dataBindDisposeBag)
 	}
 	open func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCellEditingStyle {
 		return _tableView(tableView, editingStyleForRowAt: indexPath)
@@ -515,7 +517,7 @@ open class AutoSearchableSectionedTableViewManager<
 			}
 			self.tableView.dataSource=nil
 			self.sections.asObservable()
-//				.observeOn(MainScheduler.instance)
+				.observeOn(MainScheduler.instance)
 				.bindTo(self.tableView.rx_itemsWithDataSource(self.dataSource))
 			.addDisposableTo(self.dataBindDisposeBag)
 			}.addDisposableTo(dataBindDisposeBag)
