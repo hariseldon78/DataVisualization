@@ -278,6 +278,7 @@ open class AutoSectionedTableViewManager<
 			else {
 				DataVisualization.fatalError("why no section cell?")
 		}
+		guard section<sections.value.count else {return nil}
 		let sec=sections.value[section]
 		
 		sectionViewModel.cellFactory(section, item:sec.model, elements:sec.items, cell:hv as! SectionViewModel.Cell)
@@ -512,12 +513,13 @@ open class AutoSearchableSectionedTableViewManager<
 				(s,d) in
 				RxSectionModel(model: s, items: d)
 			}
+			self.tableView.dataSource=nil
+			self.sections.asObservable()
+//				.observeOn(MainScheduler.instance)
+				.bindTo(self.tableView.rx_itemsWithDataSource(self.dataSource))
+			.addDisposableTo(self.dataBindDisposeBag)
 			}.addDisposableTo(dataBindDisposeBag)
 		
-		sections.asObservable()
-			.observeOn(MainScheduler.instance)
-			.bindTo(tableView.rx_itemsWithDataSource(dataSource))
-			.addDisposableTo(dataBindDisposeBag)
 		
 		allData.map { array in
 			array.isEmpty
