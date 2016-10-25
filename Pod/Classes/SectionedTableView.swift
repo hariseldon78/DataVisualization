@@ -124,6 +124,7 @@ public enum OnSelectSectionedBehaviour<T>
 {
 	case segue(name:String,presentation:PresentationMode)
 	case sectionSegue(name:String,presentation:PresentationMode) // shows the detail of the section, even if starting from a data cell
+	case indexPathSpecificSegue(segueForPath:(IndexPath)->String,presentation:PresentationMode)
 	case action(action:(_ d:T)->())
 }
 
@@ -163,7 +164,7 @@ open class AutoSectionedTableViewManager<
 	let dataSource=RxTableViewSectionedReloadDataSource<RxSectionModel>()
 	var sections=Variable([RxSectionModel]())
 	
-	var onDataClick:((_ row:Element)->())?=nil
+	var onDataClick:((_ row:Element,_ path:IndexPath)->())?=nil
 	var clickedDataObj:Element?
 	
 	var onSectionClick:((_ section:Section)->())?=nil
@@ -308,7 +309,7 @@ open class AutoSectionedTableViewManager<
 		let item=dataSource[indexPath]
 		clickedDataObj=item
 		clickedSectionObj=sections.value[indexPath.section].model
-		onDataClick?(item)
+		onDataClick?(item,indexPath)
 		tableView.indexPathsForSelectedRows?.forEach{ (indexPath) in
 			tableView.deselectRow(at: indexPath, animated: true)
 		}
@@ -325,16 +326,20 @@ open class AutoSectionedTableViewManager<
 		{
 		case .segue(let name,let presentation):
 			dataDetailSegue=name
-			onDataClick = { row in
+			onDataClick = { row,_ in
 				self.vc.performSegue(withIdentifier: name, sender: nil)
 			}
 		case .sectionSegue(let name,let presentation):
 			dataDetailSectionSegue=name
-			onDataClick = { row in
+			onDataClick = { row,_ in
 				self.vc.performSegue(withIdentifier: name, sender: nil)
 			}
+		case .indexPathSpecificSegue(let segueForPath,let presentation):
+			onDataClick = { _,indexPath in
+				self.vc.performSegue(withIdentifier: segueForPath(indexPath), sender: nil)
+			}
 		case .action(let closure):
-			self.onDataClick=closure
+			self.onDataClick={d,_ in closure(d)}
 		}
 		switch accessory
 		{
@@ -357,6 +362,8 @@ open class AutoSectionedTableViewManager<
 		case .segue(_,_):
 			fallthrough
 		case .sectionSegue(_,_):
+			fallthrough
+		case .indexPathSpecificSegue(_,_):
 			listenForSegue()
 		default:
 			_=0
@@ -399,7 +406,7 @@ open class AutoSectionedTableViewManager<
 			case let val where val==self.sectionDetailSegue:
 				dest.detailManager.object=self.clickedSectionObj
 			default:
-				_=0
+				dest.detailManager.object=self.clickedDataObj
 			}
 			}.addDisposableTo(disposeBag)
 	}
