@@ -65,22 +65,22 @@ open class CollapsableSectioner<
 	}
 	open var sections:Observable<[SectionAndData]> {
 		return Observable.combineLatest(original.sections,selectedSection.asObservable(),showAll.asObservable())
-			{
-				let (sectionsAndData,selected,showAll)=$0
-				return sectionsAndData.map{ (_s,dd)  in
-					var s=_s
-					s.elementsCount=dd.count
-					if showAll || (selected != nil && s==selected!)
-					{
-						s.collapseState = .expanded
-						return (s,dd)
-					}
-					else
-					{
-						s.collapseState = .collapsed
-						return (s,[Data]())
-					}
+		{
+			let (sectionsAndData,selected,showAll)=$0
+			return sectionsAndData.map{ (_s,dd)  in
+				var s=_s
+				s.elementsCount=dd.count
+				if showAll || (selected != nil && s==selected!)
+				{
+					s.collapseState = .expanded
+					return (s,dd)
 				}
+				else
+				{
+					s.collapseState = .collapsed
+					return (s,[Data]())
+				}
+			}
 		}
 	}
 	open func resubscribe() {
@@ -221,7 +221,7 @@ open class AutoSectionedTableViewManager<
 			})
 			return cell
 		}
-		
+		setDataSource()
 		bindData()
 		
 		if let Cacheable=SectionerType.self as? Cached.Type
@@ -247,20 +247,24 @@ open class AutoSectionedTableViewManager<
 	open var data:Observable<[SectionAndData]> {
 		return sectioner.sections
 	}
+	func setDataSource()
+	{
+		tableView.dataSource=nil
+		sections.asObservable()
+			.observeOn(MainScheduler.instance)
+			.bindTo(tableView.rx_itemsWithDataSource(dataSource))
+			.addDisposableTo(disposeBag)
+	}
 	func bindData()
 	{
 		data
+			.debug("data")
 			.subscribeOn(backgroundScheduler)
+			.debug("backgroundScheduler")
 			.subscribeNext { (secs:[(Section, [Element])]) -> Void in
 				self.sections.value=secs.map{ (s,d) in
 					RxSectionModel(model: s, items: d)
 				}
-				self.tableView.dataSource=nil
-				self.sections.asObservable()
-					.observeOn(MainScheduler.instance)
-					.bindTo(self.tableView.rx_itemsWithDataSource(self.dataSource))
-					.addDisposableTo(self.dataBindDisposeBag)
-				
 				self.emptyList=secs.isEmpty
 				if self.emptyList {
 					self.tableView.backgroundView=self.sectionViewModel.viewForEmptyList
@@ -275,7 +279,7 @@ open class AutoSectionedTableViewManager<
 		return _tableView(tableView, editingStyleForRowAt: indexPath)
 	}
 	open func tableView(_ tableView: UITableView,
-		viewForHeaderInSection section: Int) -> UIView?
+	                    viewForHeaderInSection section: Int) -> UIView?
 	{
 		guard let hv=tableView.dequeueReusableHeaderFooterView(withIdentifier: "section")
 			else {
@@ -299,11 +303,11 @@ open class AutoSectionedTableViewManager<
 		clickedSectionObj=gr.obj
 		onSectionClick?(gr.obj)
 	}
-//	public func tableView(tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-//		guard let hv=tableView.dequeueReusableHeaderFooterViewWithIdentifier("section")
-//			else {fatalError("why no section cell?")}
-//		return hv.bounds.height
-//	}
+	//	public func tableView(tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+	//		guard let hv=tableView.dequeueReusableHeaderFooterViewWithIdentifier("section")
+	//			else {fatalError("why no section cell?")}
+	//		return hv.bounds.height
+	//	}
 	open func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
 		dump(indexPath)
 		let item=dataSource[indexPath]
@@ -313,7 +317,7 @@ open class AutoSectionedTableViewManager<
 		tableView.indexPathsForSelectedRows?.forEach{ (indexPath) in
 			tableView.deselectRow(at: indexPath, animated: true)
 		}
-
+		
 	}
 	
 	open var cellDecorators:[CellDecorator]=[]
@@ -502,11 +506,11 @@ open class AutoSearchableSectionedTableViewManager<
 	let searchStyle:SearchControllerStyle
 	
 	public init(elementViewModel:ElementViewModel,
-		sectionViewModel:SectionViewModel,
-		sectioner:SectionerType,
-		dataFilteringClosure:@escaping DataFilteringClosure,
-		sectionFilteringClosure:@escaping SectionFilteringClosure,
-		searchStyle:SearchControllerStyle = .searchBarInNavigationBar)
+	            sectionViewModel:SectionViewModel,
+	            sectioner:SectionerType,
+	            dataFilteringClosure:@escaping DataFilteringClosure,
+	            sectionFilteringClosure:@escaping SectionFilteringClosure,
+	            searchStyle:SearchControllerStyle = .searchBarInNavigationBar)
 	{
 		self.searchStyle=searchStyle
 		self.dataFilteringClosure=dataFilteringClosure
@@ -526,7 +530,7 @@ open class AutoSearchableSectionedTableViewManager<
 			self.sections.asObservable()
 				.observeOn(MainScheduler.instance)
 				.bindTo(self.tableView.rx_itemsWithDataSource(self.dataSource))
-			.addDisposableTo(self.dataBindDisposeBag)
+				.addDisposableTo(self.dataBindDisposeBag)
 			}.addDisposableTo(dataBindDisposeBag)
 		
 		
@@ -536,7 +540,7 @@ open class AutoSearchableSectionedTableViewManager<
 			.subscribe(onNext: { (empty) -> Void in
 				self.emptyList=empty
 				}, onError: nil,
-				onCompleted: { () -> Void in
+				   onCompleted: { () -> Void in
 					self.dataCompleted=true
 				}, onDisposed: nil)
 			.addDisposableTo(dataBindDisposeBag)
