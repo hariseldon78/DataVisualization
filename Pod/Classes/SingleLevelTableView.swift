@@ -133,23 +133,23 @@ open class AutoSingleLevelTableViewManager<
 		
 		tableView
 			.rx.modelSelected(Data.self)
-			.subscribeNext(didSelectObj)
+			.subscribe(onNext:(didSelectObj))
 			.addDisposableTo(disposeBag)
 		
 		tableView
 			.rx.itemAccessoryButtonTapped
-			.subscribeNext { (index) in
-				if let obj:Data=try? tableView.rx_modelAtIndexPath(index) {
+			.subscribe(onNext: { (index) in
+				if let obj:Data=try? tableView.rx.model(at:index) {
 					tableView.selectRow(at: index, animated: false, scrollPosition: UITableViewScrollPosition.none)
 					didSelectObj(obj)
 				}
-		}
+		}).addDisposableTo(disposeBag)
 		
 	}
 	
 	func bindData(){
 		data
-			.bindTo(tableView.rx_itemsWithCellIdentifier("cell")) {
+			.bindTo(tableView.rx.items(cellIdentifier:"cell")) {
 				(index,item,cell)->Void in
 				self.viewModel.cellFactory(index,item: item, cell: cell as! DataViewModel.Cell)
 				cell.setNeedsUpdateConstraints()
@@ -173,7 +173,7 @@ open class AutoSingleLevelTableViewManager<
 				array.isEmpty
 			}
 			.observeOn(MainScheduler.instance)
-			.subscribeNext { empty in
+			.subscribe(onNext: { empty in
 				if empty {
 					self.tableView.backgroundView=self.viewModel.viewForEmptyList
 				}
@@ -181,7 +181,7 @@ open class AutoSingleLevelTableViewManager<
 				{
 					self.tableView.backgroundView=nil
 				}
-			}.addDisposableTo(dataBindDisposeBag)
+			}).addDisposableTo(dataBindDisposeBag)
 		
 	}
 	open var cellDecorators:[CellDecorator]=[]
@@ -192,7 +192,7 @@ open class AutoSingleLevelTableViewManager<
 		{
 			let detailSegue=segue
 			onClick={ _ in self.vc.performSegue(withIdentifier: segue, sender: nil) }
-			vc.rx_prepareForSegue.subscribeNext { (segue,_) in
+			vc.rx_prepareForSegue.subscribe(onNext: { (segue,_) in
 				guard let destVC=segue.destination as? UIViewController,
 					let identifier=segue.identifier else {return}
 				
@@ -201,7 +201,7 @@ open class AutoSingleLevelTableViewManager<
 						else {return}
 					dest.detailManager.object=self.clickedObj
 				}
-				}.addDisposableTo(disposeBag)
+				}).addDisposableTo(disposeBag)
 		}
 		switch accessory
 		{
@@ -289,7 +289,7 @@ open class AutoSearchableSingleLevelTableViewManager<
 			.map { array in
 				array.isEmpty
 			}
-			.subscribeNext { empty in
+			.subscribe(onNext: { empty in
 				
 				switch (empty,self.searchController.searchBar.text)
 				{
@@ -300,7 +300,7 @@ open class AutoSearchableSingleLevelTableViewManager<
 				default:
 					self.tableView.backgroundView=nil
 				}
-			}.addDisposableTo(dataBindDisposeBag)
+			}).addDisposableTo(dataBindDisposeBag)
 		
 	}
 }

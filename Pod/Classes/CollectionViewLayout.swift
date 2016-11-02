@@ -128,7 +128,7 @@ open class DynamicCollectionViewLayout: UICollectionViewLayout
 			.asObservable()
 			.observeOn(MainScheduler.instance)
 			.subscribeOn(MainScheduler.instance)
-			.subscribeNext { (cellInfo) in
+			.subscribe(onNext: { (cellInfo) in
 				self.attributesCache=cellInfo.map { (index,size,y) in
 					let origin=CGPoint(x:(self.collectionView?.contentInset.left ?? 0) + self.spacings.horizontalBorder, y:y)
 					let frame=CGRect(origin: origin, size: size)
@@ -137,7 +137,7 @@ open class DynamicCollectionViewLayout: UICollectionViewLayout
 					return attr
 				}
 				self.invalidateLayout()
-			}.addDisposableTo(🗑)
+			}).addDisposableTo(🗑)
 	}
 	
 	required public init?(coder aDecoder: NSCoder) {

@@ -32,10 +32,10 @@ extension ControllerWithCollectionView where Self:Disposer
 		collectionView.bounces=true
 		collectionView.alwaysBounceVertical=true
 		collectionView.addSubview(rc)
-		rc.rx.controlEvent(UIControlEvents.valueChanged).subscribeNext{ _ in
+		rc.rx.controlEvent(UIControlEvents.valueChanged).subscribe(onNext:{ _ in
 			invalidateCacheAndReBindData()
 			rc.endRefreshing()
-			}.addDisposableTo(disposeBag)
+			}).addDisposableTo(disposeBag)
 	}
 	
 	func registerDataCell(_ nib: Either<UINib, UIView.Type>)
@@ -119,8 +119,8 @@ open class AutoSingleLevelCollectionViewManager<
 		collectionView.collectionViewLayout=DynamicCollectionViewLayout(cellSizes:cellSizes.asDriver(onErrorJustReturn:[CGSize.zero]),spacings:DataViewModel.spacings)
 		viewModel.cellResizeEvents.onNext()
 		
-		viewModel.cellResizeEvents.subscribeNext { self.collectionView.collectionViewLayout.invalidateLayout()	}.addDisposableTo(disposeBag)
-		data.subscribeNext {_ in self.collectionView.collectionViewLayout.invalidateLayout() }.addDisposableTo(disposeBag)
+		viewModel.cellResizeEvents.subscribe(onNext: { self.collectionView.collectionViewLayout.invalidateLayout()	}).addDisposableTo(disposeBag)
+		data.subscribe(onNext: {_ in self.collectionView.collectionViewLayout.invalidateLayout() }).addDisposableTo(disposeBag)
 		registerDataCell(nib)
 		bindData()
 		
@@ -139,19 +139,19 @@ open class AutoSingleLevelCollectionViewManager<
 		
 		collectionView
 			.rx.modelSelected(Data.self)
-			.subscribeNext { (obj) in
+			.subscribe(onNext: { (obj) in
 				self.clickedObj=obj
 				self.onClick?(obj)
 				collectionView.indexPathsForSelectedItems?.forEach{ (indexPath) in
 					collectionView.deselectItem(at: indexPath, animated: true)
 				}
-		}.addDisposableTo(disposeBag)
+		}).addDisposableTo(disposeBag)
 	}
 
 	func bindData()
 	{
 		data
-			.bindTo(collectionView.rx_itemsWithCellIdentifier("cell")) {
+			.bindTo(collectionView.rx.items(cellIdentifier:"cell")) {
 				(index,item,cell)->Void in
 				self.viewModel.cellFactory(index, item: item, cell: cell as! DataViewModel.Cell)
 				cell.setNeedsUpdateConstraints()
@@ -166,13 +166,13 @@ open class AutoSingleLevelCollectionViewManager<
 	{
 		data
 			.map { $0.isEmpty }
-			.subscribeNext{ empty in
+			.subscribe(onNext:{ empty in
 				if empty {
 					self.collectionView.backgroundView=self.viewModel.viewForEmptyList
 				} else {
 					self.collectionView.backgroundView=nil
 				}
-		}.addDisposableTo(dataBindDisposeBag)
+		}) .addDisposableTo(dataBindDisposeBag)
 	}
 	
 	open func setupOnSelect(_ onSelect:OnSelectBehaviour<Data>)
@@ -181,7 +181,7 @@ open class AutoSingleLevelCollectionViewManager<
 		{
 			let detailSegue=segue
 			onClick={ _ in self.vc.performSegue(withIdentifier: segue, sender: nil) }
-			vc.rx_prepareForSegue.subscribeNext { (segue,_) in
+			vc.rx_prepareForSegue.subscribe(onNext: { (segue,_) in
 				guard let destVC=segue.destination as? UIViewController,
 					let identifier=segue.identifier else {return}
 				
@@ -190,7 +190,7 @@ open class AutoSingleLevelCollectionViewManager<
 						else {return}
 					dest.detailManager.object=self.clickedObj
 				}
-				}.addDisposableTo(disposeBag)
+				}).addDisposableTo(disposeBag)
 		}
 		switch onSelect
 		{

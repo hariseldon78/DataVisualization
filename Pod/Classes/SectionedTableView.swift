@@ -235,12 +235,12 @@ open class AutoSectionedTableViewManager<
 		}
 		tableView
 			.rx.itemAccessoryButtonTapped
-			.subscribeNext { (index) in
-				if let obj:Element=try? tableView.rx_modelAtIndexPath(index) {
+			.subscribe(onNext: { (index) in
+				if let obj:Element=try? tableView.rx.model(at:index) {
 					self.tableView.selectRow(at: index, animated: false, scrollPosition: UITableViewScrollPosition.none)
 					self.tableView(self.tableView, didSelectRowAt: index)
 				}
-		}
+		}).addDisposableTo(disposeBag)
 		
 	}
 	var emptyList=false
@@ -252,7 +252,7 @@ open class AutoSectionedTableViewManager<
 		tableView.dataSource=nil
 		sections.asObservable()
 			.observeOn(MainScheduler.instance)
-			.bindTo(tableView.rx_itemsWithDataSource(dataSource))
+			.bindTo(tableView.rx.items(dataSource:dataSource))
 			.addDisposableTo(disposeBag)
 	}
 	func bindData()
@@ -261,7 +261,7 @@ open class AutoSectionedTableViewManager<
 			.debug("data")
 			.subscribeOn(backgroundScheduler)
 			.debug("backgroundScheduler")
-			.subscribeNext { (secs:[(Section, [Element])]) -> Void in
+			.subscribe(onNext: { (secs:[(Section, [Element])]) -> Void in
 				self.sections.value=secs.map{ (s,d) in
 					RxSectionModel(model: s, items: d)
 				}
@@ -271,7 +271,7 @@ open class AutoSectionedTableViewManager<
 				} else {
 					self.tableView.backgroundView=nil
 				}
-			}
+			})
 			.addDisposableTo(dataBindDisposeBag)
 		
 	}
@@ -398,7 +398,7 @@ open class AutoSectionedTableViewManager<
 	open func listenForSegue() {
 		guard !listeningForSegue else {return}
 		listeningForSegue=true
-		vc.rx_prepareForSegue.subscribeNext { (segue,_) in
+		vc.rx_prepareForSegue.subscribe(onNext: { (segue,_) in
 			guard var dest=segue.destination as? DetailView,
 				let identifier=segue.identifier else {return}
 			switch identifier
@@ -412,7 +412,7 @@ open class AutoSectionedTableViewManager<
 			default:
 				dest.detailManager.object=self.clickedDataObj
 			}
-			}.addDisposableTo(disposeBag)
+		}).addDisposableTo(disposeBag)
 	}
 }
 
@@ -520,7 +520,7 @@ open class AutoSearchableSectionedTableViewManager<
 	
 	var dataCompleted=false
 	override func bindData() {
-		data.subscribeNext {
+		data.subscribe(onNext: {
 			(secs:[(Section, [Element])]) -> Void in
 			self.sections.value=secs.map{
 				(s,d) in
@@ -529,9 +529,9 @@ open class AutoSearchableSectionedTableViewManager<
 			self.tableView.dataSource=nil
 			self.sections.asObservable()
 				.observeOn(MainScheduler.instance)
-				.bindTo(self.tableView.rx_itemsWithDataSource(self.dataSource))
+				.bindTo(self.tableView.rx.items(dataSource:self.dataSource))
 				.addDisposableTo(self.dataBindDisposeBag)
-			}.addDisposableTo(dataBindDisposeBag)
+			}).addDisposableTo(dataBindDisposeBag)
 		
 		
 		allData.map { array in
@@ -550,7 +550,7 @@ open class AutoSearchableSectionedTableViewManager<
 				array.isEmpty
 			}
 			.observeOn(MainScheduler.instance)
-			.subscribeNext { empty in
+			.subscribe(onNext: { empty in
 				
 				switch (empty,self.searchController.searchBar.text)
 				{
@@ -561,7 +561,7 @@ open class AutoSearchableSectionedTableViewManager<
 				default:
 					self.tableView.backgroundView=nil
 				}
-			}.addDisposableTo(dataBindDisposeBag)
+			}).addDisposableTo(dataBindDisposeBag)
 		
 		
 	}

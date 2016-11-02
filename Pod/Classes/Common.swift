@@ -30,10 +30,10 @@ extension ControllerWithTableView where Self:Disposer
 		tableView.bounces=true
 		tableView.alwaysBounceVertical=true
 		dummyTvc.refreshControl=rc
-		rc.rx.controlEvent(UIControlEvents.valueChanged).subscribeNext{ _ in
+		rc.rx.controlEvent(UIControlEvents.valueChanged).subscribe(onNext:{ _ in
 			invalidateCacheAndReBindData()
 			rc.endRefreshing()
-			}.addDisposableTo(disposeBag)
+			}).addDisposableTo(disposeBag)
 	}
 	
 	func registerDataCell(_ nib: Either<UINib, UIView.Type>)

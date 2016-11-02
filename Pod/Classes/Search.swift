@@ -45,7 +45,7 @@ class CustomSearchBar: UISearchBar {
 	}
 	open let cancelSubject = PublishSubject<Int>()
 	open var rx_cancel: ControlEvent<Void> {
-		let source=rx.delegate.observe("searchBarCancelButtonClicked:").map{_ in _=0}
+		let source=rx.delegate.sentMessage(#selector(UISearchBarDelegate.searchBarCancelButtonClicked(_:))).map{_ in _=0}
 		let events = Observable.of(source,cancelSubject.asObservable().map{_ in  _=0}).merge()
 		//			[source, cancelSubject].toObservable().merge()
 		return ControlEvent(events: events)
@@ -59,8 +59,10 @@ class CustomSearchBar: UISearchBar {
 		}
 		
 		let cancelMeansNoText=rx_cancel.map{""}
+		let txt:Observable<String>=rx.text.asObservable().filter{$0 != nil}.map {$0!}
+		
 		let source:Observable<String>=Observable.of(
-			rx.text.asObservable(),
+			txt,
 			cancelMeansNoText)
 			.merge()
 		return ControlProperty(values: source, valueSink: AnyObserver { [weak self] event in
@@ -133,7 +135,7 @@ extension Searchable
 		case .searchBarInNavigationBar:
 			var buttons=self.vc.navigationItem.rightBarButtonItems ?? [UIBarButtonItem]()
 			let searchButton=UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.search, target: nil, action: nil)
-			searchButton.rx.tap.subscribeNext{
+			searchButton.rx.tap.subscribe(onNext:{
 				guard let searchBar=self.searchController.searchBar as? CustomSearchBar else {return}
 				if self.vc.navigationItem.titleView==nil
 				{
@@ -180,12 +182,12 @@ extension Searchable
 					searchBar.text=""
 					self.vc.navigationItem.titleView=nil
 				}
-				}.addDisposableTo(self.disposeBag)
+				}).addDisposableTo(self.disposeBag)
 			buttons.append(searchButton)
 			self.vc.navigationItem.rightBarButtonItems=buttons
 			self.vc.definesPresentationContext=true
 		}
-		vc.rx_viewWillDisappear.subscribeNext{ _ in
+		vc.rx_viewWillDisappear.subscribe(onNext:{ _ in
 			switch style{
 			default:
 				self.searchController.isActive=false
@@ -196,7 +198,7 @@ extension Searchable
 					self.searchController.searchBar.removeFromSuperview()
 				}
 			}
-			}.addDisposableTo(disposeBag)
+			}).addDisposableTo(disposeBag)
 	}
 	
 	var isSearching:Bool {
