@@ -526,11 +526,6 @@ open class AutoSearchableSectionedTableViewManager<
 				(s,d) in
 				RxSectionModel(model: s, items: d)
 			}
-			self.tableView.dataSource=nil
-			self.sections.asObservable()
-				.observeOn(MainScheduler.instance)
-				.bindTo(self.tableView.rx.items(dataSource:self.dataSource))
-				.addDisposableTo(self.dataBindDisposeBag)
 		}).addDisposableTo(dataBindDisposeBag)
 		
 		

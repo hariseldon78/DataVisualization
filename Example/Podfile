@@ -3,6 +3,9 @@ use_frameworks!
 
 target 'DataVisualization_Example' do
   pod "DataVisualization", :path => "../"
+
+  pod 'RxSwift',    '~> 3.0.0'
+  pod 'RxCocoa',    '~> 3.0.0'
 end
 
 target 'DataVisualization_Tests' do
@@ -13,8 +16,8 @@ target 'DataVisualization_Tests' do
 #  pod 'FBSnapshotTestCase'
 #  pod 'Nimble-Snapshots'
 
-  pod 'RxSwift',    '~> 3.0.0-beta.1'
-  pod 'RxCocoa',    '~> 3.0.0-beta.1'
+  pod 'RxSwift',    '~> 3.0.0'
+  pod 'RxCocoa',    '~> 3.0.0'
 end
 
 post_install do |installer|
