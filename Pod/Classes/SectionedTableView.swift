@@ -240,7 +240,7 @@ open class AutoSectionedTableViewManager<
 					self.tableView.selectRow(at: index, animated: false, scrollPosition: UITableViewScrollPosition.none)
 					self.tableView(self.tableView, didSelectRowAt: index)
 				}
-		}).addDisposableTo(disposeBag)
+			}).addDisposableTo(disposeBag)
 		
 	}
 	var emptyList=false
@@ -250,7 +250,7 @@ open class AutoSectionedTableViewManager<
 	func setDataSource()
 	{
 		tableView.dataSource=nil
-		sections.asObservable()
+		sections.asDriver().asObservable()
 			.observeOn(MainScheduler.instance)
 			.bindTo(tableView.rx.items(dataSource:dataSource))
 			.addDisposableTo(disposeBag)
@@ -531,7 +531,7 @@ open class AutoSearchableSectionedTableViewManager<
 				.observeOn(MainScheduler.instance)
 				.bindTo(self.tableView.rx.items(dataSource:self.dataSource))
 				.addDisposableTo(self.dataBindDisposeBag)
-			}).addDisposableTo(dataBindDisposeBag)
+		}).addDisposableTo(dataBindDisposeBag)
 		
 		
 		allData.map { array in
@@ -539,10 +539,10 @@ open class AutoSearchableSectionedTableViewManager<
 			}
 			.subscribe(onNext: { (empty) -> Void in
 				self.emptyList=empty
-				}, onError: nil,
-				   onCompleted: { () -> Void in
-					self.dataCompleted=true
-				}, onDisposed: nil)
+			}, onError: nil,
+			   onCompleted: { () -> Void in
+				self.dataCompleted=true
+			}, onDisposed: nil)
 			.addDisposableTo(dataBindDisposeBag)
 		
 		data
