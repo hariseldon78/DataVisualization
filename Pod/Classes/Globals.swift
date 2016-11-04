@@ -7,32 +7,33 @@
 //
 
 import Foundation
-
+func originalFatalError(_ message: @autoclosure () -> String = "", file: StaticString = #file, line: UInt = #line) -> Never
+{
+	fatalError(message,file:file,line:line)
+}
 open class DataVisualization {
 	static open var nonFatalErrorMessageHandler:((String)->())={ e  in
-		fatalError(e)
+		originalFatalError(e)
 	}
 	static open var nonFatalErrorHandler:((NSError)->())={ e in
 		nonFatalErrorMessageHandler(e.localizedDescription)
 	}
 	
 	static open var fatalErrorMessageHandler:((String)->())={ e  in
-		fatalError(e)
+		originalFatalError(e)
 	}
 	static open var fatalErrorHandler:((NSError)->())={ e in
 		fatalErrorMessageHandler(e.localizedDescription)
 	}
 	
-	open class func nonFatalError(_ error:NSError) -> Never
+	open class func nonFatalError(_ error:NSError)
 	{
 		nonFatalErrorHandler(error)
-		exit(1)
 	}
 	
-	open class func nonFatalError(_ string:String="") -> Never
+	open class func nonFatalError(_ string:String="")
 	{
 		nonFatalErrorMessageHandler(string)
-		exit(1)
 	}
 	
 	open class func fatalError(_ error:NSError) -> Never
