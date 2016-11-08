@@ -224,15 +224,7 @@ open class AutoSectionedTableViewManager<
 		setDataSource()
 		bindData()
 		
-		if let Cacheable=SectionerType.self as? Cached.Type
-		{
-			setupRefreshControl{
-				Cacheable.invalidateCache()
-				self.sectioner.resubscribe()
-				self.dataBindDisposeBag=DisposeBag()
-				self.bindData()
-			}
-		}
+		setupRefreshControl(refreshData)
 		tableView
 			.rx.itemAccessoryButtonTapped
 			.subscribe(onNext: { (index) in
@@ -242,6 +234,15 @@ open class AutoSectionedTableViewManager<
 				}
 			}).addDisposableTo(disposeBag)
 		
+	}
+	open func refreshData() {
+		if let Cacheable=SectionerType.self as? Cached.Type
+		{
+			Cacheable.invalidateCache()
+		}
+		self.sectioner.resubscribe()
+		self.dataBindDisposeBag=DisposeBag()
+		self.bindData()
 	}
 	var emptyList=false
 	open var data:Observable<[SectionAndData]> {
