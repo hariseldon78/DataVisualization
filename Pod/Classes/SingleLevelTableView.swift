@@ -266,7 +266,7 @@ open class AutoSearchableSingleLevelTableViewManager<
 		
 	}
 	
-	public init(viewModel:DataViewModel,filteringClosure:@escaping FilteringClosure,searchStyle:SearchControllerStyle = .searchBarInNavigationBar,dataExtractor:DataExtractorBase<Data>) {
+	public init(viewModel:DataViewModel,filteringClosure:@escaping FilteringClosure,searchStyle:SearchControllerStyle = .searchBarInTableHeader,dataExtractor:DataExtractorBase<Data>) {
 		self.searchStyle=searchStyle
 		self.filteringClosure=filteringClosure
 		super.init(viewModel: viewModel,dataExtractor:dataExtractor)

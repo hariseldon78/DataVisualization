@@ -511,7 +511,7 @@ open class AutoSearchableSectionedTableViewManager<
 	            sectioner:SectionerType,
 	            dataFilteringClosure:@escaping DataFilteringClosure,
 	            sectionFilteringClosure:@escaping SectionFilteringClosure,
-	            searchStyle:SearchControllerStyle = .searchBarInNavigationBar)
+	            searchStyle:SearchControllerStyle = .searchBarInTableHeader)
 	{
 		self.searchStyle=searchStyle
 		self.dataFilteringClosure=dataFilteringClosure
