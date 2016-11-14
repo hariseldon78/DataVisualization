@@ -15,6 +15,8 @@ public enum SearchControllerStyle
 {
 	case searchBarInTableHeader
 	case searchBarInNavigationBar
+	case searchBarInView(view: UIView,config: (UISearchBar)->Void)
+
 }
 
 // non dovrebbe essere pubblico
@@ -113,7 +115,7 @@ extension Searchable
 			
 			let sc=CustomSearchController(searchResultsController: nil)
 			switch style{
-			case .searchBarInTableHeader:
+			case .searchBarInTableHeader,.searchBarInView(_,_):
 				sc.hidesNavigationBarDuringPresentation=false
 				sc.dimsBackgroundDuringPresentation=false
 				sc.searchBar.searchBarStyle=UISearchBarStyle.minimal
@@ -132,6 +134,9 @@ extension Searchable
 		switch style{
 		case .searchBarInTableHeader:
 			self.tableView.tableHeaderView=self.searchController.searchBar
+		case .searchBarInView(let view,let config):
+			view.addSubview(self.searchController.searchBar)
+			config(self.searchController.searchBar)
 		case .searchBarInNavigationBar:
 			var buttons=self.vc.navigationItem.rightBarButtonItems ?? [UIBarButtonItem]()
 			let searchButton=UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.search, target: nil, action: nil)

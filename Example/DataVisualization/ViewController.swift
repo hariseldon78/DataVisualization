@@ -10,6 +10,7 @@ import UIKit
 import RxSwift
 import RxCocoa
 import DataVisualization
+import Cartography
 
 class PlainViewController:UIViewController
 {
@@ -166,22 +167,32 @@ class PlainSectionedViewController:UIViewController {
 
 
 class SearchSectionedViewController:UIViewController {
+	@IBOutlet weak var searchView: UIView!
+	
 	var disposeBag=DisposeBag()
 	@IBOutlet weak var tableView: UITableView!
-	let tvManager=AutoSearchableSectionedTableViewManager(
-		elementViewModel: Worker.defaultViewModel(),
-		sectionViewModel: Department.defaultSectionViewModel(),
-		sectioner: CollapsableSectioner(original:WorkerSectioner()),
-		dataFilteringClosure: { (d, s) -> Bool in
-			return d.name.localizedUppercase.contains(s.localizedUppercase)
-		},
-		sectionFilteringClosure: { (d, s) -> Bool in
-			return d.name.localizedUppercase.contains(s.localizedUppercase)
-	})
+	var tvManager:AutoSearchableSectionedTableViewManager<Worker,Worker.DefaultViewModel,Department, Department.DefaultSectionViewModel,CollapsableSectioner<WorkerSectioner>>!
 	
 	
 	override func viewDidLoad() {
 		super.viewDidLoad()
+		tvManager=AutoSearchableSectionedTableViewManager(
+			elementViewModel: Worker.defaultViewModel(),
+			sectionViewModel: Department.defaultSectionViewModel(),
+			sectioner: CollapsableSectioner(original:WorkerSectioner()),
+			dataFilteringClosure: { (d, s) -> Bool in
+				return d.name.localizedUppercase.contains(s.localizedUppercase)
+		},
+			sectionFilteringClosure: { (d, s) -> Bool in
+				return d.name.localizedUppercase.contains(s.localizedUppercase)
+		},
+			searchStyle:.searchBarInView(view:searchView,config:	{ searchBar in
+//			constrain(searchBar) {
+//				$0.top==$0.superview!.top
+////				$0.leading==$0.superview!.leading
+////				$0.trailing==$0.superview!.trailing
+//				}
+			}))
 		tvManager.setupTableView(tableView,vc:self)
 		tvManager.setupDataOnSelect(.detail,.sectionSegue(name:"departmentDetail",presentation:.push))
 		tvManager.setupSectionOnSelect(OnSelectBehaviour<Department>.action(action: { (d) in
