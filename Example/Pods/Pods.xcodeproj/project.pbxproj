@@ -1024,6 +1024,7 @@
 		F9F6D8B7726D8030CF707E5991769197 /* Rx.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Rx.swift; path = RxSwift/Rx.swift; sourceTree = "<group>"; };
 		F9FF1638DC65E29C185BDD9ED11FD17B /* RxPickerViewDelegateProxy.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = RxPickerViewDelegateProxy.swift; path = RxCocoa/iOS/Proxies/RxPickerViewDelegateProxy.swift; sourceTree = "<group>"; };
 		FA9A301371A6CFCEAD2C454122C7871D /* ControlProperty.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ControlProperty.swift; path = RxCocoa/CocoaUnits/ControlProperty.swift; sourceTree = "<group>"; };
+		FB3083F41DD9D56F007E0876 /* Cartfile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = Cartfile; path = ../../../../Cartfile; sourceTree = "<group>"; };
 		FBDB5F0BFAA3D9B5245E264C82E3A8D7 /* ObservableType+Extensions.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = "ObservableType+Extensions.swift"; path = "RxSwift/ObservableType+Extensions.swift"; sourceTree = "<group>"; };
 		FBE05D4B8E14E615090B4AA47CCA0561 /* TailRecursiveSink.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = TailRecursiveSink.swift; path = RxSwift/Observers/TailRecursiveSink.swift; sourceTree = "<group>"; };
 		FC48EA8D859F78FC25FA71A9D78CFEBE /* UISwitch+Rx.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = "UISwitch+Rx.swift"; path = "RxCocoa/iOS/UISwitch+Rx.swift"; sourceTree = "<group>"; };
@@ -1235,6 +1236,7 @@
 		5AA3FE2A81E3F78353B4E4DB27127CB5 /* Support Files */ = {
 			isa = PBXGroup;
 			children = (
+				FB3083F41DD9D56F007E0876 /* Cartfile */,
 				A6D22EEE71EA5653FF91486DE7405BA1 /* DataVisualization.modulemap */,
 				A9C173BA8CE3774689331EC6062A84BA /* DataVisualization.xcconfig */,
 				AF16B48E227A0A5BADD2F020AB148740 /* DataVisualization-dummy.m */,
