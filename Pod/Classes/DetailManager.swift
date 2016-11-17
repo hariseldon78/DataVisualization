@@ -30,11 +30,19 @@ open class DetailManager<Data>:DetailManagerType
 		}
 		if objObs==nil { objObs=Variable(w) }
 		else { objObs.value=w }
+		if viewDidLoadPassed {bind()}
 		}
 	}
 	public typealias Binder=(_ obj:Observable<Data>,_ disposeBag:DisposeBag)->()
 	open var binder:Binder?
+	var viewDidLoadPassed=false
 	open func viewDidLoad() {
+		viewDidLoadPassed=true
+		if objObs != nil {
+			bind()
+		}
+	}
+	func bind(){
 		let obj=objObs.asObservable().observeOn(MainScheduler.instance)
 		binder?(obj,disposeBag)
 	}
