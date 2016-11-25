@@ -16,7 +16,7 @@ public enum SearchControllerStyle
 	case searchBarInTableHeader
 	case searchBarInNavigationBar
 	case searchBarInView(view: UIView,config: (UISearchBar)->Void)
-
+	
 }
 
 // non dovrebbe essere pubblico
@@ -76,7 +76,7 @@ class CustomSearchBar: UISearchBar {
 			case .completed:
 				break
 			}
-			})
+		})
 	}
 	
 }
@@ -136,7 +136,9 @@ extension Searchable
 			self.tableView.tableHeaderView=self.searchController.searchBar
 		case .searchBarInView(let view,let config):
 			view.addSubview(self.searchController.searchBar)
-			config(self.searchController.searchBar)
+			OperationQueue.main.addOperation {
+				config(self.searchController.searchBar)
+			}
 		case .searchBarInNavigationBar:
 			var buttons=self.vc.navigationItem.rightBarButtonItems ?? [UIBarButtonItem]()
 			let searchButton=UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.search, target: nil, action: nil)
@@ -170,7 +172,7 @@ extension Searchable
 					superview.addSubview(searchBar)
 					// deve stare alla stessa altezza dei pulsanti
 					
-//					print(NSStringFromCGRect(btnFrame))
+					//					print(NSStringFromCGRect(btnFrame))
 					constrain(searchBar){
 						//						$0.top 		== $0.superview!.top+btnFrame.origin.y
 						//						$0.height 	== btnFrame.size.height
@@ -187,7 +189,7 @@ extension Searchable
 					searchBar.text=""
 					self.vc.navigationItem.titleView=nil
 				}
-				}).addDisposableTo(self.disposeBag)
+			}).addDisposableTo(self.disposeBag)
 			buttons.append(searchButton)
 			self.vc.navigationItem.rightBarButtonItems=buttons
 			self.vc.definesPresentationContext=true
@@ -203,7 +205,7 @@ extension Searchable
 					self.searchController.searchBar.removeFromSuperview()
 				}
 			}
-			}).addDisposableTo(disposeBag)
+		}).addDisposableTo(disposeBag)
 	}
 	
 	var isSearching:Bool {

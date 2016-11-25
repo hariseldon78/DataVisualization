@@ -187,11 +187,11 @@ class SearchSectionedViewController:UIViewController {
 				return d.name.localizedUppercase.contains(s.localizedUppercase)
 		},
 			searchStyle:.searchBarInView(view:searchView,config:	{ searchBar in
-//			constrain(searchBar) {
-//				$0.top==$0.superview!.top
-////				$0.leading==$0.superview!.leading
-////				$0.trailing==$0.superview!.trailing
-//				}
+			constrain(searchBar) {
+				$0.top==$0.superview!.top
+				$0.leading==$0.superview!.leading
+				$0.trailing==$0.superview!.trailing
+				}
 			}))
 		tvManager.setupTableView(tableView,vc:self)
 		tvManager.setupDataOnSelect(.detail,.sectionSegue(name:"departmentDetail",presentation:.push))
