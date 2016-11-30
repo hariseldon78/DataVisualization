@@ -186,7 +186,7 @@ class SearchSectionedViewController:UIViewController {
 			sectionFilteringClosure: { (d, s) -> Bool in
 				return d.name.localizedUppercase.contains(s.localizedUppercase)
 		},
-			searchStyle:.searchBarInView(view:searchView,config:	{ searchBar in
+			searchStyle:.searchBarInView(view:searchView,config:	{ searchBar,searchController in
 			constrain(searchBar) {
 				$0.top==$0.superview!.top
 				$0.leading==$0.superview!.leading

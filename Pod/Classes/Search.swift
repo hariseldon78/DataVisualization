@@ -15,7 +15,7 @@ public enum SearchControllerStyle
 {
 	case searchBarInTableHeader
 	case searchBarInNavigationBar
-	case searchBarInView(view: UIView,config: (UISearchBar)->Void)
+	case searchBarInView(view: UIView,config: (UISearchBar,UISearchController)->Void)
 	
 }
 
@@ -137,7 +137,7 @@ extension Searchable
 		case .searchBarInView(let view,let config):
 			view.addSubview(self.searchController.searchBar)
 			OperationQueue.main.addOperation {
-				config(self.searchController.searchBar)
+				config(self.searchController.searchBar,self.searchController)
 			}
 		case .searchBarInNavigationBar:
 			var buttons=self.vc.navigationItem.rightBarButtonItems ?? [UIBarButtonItem]()
