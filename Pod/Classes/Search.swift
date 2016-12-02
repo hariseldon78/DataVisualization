@@ -16,7 +16,8 @@ public enum SearchControllerStyle
 	case searchBarInTableHeader
 	case searchBarInNavigationBar
 	case searchBarInView(view: UIView,config: (UISearchBar,UISearchController)->Void)
-	
+	case externalSearchBar(searchBar:UISearchBar)
+
 }
 
 // non dovrebbe essere pubblico
@@ -40,20 +41,16 @@ extension UIImage {
 		return image!
 	}
 }
-class CustomSearchBar: UISearchBar {
+extension UISearchBar {
 	
-	override func setShowsCancelButton(_ showsCancelButton: Bool, animated: Bool) {
-		super.setShowsCancelButton(false, animated: false)
-	}
-	open let cancelSubject = PublishSubject<Int>()
-	open var rx_cancel: ControlEvent<Void> {
+	public var rx_cancel: ControlEvent<Void> {
 		let source=rx.delegate.sentMessage(#selector(UISearchBarDelegate.searchBarCancelButtonClicked(_:))).map{_ in _=0}
-		let events = Observable.of(source,cancelSubject.asObservable().map{_ in  _=0}).merge()
-		//			[source, cancelSubject].toObservable().merge()
+		let emptyText=rx.text.filter {$0==""}
+		let events = Observable.of(source,emptyText.map{_ in  _=0}).merge()
 		return ControlEvent(events: events)
 	}
 	
-	open var rx_textOrCancel: ControlProperty<String> {
+	public var rx_textOrCancel: ControlProperty<String> {
 		
 		func bindingErrorToInterface(_ error: Error) {
 			let error = "Binding error to UI: \(error)"
@@ -78,21 +75,24 @@ class CustomSearchBar: UISearchBar {
 			}
 		})
 	}
-	
 }
-
-class CustomSearchController: UISearchController, UISearchBarDelegate {
+class BugFixedSearchBar:UISearchBar {
+	override func setShowsCancelButton(_ showsCancelButton: Bool, animated: Bool) {
+		// uisearchcontroller will insist to reset this flag, so i just ignore him.
+	}
+}
+class CustomSearchController: UISearchController {
 	
-	lazy var _searchBar: CustomSearchBar = {
+	lazy var _searchBar: UISearchBar = {
 		[unowned self] in
-		let customSearchBar = CustomSearchBar(frame: CGRect.zero)
-		customSearchBar.delegate = self
+		let customSearchBar = BugFixedSearchBar(frame: CGRect.zero)
 		return customSearchBar
 		}()
+	var externalSearchBar:UISearchBar?
 	
 	override var searchBar: UISearchBar {
 		get {
-			return _searchBar
+			return externalSearchBar ?? _searchBar
 		}
 	}
 	override init(searchResultsController: UIViewController?) {
@@ -114,19 +114,20 @@ extension Searchable
 		searchController=({
 			
 			let sc=CustomSearchController(searchResultsController: nil)
+			sc.hidesNavigationBarDuringPresentation=false
+			sc.dimsBackgroundDuringPresentation=false
 			switch style{
 			case .searchBarInTableHeader,.searchBarInView(_,_):
-				sc.hidesNavigationBarDuringPresentation=false
-				sc.dimsBackgroundDuringPresentation=false
 				sc.searchBar.searchBarStyle=UISearchBarStyle.minimal
 				sc.searchBar.backgroundColor=UIColor(white: 1.0, alpha: 0.95)
 				sc.searchBar.sizeToFit()
 			case .searchBarInNavigationBar:
-				sc.hidesNavigationBarDuringPresentation=false
-				sc.dimsBackgroundDuringPresentation=false
 				sc.searchBar.searchBarStyle=UISearchBarStyle.prominent
 				//				sc.searchBar.tintColor=UIColor(white:0.9, alpha:1.0) // non bianco altrimenti non si vede il cursore (influisce sul cursore e sul testo del pulsante cancel)
 				sc.searchBar.sizeToFit()
+			case .externalSearchBar(let searchBar):
+				sc.externalSearchBar=searchBar
+				
 			}
 			return sc
 			
@@ -139,11 +140,12 @@ extension Searchable
 			OperationQueue.main.addOperation {
 				config(self.searchController.searchBar,self.searchController)
 			}
+		case .externalSearchBar(let searchBar):
+			_=0
 		case .searchBarInNavigationBar:
 			var buttons=self.vc.navigationItem.rightBarButtonItems ?? [UIBarButtonItem]()
 			let searchButton=UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.search, target: nil, action: nil)
 			searchButton.rx.tap.subscribe(onNext:{
-				guard let searchBar=self.searchController.searchBar as? CustomSearchBar else {return}
 				if self.vc.navigationItem.titleView==nil
 				{
 					guard let navBar=self.vc.navigationController?.navigationBar else {return}
@@ -162,6 +164,7 @@ extension Searchable
 					
 					//					searchBar.backgroundColor=UIColor.redColor()
 					//					searchBar.barTintColor=UIColor.whiteColor()
+					let searchBar=self.searchController.searchBar
 					var textFieldInsideSearchBar = searchBar.value(forKey: "searchField") as? UITextField
 					textFieldInsideSearchBar?.textColor = UIColor.black
 					searchBar.tintColor=UIColor.black // colora il cursore e testo cancel
@@ -185,8 +188,7 @@ extension Searchable
 				}
 				else
 				{
-					searchBar.cancelSubject.onNext(0)
-					searchBar.text=""
+					self.searchController.searchBar.text=""
 					self.vc.navigationItem.titleView=nil
 				}
 			}).addDisposableTo(self.disposeBag)

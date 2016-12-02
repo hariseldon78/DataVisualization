@@ -246,8 +246,7 @@ open class AutoSearchableSingleLevelTableViewManager<
 	open var filteringClosure:FilteringClosure
 	let searchStyle:SearchControllerStyle
 	open var search:Observable<String> {
-		guard let searchBar=searchController.searchBar as? CustomSearchBar else {DataVisualization.fatalError()}
-		return searchBar.rx_textOrCancel.asObservable()
+		return searchController.searchBar.rx_textOrCancel.asObservable()
 	}
 	open override var data:Observable<[Data]> {
 		let allData=super.data

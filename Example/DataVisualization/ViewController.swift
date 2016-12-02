@@ -15,7 +15,7 @@ import Cartography
 class PlainViewController:UIViewController
 {
 	@IBOutlet weak var tableView: UITableView!
-
+	
 	var tvManager:AutoSearchableSingleLevelTableViewManager<Worker,Worker.DefaultViewModel>!
 	let dataExtractor=ApiExtractor<Worker>(apiParams:["name":"ApiParams" as AnyObject,"salary":Double(4000.0) as AnyObject,"department":UInt(8) as AnyObject])
 	override func viewDidLoad() {
@@ -24,7 +24,7 @@ class PlainViewController:UIViewController
 			viewModel: Worker.defaultViewModel(),
 			filteringClosure: { (d:Worker, s:String) -> Bool in
 				return d.name.localizedUppercase.contains(s.localizedUppercase)
-			},
+		},
 			dataExtractor: dataExtractor)
 		tvManager.setupTableView(tableView,vc:self)
 		tvManager.setupOnSelect(.detail,.segue(name:"detail",presentation:.push))
@@ -62,7 +62,7 @@ class PlainCollectionViewController:UIViewController
 	
 	override func viewDidLoad() {
 		super.viewDidLoad()
-
+		
 		tvManager.setupCollectionView( collectionView,vc:self)
 		tvManager.setupOnSelect(.segue(name:"detail",presentation:.push))
 	}
@@ -112,7 +112,7 @@ class NoStoryboardViewController:UIViewController
 	init(){
 		super.init(nibName:"NibVC",bundle:Bundle.main)
 	}
-
+	
 	required init?(coder aDecoder: NSCoder) {
 		super.init(coder:aDecoder)
 	}
@@ -144,13 +144,13 @@ class FunkyViewController:UIViewController {
 		(index:Int, item, cell:DataViewModel.Cell) -> Void in
 		cell.title.text=item.name
 		cell.subtitle.text="salary: €\(item.salary)"
-		},dataExtractor:ApiExtractor())
+	},dataExtractor:ApiExtractor())
 	override func viewDidLoad() {
 		super.viewDidLoad()
 		tvManager.setupTableView(tableView,vc:self)
 		tvManager.setupOnSelect(.detail,.segue(name:"detail",presentation:.push))
 	}
-
+	
 }
 
 class PlainSectionedViewController:UIViewController {
@@ -187,10 +187,10 @@ class SearchSectionedViewController:UIViewController {
 				return d.name.localizedUppercase.contains(s.localizedUppercase)
 		},
 			searchStyle:.searchBarInView(view:searchView,config:	{ searchBar,searchController in
-			constrain(searchBar) {
-				$0.top==$0.superview!.top
-				$0.leading==$0.superview!.leading
-				$0.trailing==$0.superview!.trailing
+				constrain(searchBar) {
+					$0.top==$0.superview!.top
+					$0.leading==$0.superview!.leading
+					$0.trailing==$0.superview!.trailing
 				}
 			}))
 		tvManager.setupTableView(tableView,vc:self)
@@ -212,7 +212,7 @@ class SearchSectionedViewController:UIViewController {
 			.subscribe(onNext: {
 				print("showAll=\($0)")
 				self.tvManager.sectioner.showAll.value=$0
-		}).addDisposableTo(disposeBag)
+			}).addDisposableTo(disposeBag)
 		
 		
 	}
@@ -220,7 +220,7 @@ class SearchSectionedViewController:UIViewController {
 
 class SearchSectioned2ViewController:UIViewController {
 	var disposeBag=DisposeBag()
-
+	
 	@IBOutlet weak var tableView: UITableView!
 	
 	let tvManager=AutoSearchableSectionedTableViewManager(
@@ -229,7 +229,7 @@ class SearchSectioned2ViewController:UIViewController {
 		sectioner: CollapsableSectioner(original:WorkerSectioner()),
 		dataFilteringClosure: { (d, s) -> Bool in
 			return d.name.localizedUppercase.contains(s.localizedUppercase)
-		},
+	},
 		sectionFilteringClosure: { (d, s) -> Bool in
 			return d.name.localizedUppercase.contains(s.localizedUppercase)
 	})
@@ -267,38 +267,38 @@ class SearchSectioned2ViewController:UIViewController {
 class SearchSectionedFunkyViewController:UIViewController {
 	var disposeBag=DisposeBag()
 	@IBOutlet weak var tableView: UITableView!
+	@IBOutlet weak var sb: UISearchBar!
 	
 	typealias DataViewModel=ConcreteViewModel<Worker,FunkyCell>
-
-	let tvManager=AutoSearchableSectionedTableViewManager(
-		elementViewModel: DataViewModel(cellName: "FunkyCell") {
-			(index:Int, item, cell:DataViewModel.Cell) -> Void in
-			cell.title.text=item.name
-			cell.subtitle.text="salary: €\(item.salary)"
-		},
-		sectionViewModel: Department.defaultSectionViewModel(),
-		sectioner: CollapsableSectioner(original:WorkerSectioner()),
-		dataFilteringClosure: { (d, s) -> Bool in
-			return d.name.localizedUppercase.contains(s.localizedUppercase)
-		},
-		sectionFilteringClosure: { (d, s) -> Bool in
-			return d.name.localizedUppercase.contains(s.localizedUppercase)
-	})
 	
 	
 	override func viewDidLoad() {
 		super.viewDidLoad()
+		let tvManager=AutoSearchableSectionedTableViewManager(
+			elementViewModel: DataViewModel(cellName: "FunkyCell") {
+				(index:Int, item, cell:DataViewModel.Cell) -> Void in
+				cell.title.text=item.name
+				cell.subtitle.text="salary: €\(item.salary)"
+			},
+			sectionViewModel: Department.defaultSectionViewModel(),
+			sectioner: CollapsableSectioner(original:WorkerSectioner()),
+			dataFilteringClosure: { (d, s) -> Bool in
+				return d.name.localizedUppercase.contains(s.localizedUppercase)
+		},
+			sectionFilteringClosure: { (d, s) -> Bool in
+				return d.name.localizedUppercase.contains(s.localizedUppercase)
+		},searchStyle:.externalSearchBar(searchBar: sb))
 		tvManager.setupTableView(tableView,vc:self)
 		tvManager.setupDataOnSelect(.info,.sectionSegue(name:"departmentDetail",presentation:.push))
 		tvManager.setupSectionOnSelect(OnSelectBehaviour<Department>.action(action: { (d) in
 			// TODO: creare una behaviouraction ad hoc, o almeno un methodo in CollapsableSectionerProtocol
-			if let s=self.tvManager.sectioner.selectedSection.value , s==d
+			if let s=tvManager.sectioner.selectedSection.value , s==d
 			{
-				self.tvManager.sectioner.selectedSection.value=nil
+				tvManager.sectioner.selectedSection.value=nil
 			}
 			else
 			{
-				self.tvManager.sectioner.selectedSection.value=d
+				tvManager.sectioner.selectedSection.value=d
 			}
 		}))
 		tvManager.search.asObservable()
@@ -306,7 +306,7 @@ class SearchSectionedFunkyViewController:UIViewController {
 			.distinctUntilChanged()
 			.subscribe(onNext: {
 				print("showAll=\($0)")
-				self.tvManager.sectioner.showAll.value=$0
+				tvManager.sectioner.showAll.value=$0
 			}).addDisposableTo(disposeBag)
 		
 		
@@ -345,7 +345,7 @@ class WorkerDetail2:UIViewController,DetailView
 			obj.map { Float($0.salary) }.bindTo(self.slider1.rx.value).addDisposableTo(disposeBag)
 		}
 		detailManager.viewDidLoad()
-
+		
 	}
 	
 }
