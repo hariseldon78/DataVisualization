@@ -13,9 +13,9 @@ import Cartography
 
 public enum SearchControllerStyle
 {
-	case searchBarInTableHeader
-	case searchBarInNavigationBar
-	case searchBarInView(view: UIView,config: (UISearchBar,UISearchController)->Void)
+	case searchBarInTableHeader(cancelButton:Bool)
+	case searchBarInNavigationBar(cancelButton:Bool)
+	case searchBarInView(view: UIView,cancelButton:Bool,config: (UISearchBar,UISearchController)->Void)
 	case externalSearchBar(searchBar:UISearchBar)
 
 }
@@ -43,10 +43,13 @@ extension UIImage {
 }
 extension UISearchBar {
 	
-	public var rx_cancel: ControlEvent<Void> {
-		let source=rx.delegate.sentMessage(#selector(UISearchBarDelegate.searchBarCancelButtonClicked(_:))).map{_ in _=0}
+	public var rx_cancel:ControlEvent<Void> {
+		return ControlEvent(events: rx.delegate.sentMessage(#selector(UISearchBarDelegate.searchBarCancelButtonClicked(_:))).map{_ in _=0})
+	}
+	
+	public var rx_cancelOrX: ControlEvent<Void> {
 		let emptyText=rx.text.filter {$0==""}
-		let events = Observable.of(source,emptyText.map{_ in  _=0}).merge()
+		let events = Observable.of(rx.delegate.sentMessage(#selector(UISearchBarDelegate.searchBarCancelButtonClicked(_:))).map{_ in _=0},emptyText.map{_ in  _=0}).merge()
 		return ControlEvent(events: events)
 	}
 	
@@ -57,7 +60,7 @@ extension UISearchBar {
 			DataVisualization.nonFatalError(error)
 		}
 		
-		let cancelMeansNoText=rx_cancel.map{""}
+		let cancelMeansNoText=rx_cancelOrX.map{""}
 		let txt:Observable<String>=rx.text.asObservable().filter{$0 != nil}.map {$0!}
 		
 		let source:Observable<String>=Observable.of(
@@ -76,10 +79,14 @@ extension UISearchBar {
 		})
 	}
 }
-class BugFixedSearchBar:UISearchBar {
+final class BugFixedSearchBar:UISearchBar {
 	override func setShowsCancelButton(_ showsCancelButton: Bool, animated: Bool) {
 		// uisearchcontroller will insist to reset this flag, so i just ignore him.
+		if allowCancelButton {
+			super.setShowsCancelButton(showsCancelButton, animated: animated)
+		}
 	}
+	var allowCancelButton=false
 }
 class CustomSearchController: UISearchController {
 	
@@ -104,6 +111,10 @@ class CustomSearchController: UISearchController {
 	required override init?(coder aDecoder: NSCoder) {
 		super.init(coder: aDecoder)
 	}
+	func showCancelButton(showIt:Bool) {
+		(searchBar as? BugFixedSearchBar)?.allowCancelButton=showIt
+		searchBar.showsCancelButton=showIt
+	}
 }
 extension Searchable
 {
@@ -117,11 +128,11 @@ extension Searchable
 			sc.hidesNavigationBarDuringPresentation=false
 			sc.dimsBackgroundDuringPresentation=false
 			switch style{
-			case .searchBarInTableHeader,.searchBarInView(_,_):
+			case .searchBarInTableHeader(_),.searchBarInView(_,_,_):
 				sc.searchBar.searchBarStyle=UISearchBarStyle.minimal
 				sc.searchBar.backgroundColor=UIColor(white: 1.0, alpha: 0.95)
 				sc.searchBar.sizeToFit()
-			case .searchBarInNavigationBar:
+			case .searchBarInNavigationBar(_):
 				sc.searchBar.searchBarStyle=UISearchBarStyle.prominent
 				//				sc.searchBar.tintColor=UIColor(white:0.9, alpha:1.0) // non bianco altrimenti non si vede il cursore (influisce sul cursore e sul testo del pulsante cancel)
 				sc.searchBar.sizeToFit()
@@ -129,13 +140,32 @@ extension Searchable
 				sc.externalSearchBar=searchBar
 				
 			}
+			
+			switch style {
+			case .searchBarInTableHeader(let cancelButton):
+				sc.showCancelButton(showIt: cancelButton)
+			case .searchBarInNavigationBar(let cancelButton):
+				sc.showCancelButton(showIt: cancelButton)
+			case .searchBarInView(_,let cancelButton,_):
+				sc.showCancelButton(showIt: cancelButton)
+			default:
+				_=0
+			}
 			return sc
 			
 			}())
+		let searchBar=searchController.searchBar
+		searchBar.rx_cancel.subscribe(onNext:{ _ in
+			searchBar.text=""
+			searchBar.resignFirstResponder()
+		}).addDisposableTo(self.disposeBag)
+		searchBar.returnKeyType=UIReturnKeyType.search
+		
+
 		switch style{
 		case .searchBarInTableHeader:
 			self.tableView.tableHeaderView=self.searchController.searchBar
-		case .searchBarInView(let view,let config):
+		case .searchBarInView(let view,_,let config):
 			view.addSubview(self.searchController.searchBar)
 			OperationQueue.main.addOperation {
 				config(self.searchController.searchBar,self.searchController)
