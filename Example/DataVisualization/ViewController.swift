@@ -186,7 +186,7 @@ class SearchSectionedViewController:UIViewController {
 			sectionFilteringClosure: { (d, s) -> Bool in
 				return d.name.localizedUppercase.contains(s.localizedUppercase)
 		},
-			searchStyle:.searchBarInView(view:searchView,cancelButton:true,config:	{ searchBar,searchController in
+			searchStyle: SearchControllerStyle(position:.searchBarInView(view: searchView),config:{ searchBar,searchController in
 				constrain(searchBar) {
 					$0.top==$0.superview!.top
 					$0.leading==$0.superview!.leading
@@ -287,7 +287,7 @@ class SearchSectionedFunkyViewController:UIViewController {
 		},
 			sectionFilteringClosure: { (d, s) -> Bool in
 				return d.name.localizedUppercase.contains(s.localizedUppercase)
-		},searchStyle:.externalSearchBar(searchBar: sb))
+		},searchStyle:SearchControllerStyle(position: .externalSearchBar(searchBar: sb)))
 		tvManager.setupTableView(tableView,vc:self)
 		tvManager.setupDataOnSelect(.info,.sectionSegue(name:"departmentDetail",presentation:.push))
 		tvManager.setupSectionOnSelect(OnSelectBehaviour<Department>.action(action: { (d) in

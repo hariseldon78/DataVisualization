@@ -11,11 +11,25 @@ import RxSwift
 import RxCocoa
 import Cartography
 
-public enum SearchControllerStyle
+public struct SearchControllerStyle {
+	var position:SearchControllerPosition
+	var showCancelButton:Bool
+	var searchBarLayout:UISearchBarStyle
+	public typealias ConfigClosure=(UISearchBar,UISearchController)->Void
+	var config:ConfigClosure?
+	public init(position:SearchControllerPosition = .searchBarInTableHeader, showCancelButton:Bool = true, searchBarLayout:UISearchBarStyle = .prominent, config:ConfigClosure? = nil) {
+		self.position=position
+		self.showCancelButton=showCancelButton
+		self.searchBarLayout=searchBarLayout
+		self.config=config
+	}
+}
+
+public enum SearchControllerPosition
 {
-	case searchBarInTableHeader(cancelButton:Bool)
-	case searchBarInNavigationBar(cancelButton:Bool)
-	case searchBarInView(view: UIView,cancelButton:Bool,config: (UISearchBar,UISearchController)->Void)
+	case searchBarInTableHeader
+	case searchBarInNavigationBar
+	case searchBarInView(view: UIView)
 	case externalSearchBar(searchBar:UISearchBar)
 
 }
@@ -127,30 +141,19 @@ extension Searchable
 			let sc=CustomSearchController(searchResultsController: nil)
 			sc.hidesNavigationBarDuringPresentation=false
 			sc.dimsBackgroundDuringPresentation=false
-			switch style{
-			case .searchBarInTableHeader(_),.searchBarInView(_,_,_):
-				sc.searchBar.searchBarStyle=UISearchBarStyle.minimal
+			switch style.position{
+			case .searchBarInTableHeader,.searchBarInView(_):
 				sc.searchBar.backgroundColor=UIColor(white: 1.0, alpha: 0.95)
 				sc.searchBar.sizeToFit()
-			case .searchBarInNavigationBar(_):
-				sc.searchBar.searchBarStyle=UISearchBarStyle.prominent
-				//				sc.searchBar.tintColor=UIColor(white:0.9, alpha:1.0) // non bianco altrimenti non si vede il cursore (influisce sul cursore e sul testo del pulsante cancel)
+			case .searchBarInNavigationBar:
 				sc.searchBar.sizeToFit()
 			case .externalSearchBar(let searchBar):
 				sc.externalSearchBar=searchBar
 				
 			}
-			
-			switch style {
-			case .searchBarInTableHeader(let cancelButton):
-				sc.showCancelButton(showIt: cancelButton)
-			case .searchBarInNavigationBar(let cancelButton):
-				sc.showCancelButton(showIt: cancelButton)
-			case .searchBarInView(_,let cancelButton,_):
-				sc.showCancelButton(showIt: cancelButton)
-			default:
-				_=0
-			}
+			sc.searchBar.searchBarStyle=style.searchBarLayout
+			sc.showCancelButton(showIt: style.showCancelButton)
+
 			return sc
 			
 			}())
@@ -162,14 +165,11 @@ extension Searchable
 		searchBar.returnKeyType=UIReturnKeyType.search
 		
 
-		switch style{
+		switch style.position{
 		case .searchBarInTableHeader:
 			self.tableView.tableHeaderView=self.searchController.searchBar
-		case .searchBarInView(let view,_,let config):
+		case .searchBarInView(let view):
 			view.addSubview(self.searchController.searchBar)
-			OperationQueue.main.addOperation {
-				config(self.searchController.searchBar,self.searchController)
-			}
 		case .externalSearchBar(let searchBar):
 			_=0
 		case .searchBarInNavigationBar:
@@ -226,6 +226,13 @@ extension Searchable
 			self.vc.navigationItem.rightBarButtonItems=buttons
 			self.vc.definesPresentationContext=true
 		}
+		
+		if let config=style.config {
+			OperationQueue.main.addOperation {
+				config(self.searchController.searchBar,self.searchController)
+			}
+		}
+
 		vc.rx_viewWillDisappear.subscribe(onNext:{ _ in
 			switch style{
 			default:
