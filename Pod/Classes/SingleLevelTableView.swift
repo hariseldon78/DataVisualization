@@ -95,7 +95,6 @@ open class AutoSingleLevelTableViewManager<
 	public required init(viewModel:DataViewModel,dataExtractor:DataExtractorBase<Data>){
 		self.viewModel=viewModel
 		self.dataExtractor=dataExtractor
-		self.dataExtractor.viewForActivityIndicator=tableView
 	}
 	open func setupTableView(_ tableView:UITableView,vc:UIViewController)
 	{
@@ -105,6 +104,7 @@ open class AutoSingleLevelTableViewManager<
 		
 		self.vc=vc
 		self.tableView=tableView
+		self.dataExtractor.viewForActivityIndicator=tableView
 		
 		tableView.delegate=nil
 		tableView.rx.setDelegate(self)
