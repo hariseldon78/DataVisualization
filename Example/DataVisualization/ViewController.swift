@@ -17,9 +17,9 @@ class PlainViewController:UIViewController
 	@IBOutlet weak var tableView: UITableView!
 	
 	var tvManager:AutoSearchableSingleLevelTableViewManager<Worker,Worker.DefaultViewModel>!
-	let dataExtractor=ApiExtractor<Worker>(apiParams:["name":"ApiParams" as AnyObject,"salary":Double(4000.0) as AnyObject,"department":UInt(8) as AnyObject])
 	override func viewDidLoad() {
 		super.viewDidLoad()
+		let dataExtractor=ApiExtractor<Worker>(viewForActivityIndicator:view, apiParams:["name":"ApiParams" as AnyObject,"salary":Double(4000.0) as AnyObject,"department":UInt(8) as AnyObject])
 		tvManager=AutoSearchableSingleLevelTableViewManager(
 			viewModel: Worker.defaultViewModel(),
 			filteringClosure: { (d:Worker, s:String) -> Bool in
@@ -58,10 +58,10 @@ class PlainCollectionViewController:UIViewController
 {
 	let 🗑=DisposeBag()
 	@IBOutlet weak var collectionView: UICollectionView!
-	var tvManager=AutoSingleLevelCollectionViewManager (viewModel: Worker.defaultCollectionViewModel(),dataExtractor:ApiExtractor())
 	
 	override func viewDidLoad() {
 		super.viewDidLoad()
+		var tvManager=AutoSingleLevelCollectionViewManager (viewModel: Worker.defaultCollectionViewModel(),dataExtractor:ApiExtractor(viewForActivityIndicator: view))
 		
 		tvManager.setupCollectionView( collectionView,vc:self)
 		tvManager.setupOnSelect(.segue(name:"detail",presentation:.push))
@@ -87,12 +87,12 @@ class StaticViewController:UIViewController
 {
 	@IBOutlet weak var tableView: UITableView!
 	@IBOutlet var staticHeaderView: UIView!
-	var tvManager=AutoSearchableSingleLevelTableViewManager (viewModel: Worker.defaultViewModel(), filteringClosure: { (d:Worker, s:String) -> Bool in
-		return d.name.localizedUppercase.contains(s.localizedUppercase)
-	},dataExtractor:ApiExtractor<Worker>())
 	
 	override func viewDidLoad() {
 		super.viewDidLoad()
+		var tvManager=AutoSearchableSingleLevelTableViewManager (viewModel: Worker.defaultViewModel(), filteringClosure: { (d:Worker, s:String) -> Bool in
+			return d.name.localizedUppercase.contains(s.localizedUppercase)
+		},dataExtractor:ApiExtractor<Worker>(viewForActivityIndicator:view))
 		tvManager.setupTableView(tableView,vc:self)
 		tvManager.setupOnSelect(.info,.segue(name:"detail",presentation:.push))
 	}
@@ -106,9 +106,6 @@ class StaticViewController:UIViewController
 class NoStoryboardViewController:UIViewController
 {
 	@IBOutlet weak var tableView: UITableView!
-	var tvManager=AutoSearchableSingleLevelTableViewManager (viewModel: Worker.defaultViewModel(), filteringClosure: { (d:Worker, s:String) -> Bool in
-		return d.name.localizedUppercase.contains(s.localizedUppercase)
-	},dataExtractor:ApiExtractor())
 	init(){
 		super.init(nibName:"NibVC",bundle:Bundle.main)
 	}
@@ -118,6 +115,9 @@ class NoStoryboardViewController:UIViewController
 	}
 	override func viewDidLoad() {
 		super.viewDidLoad()
+		var tvManager=AutoSearchableSingleLevelTableViewManager (viewModel: Worker.defaultViewModel(), filteringClosure: { (d:Worker, s:String) -> Bool in
+			return d.name.localizedUppercase.contains(s.localizedUppercase)
+		},dataExtractor:ApiExtractor(viewForActivityIndicator:view))
 		tvManager.setupTableView(tableView,vc:self)
 	}
 }
@@ -126,9 +126,9 @@ class PlainNoDetViewController:UIViewController
 {
 	
 	@IBOutlet weak var tableView: UITableView!
-	var tvManager=AutoSingleLevelTableViewManager(viewModel: Worker.defaultViewModel(),dataExtractor:ApiExtractor())
 	override func viewDidLoad() {
 		super.viewDidLoad()
+		var tvManager=AutoSingleLevelTableViewManager(viewModel: Worker.defaultViewModel(),dataExtractor:ApiExtractor(viewForActivityIndicator:view))
 		tvManager.setupTableView(tableView,vc:self)
 		tvManager.setupOnSelect(.detail,.action(action: { (d:Worker) -> () in
 			dump(d)
@@ -140,13 +140,13 @@ class PlainNoDetViewController:UIViewController
 class FunkyViewController:UIViewController {
 	@IBOutlet weak var tableView: UITableView!
 	typealias DataViewModel=ConcreteViewModel<Worker,FunkyCell>
-	let tvManager=AutoSingleLevelTableViewManager(viewModel: DataViewModel(cellName: "FunkyCell") {
-		(index:Int, item, cell:DataViewModel.Cell) -> Void in
-		cell.title.text=item.name
-		cell.subtitle.text="salary: €\(item.salary)"
-	},dataExtractor:ApiExtractor())
 	override func viewDidLoad() {
 		super.viewDidLoad()
+		let tvManager=AutoSingleLevelTableViewManager(viewModel: DataViewModel(cellName: "FunkyCell") {
+			(index:Int, item, cell:DataViewModel.Cell) -> Void in
+			cell.title.text=item.name
+			cell.subtitle.text="salary: €\(item.salary)"
+		},dataExtractor:ApiExtractor(viewForActivityIndicator:view))
 		tvManager.setupTableView(tableView,vc:self)
 		tvManager.setupOnSelect(.detail,.segue(name:"detail",presentation:.push))
 	}

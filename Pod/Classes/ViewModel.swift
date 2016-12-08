@@ -219,9 +219,11 @@ open class StaticExtractor<_DataType>:DataExtractorBase<_DataType> {
 open class ApiExtractor<_DataType>:DataExtractorBase<_DataType> where _DataType:WithApi {
 	let apiParams:[String:Any]?
 	
-	public init(apiParams: [String : Any]?=nil)
+	public init(viewForActivityIndicator:UIView?,apiParams: [String : Any]?=nil)
 	{
 		self.apiParams=apiParams
+		super.init()
+		self.viewForActivityIndicator=viewForActivityIndicator
 	}
 	
 	open override func data()->Observable<[DataType]>
