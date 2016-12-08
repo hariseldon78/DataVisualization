@@ -148,6 +148,8 @@ open class AutoSingleLevelTableViewManager<
 	}
 	
 	func bindData(){
+		let data=self.data.shareReplayLatestWhileConnected()
+
 		data
 			.bindTo(tableView.rx.items(cellIdentifier:"cell")) {
 				(index,item,cell)->Void in
@@ -160,13 +162,13 @@ open class AutoSingleLevelTableViewManager<
 			}
 			.addDisposableTo(dataBindDisposeBag)
 		
-		handleEmpty()
+		handleEmpty(data:data)
 	}
 	open func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCellEditingStyle {
 		return _tableView(tableView, editingStyleForRowAt: indexPath)
 	}
 	
-	func handleEmpty()
+	func handleEmpty(data:Observable<[Data]>)
 	{
 		data
 			.map { array in
@@ -282,7 +284,7 @@ open class AutoSearchableSingleLevelTableViewManager<
 		super.setupTableView(tableView, vc:vc)
 	}
 	
-	override func handleEmpty()
+	override func handleEmpty(data:Observable<[Data]>)
 	{
 		data
 			.map { array in
