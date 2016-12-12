@@ -11,13 +11,19 @@ import RxSwift
 import RxCocoa
 import Cartography
 
+public enum CancelButtonStyle {
+	case neverShow
+	case alwaysShow
+	case showWhileEditing
+	var allow:Bool { return self == .alwaysShow || self == .showWhileEditing }
+}
 public struct SearchControllerStyle {
 	var position:SearchControllerPosition
-	var showCancelButton:Bool
+	var showCancelButton:CancelButtonStyle
 	var searchBarLayout:UISearchBarStyle
 	public typealias ConfigClosure=(UISearchBar,UISearchController)->Void
 	var config:ConfigClosure?
-	public init(position:SearchControllerPosition = .searchBarInTableHeader, showCancelButton:Bool = true, searchBarLayout:UISearchBarStyle = .prominent, config:ConfigClosure? = nil) {
+	public init(position:SearchControllerPosition = .searchBarInTableHeader, showCancelButton:CancelButtonStyle = .showWhileEditing, searchBarLayout:UISearchBarStyle = .prominent, config:ConfigClosure? = nil) {
 		self.position=position
 		self.showCancelButton=showCancelButton
 		self.searchBarLayout=searchBarLayout
@@ -95,12 +101,10 @@ extension UISearchBar {
 }
 final class BugFixedSearchBar:UISearchBar {
 	override func setShowsCancelButton(_ showsCancelButton: Bool, animated: Bool) {
-		// uisearchcontroller will insist to reset this flag, so i just ignore him.
-		if allowCancelButton {
-			super.setShowsCancelButton(showsCancelButton, animated: animated)
-		}
+		// uisearchcontroller will insist to reset this flag
+			super.setShowsCancelButton(showsCancelButton && cancelButtonStyle.allow, animated: animated)
 	}
-	var allowCancelButton=false
+	var cancelButtonStyle=CancelButtonStyle.showWhileEditing
 }
 class CustomSearchController: UISearchController {
 	
@@ -110,7 +114,7 @@ class CustomSearchController: UISearchController {
 		return customSearchBar
 		}()
 	var externalSearchBar:UISearchBar?
-	
+	let 🗑=DisposeBag()
 	override var searchBar: UISearchBar {
 		get {
 			return externalSearchBar ?? _searchBar
@@ -125,9 +129,19 @@ class CustomSearchController: UISearchController {
 	required override init?(coder aDecoder: NSCoder) {
 		super.init(coder: aDecoder)
 	}
-	func showCancelButton(showIt:Bool) {
-		(searchBar as? BugFixedSearchBar)?.allowCancelButton=showIt
-		searchBar.showsCancelButton=showIt
+	
+	/// call this only once, after the searchBar has been assigned
+	func showCancelButton(showIt:CancelButtonStyle) {
+		(searchBar as? BugFixedSearchBar)?.cancelButtonStyle=showIt
+		searchBar.showsCancelButton=(showIt == .alwaysShow)
+		if showIt == .showWhileEditing {
+			searchBar.rx.textDidBeginEditing.subscribe(onNext: {
+				self.searchBar.showsCancelButton=true
+			}).addDisposableTo(🗑)
+			searchBar.rx.textDidEndEditing.subscribe(onNext: {
+				self.searchBar.showsCancelButton=false
+			}).addDisposableTo(🗑)
+		}
 	}
 }
 extension Searchable
