@@ -133,7 +133,7 @@ open class AutoSingleLevelCollectionViewManager<
 //				Cached.invalidateCache()
 //				(self.collectionView.collectionViewLayout as! DynamicCollectionViewLayout).attributesCache=[UICollectionViewLayoutAttributes]()
 //				self.dataBindDisposeBag=DisposeBag() // butto via la vecchia subscription
-				self.bindData().subscribe(onNext: atEnd) // rifaccio la subscription
+//				self.bindData().subscribe(onNext: atEnd) // rifaccio la subscription
 //			}
 //		}
 		
