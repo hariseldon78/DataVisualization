@@ -25,7 +25,7 @@ protocol ControllerWithCollectionView
 
 extension ControllerWithCollectionView where Self:Disposer
 {
-	func setupRefreshControl(_ invalidateCacheAndReBindData:@escaping ()->())
+	func setupRefreshControl(_ invalidateCacheAndReBindData:@escaping (/*atEnd:*/@escaping ()->())->())
 	{
 		let rc=UIRefreshControl()
 		rc.backgroundColor=UIColor.clear
@@ -33,8 +33,9 @@ extension ControllerWithCollectionView where Self:Disposer
 		collectionView.alwaysBounceVertical=true
 		collectionView.addSubview(rc)
 		rc.rx.controlEvent(UIControlEvents.valueChanged).subscribe(onNext:{ _ in
-			invalidateCacheAndReBindData()
-			rc.endRefreshing()
+			invalidateCacheAndReBindData() {
+				rc.endRefreshing()
+			}
 			}).addDisposableTo(disposeBag)
 	}
 	
@@ -80,6 +81,7 @@ open class AutoSingleLevelCollectionViewManager<
 		return dataExtractor.data()
 			.observeOn(MainScheduler.instance)
 			.subscribeOn(MainScheduler.instance)
+			.shareReplayLatestWhileConnected()
 	}
 	open let disposeBag=DisposeBag()
 	open var dataBindDisposeBag=DisposeBag()
@@ -127,11 +129,11 @@ open class AutoSingleLevelCollectionViewManager<
 		
 		if let Cached=Data.self as? Cached.Type
 		{
-			setupRefreshControl{
+			setupRefreshControl{ atEnd in
 				Cached.invalidateCache()
 				(self.collectionView.collectionViewLayout as! DynamicCollectionViewLayout).attributesCache=[UICollectionViewLayoutAttributes]()
 				self.dataBindDisposeBag=DisposeBag() // butto via la vecchia subscription
-				self.bindData() // rifaccio la subscription
+				self.bindData().subscribe(onNext: atEnd) // rifaccio la subscription
 			}
 		}
 		
@@ -149,8 +151,7 @@ open class AutoSingleLevelCollectionViewManager<
 		}).addDisposableTo(disposeBag)
 	}
 
-	func bindData()
-	{
+	@discardableResult func bindData()->Observable<Void> {
 		data
 			.bindTo(collectionView.rx.items(cellIdentifier:"cell")) {
 				(index,item,cell)->Void in
@@ -161,6 +162,7 @@ open class AutoSingleLevelCollectionViewManager<
 		}.addDisposableTo(dataBindDisposeBag)
 		
 		handleEmpty()
+		return data.map{_ in return ()}
 	}
 	
 	func handleEmpty()

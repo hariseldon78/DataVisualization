@@ -235,14 +235,14 @@ open class AutoSectionedTableViewManager<
 			}).addDisposableTo(disposeBag)
 		
 	}
-	open func refreshData() {
+	open func refreshData(atEnd:@escaping ()->()) {
 		if let Cacheable=SectionerType.self as? Cached.Type
 		{
 			Cacheable.invalidateCache()
 		}
-		self.sectioner.resubscribe()
-		self.dataBindDisposeBag=DisposeBag()
-		self.bindData()
+		sectioner.resubscribe()
+		dataBindDisposeBag=DisposeBag()
+		bindData().subscribe(onNext:atEnd).addDisposableTo(dataBindDisposeBag)
 	}
 	var emptyList=false
 	open var data:Observable<[SectionAndData]> {
@@ -256,12 +256,15 @@ open class AutoSectionedTableViewManager<
 			.bindTo(tableView.rx.items(dataSource:dataSource))
 			.addDisposableTo(disposeBag)
 	}
-	func bindData()
+	@discardableResult func bindData()->Observable<Void>
 	{
-		data
+		let dataLoader=data
 			.debug("data")
 			.subscribeOn(backgroundScheduler)
 			.debug("backgroundScheduler")
+			.shareReplayLatestWhileConnected()
+		
+		dataLoader
 			.subscribe(onNext: { (secs:[(Section, [Element])]) -> Void in
 				self.sections.value=secs.map{ (s,d) in
 					RxSectionModel(model: s, items: d)
@@ -275,6 +278,7 @@ open class AutoSectionedTableViewManager<
 			})
 			.addDisposableTo(dataBindDisposeBag)
 		
+		return dataLoader.map{_ in return ()}
 	}
 	open func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCellEditingStyle {
 		return _tableView(tableView, editingStyleForRowAt: indexPath)
@@ -519,7 +523,7 @@ open class AutoSearchableSectionedTableViewManager<
 	}
 	
 	var dataCompleted=false
-	override func bindData() {
+	@discardableResult override func bindData()->Observable<Void> {
 		data.subscribe(onNext: {
 			(secs:[(Section, [Element])]) -> Void in
 			self.sections.value=secs.map{
@@ -558,6 +562,6 @@ open class AutoSearchableSectionedTableViewManager<
 				}
 			}).addDisposableTo(dataBindDisposeBag)
 		
-		
+		return allData.map{_ in return ()}
 	}
 }

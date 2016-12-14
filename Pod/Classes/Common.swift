@@ -19,7 +19,7 @@ protocol ControllerWithTableView
 
 extension ControllerWithTableView where Self:Disposer
 {
-	func setupRefreshControl(_ invalidateCacheAndReBindData:@escaping ()->())
+	func setupRefreshControl(_ invalidateCacheAndReBindData:@escaping (/*atEnd:*/@escaping ()->())->())
 	{
 		// devo usare un tvc dummy perchè altrimenti RefreshControl si comporta male, il frame non è impostato correttamente.
 		let rc=UIRefreshControl()
@@ -31,8 +31,9 @@ extension ControllerWithTableView where Self:Disposer
 		tableView.alwaysBounceVertical=true
 		dummyTvc.refreshControl=rc
 		rc.rx.controlEvent(UIControlEvents.valueChanged).subscribe(onNext:{ _ in
-			invalidateCacheAndReBindData()
-			rc.endRefreshing()
+			invalidateCacheAndReBindData() {
+				rc.endRefreshing()
+			}
 			}).addDisposableTo(disposeBag)
 	}
 	

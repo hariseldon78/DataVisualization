@@ -115,10 +115,12 @@ open class AutoSingleLevelTableViewManager<
 		
 		if let Cached=Data.self as? Cached.Type
 		{
-			setupRefreshControl{
+			setupRefreshControl{ atEnd in
 				Cached.invalidateCache()
 				self.dataBindDisposeBag=DisposeBag() // butto via la vecchia subscription
-				self.bindData() // rifaccio la subscription
+				self.bindData()				// rifaccio la subscription
+					.subscribe(onNext: atEnd)
+					.addDisposableTo(self.dataBindDisposeBag)
 			}
 		}
 		
@@ -147,7 +149,7 @@ open class AutoSingleLevelTableViewManager<
 		
 	}
 	
-	func bindData(){
+	@discardableResult func bindData()->Observable<Void> {
 		let data=self.data.shareReplayLatestWhileConnected()
 
 		data
@@ -163,6 +165,8 @@ open class AutoSingleLevelTableViewManager<
 			.addDisposableTo(dataBindDisposeBag)
 		
 		handleEmpty(data:data)
+		
+		return data.map{_ in return ()}
 	}
 	open func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCellEditingStyle {
 		return _tableView(tableView, editingStyleForRowAt: indexPath)
