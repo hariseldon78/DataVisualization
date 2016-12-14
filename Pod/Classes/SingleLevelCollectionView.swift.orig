@@ -127,15 +127,27 @@ open class AutoSingleLevelCollectionViewManager<
 		registerDataCell(nib)
 		bindData()
 		
+<<<<<<< HEAD
+		if let Cached=Data.self as? Cached.Type
+		{
+			setupRefreshControl{ atEnd in
+				Cached.invalidateCache()
+				(self.collectionView.collectionViewLayout as! DynamicCollectionViewLayout).attributesCache=[UICollectionViewLayoutAttributes]()
+				self.dataBindDisposeBag=DisposeBag() // butto via la vecchia subscription
+				self.bindData().subscribe(onNext: atEnd) // rifaccio la subscription
+			}
+		}
+=======
 //		if let Cached=Data.self as? Cached.Type
 //		{
-//			setupRefreshControl{ atEnd in
+//			setupRefreshControl{
 //				Cached.invalidateCache()
 //				(self.collectionView.collectionViewLayout as! DynamicCollectionViewLayout).attributesCache=[UICollectionViewLayoutAttributes]()
 //				self.dataBindDisposeBag=DisposeBag() // butto via la vecchia subscription
-				self.bindData().subscribe(onNext: atEnd) // rifaccio la subscription
+//				self.bindData() // rifaccio la subscription
 //			}
 //		}
+>>>>>>> parent of 2c51514... allow refresh in collectionViews
 		
 		collectionView.delegate=nil
 		collectionView.rx.setDelegate(self)
