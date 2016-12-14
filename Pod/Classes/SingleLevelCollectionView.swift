@@ -125,15 +125,15 @@ open class AutoSingleLevelCollectionViewManager<
 		registerDataCell(nib)
 		bindData()
 		
-//		if let Cached=Data.self as? Cached.Type
-//		{
-//			setupRefreshControl{
-//				Cached.invalidateCache()
-//				(self.collectionView.collectionViewLayout as! DynamicCollectionViewLayout).attributesCache=[UICollectionViewLayoutAttributes]()
-//				self.dataBindDisposeBag=DisposeBag() // butto via la vecchia subscription
-//				self.bindData() // rifaccio la subscription
-//			}
-//		}
+		if let Cached=Data.self as? Cached.Type
+		{
+			setupRefreshControl{
+				Cached.invalidateCache()
+				(self.collectionView.collectionViewLayout as! DynamicCollectionViewLayout).attributesCache=[UICollectionViewLayoutAttributes]()
+				self.dataBindDisposeBag=DisposeBag() // butto via la vecchia subscription
+				self.bindData() // rifaccio la subscription
+			}
+		}
 		
 		collectionView.delegate=nil
 		collectionView.rx.setDelegate(self)
