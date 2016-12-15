@@ -18,7 +18,25 @@ public protocol Sectioner
 	associatedtype Data
 	associatedtype Section
 	var sections:Observable<[(Section,[Data])]> {get}
-	mutating func resubscribe()
+	func refresh()
+}
+
+open class RefreshableSectioner<Section,Data>:Sectioner {
+	open var viewForActivityIndicator: UIView?=nil
+
+	public typealias SectionAndData=(Section,[Data])
+	open func _sections()->Observable<[SectionAndData]>{ fatalError("implement me") }
+	var refresher:Refresher<[SectionAndData]>!=nil
+	public init(){
+		refresher=Refresher(source:_sections)
+		refresh()
+	}
+	public var sections: Observable<[SectionAndData]> {
+		return refresher.output
+	}
+	public func refresh() {
+		refresher.refresh()
+	}
 }
 
 public enum SectionCollapseState
@@ -83,8 +101,8 @@ open class CollapsableSectioner<
 			}
 		}
 	}
-	open func resubscribe() {
-		original.resubscribe()
+	open func refresh() {
+		original.refresh()
 	}
 	
 	open var viewForActivityIndicator: UIView? {
@@ -151,7 +169,6 @@ open class AutoSectionedTableViewManager<
 	ControllerWithTableView
 {
 	open let 🗑=DisposeBag()
-	open var dataBindDisposeBag=DisposeBag()
 	public typealias Element=_Element
 	public typealias ElementViewModel=_ElementViewModel
 	public typealias Section=_Section
@@ -240,9 +257,13 @@ open class AutoSectionedTableViewManager<
 		{
 			Cacheable.invalidateCache()
 		}
-		sectioner.resubscribe()
-		dataBindDisposeBag=DisposeBag()
-		bindData().subscribe(onNext:atEnd).addDisposableTo(dataBindDisposeBag)
+		sectioner.refresh()
+		
+		self.data
+			.map {_ in return ()}
+			.take(1)
+			.subscribe(onNext:atEnd)
+			.addDisposableTo(self.🗑)
 	}
 	var emptyList=false
 	open var data:Observable<[SectionAndData]> {
@@ -276,7 +297,7 @@ open class AutoSectionedTableViewManager<
 					self.tableView.backgroundView=nil
 				}
 			})
-			.addDisposableTo(dataBindDisposeBag)
+			.addDisposableTo(🗑)
 		
 		return dataLoader.map{_ in return ()}
 	}
@@ -530,7 +551,7 @@ open class AutoSearchableSectionedTableViewManager<
 				(s,d) in
 				RxSectionModel(model: s, items: d)
 			}
-		}).addDisposableTo(dataBindDisposeBag)
+		}).addDisposableTo(🗑)
 		
 		
 		allData.map { array in
@@ -542,7 +563,7 @@ open class AutoSearchableSectionedTableViewManager<
 			   onCompleted: { () -> Void in
 				self.dataCompleted=true
 			}, onDisposed: nil)
-			.addDisposableTo(dataBindDisposeBag)
+			.addDisposableTo(🗑)
 		
 		data
 			.map { array in
@@ -560,7 +581,7 @@ open class AutoSearchableSectionedTableViewManager<
 				default:
 					self.tableView.backgroundView=nil
 				}
-			}).addDisposableTo(dataBindDisposeBag)
+			}).addDisposableTo(🗑)
 		
 		return allData.map{_ in return ()}
 	}

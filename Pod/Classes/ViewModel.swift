@@ -205,10 +205,11 @@ open class DataExtractorBase<_DataType>:DataExtractor{
 	final public func data()->Observable<[DataType]> {
 		return refresher.output.shareReplayLatestWhileConnected()
 	}
-	var refresher:Refresher<[DataType]>! // must be inited by subclasses
-//	init(source:@escaping ()->Observable<[DataType]>) {
-//		refresher=Refresher(source: source)
-//	}
+	var refresher:Refresher<[DataType]>!=nil // must be inited by subclasses
+	init(source:@escaping ()->Observable<[DataType]>) {
+		refresher=Refresher(source: source)
+		refresh()
+	}
 	init() {}
 	final public func refresh() {
 		refresher.refresh()
@@ -217,9 +218,7 @@ open class DataExtractorBase<_DataType>:DataExtractor{
 
 open class StaticExtractor<_DataType>:DataExtractorBase<_DataType> {
 	public init(source:@autoclosure @escaping ()->Observable<[_DataType]>){
-		super.init()
-		refresher=Refresher(source: source)
-		refresh()
+		super.init(source:source)
 	}
 }
 

@@ -198,15 +198,13 @@ func +<T>(array:[T],element:T)->[T]
 	return copy
 }
 
-class WorkerSectioner:Sectioner,Cached
+class WorkerSectioner:RefreshableSectioner<Department,Worker>,Cached
 {
-	typealias Data=Worker
-	typealias Section=Department
-	typealias SectionAndData=(Section,[Data])
 	var _viewForActivityIndicator=Variable<UIView?>(nil)
-	var _refresher=Variable(0)
-	var sections:Observable<[SectionAndData]> {
-		return Observable.combineLatest(_viewForActivityIndicator.asObservable(), _refresher.asObservable()){ $0.0 }
+	
+	override func _sections() -> Observable<[SectionAndData]> {
+		// FIXME: this pattern is very wrong: it refetches data just to display the activity indicator in the correct place
+		return _viewForActivityIndicator.asObservable()
 			.observeOn(OperationQueueScheduler(operationQueue:OperationQueue()))
 			.map{ (v) in
 				Data.api(v)
@@ -226,11 +224,11 @@ class WorkerSectioner:Sectioner,Cached
 		}
 	}
 	
-	var viewForActivityIndicator: UIView? {didSet{_viewForActivityIndicator.value=viewForActivityIndicator}}
+	override var viewForActivityIndicator: UIView? {didSet{_viewForActivityIndicator.value=viewForActivityIndicator}}
 	
-	func resubscribe() {
-		_refresher.value+=1
-	}
+//	func resubscribe() {
+//		_refresher.value+=1
+//	}
 	static func invalidateCache() {
 		Data.invalidateCache()
 	}

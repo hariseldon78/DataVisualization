@@ -41,9 +41,6 @@ class CollectionTitleCell: UICollectionViewCell {
 			.subscribe(onNext: { _ in
 				self.detailsWidth.constant=20.0+CGFloat(arc4random()%300)
 				self.resizeSink?.onNext()
-//				print("invalidateLayout")
-//				self.collectionView?.collectionViewLayout.invalidateLayout()
-//				
 			}).addDisposableTo(disposeBag)
 	}
 	

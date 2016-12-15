@@ -116,10 +116,7 @@ open class AutoSingleLevelTableViewManager<
 		{
 			setupRefreshControl{ atEnd in
 				Cached.invalidateCache()
-//				self.dataBindDisposeBag=DisposeBag() // butto via la vecchia subscription
-//				self.bindData()				// rifaccio la subscription
-//					.subscribe(onNext: atEnd)
-//					.addDisposableTo(self.dataBindDisposeBag)
+				
 				self.dataExtractor
 					.refresh()
 				

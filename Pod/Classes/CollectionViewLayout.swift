@@ -128,13 +128,14 @@ open class DynamicCollectionViewLayout: UICollectionViewLayout
 			.observeOn(MainScheduler.instance)
 			.subscribeOn(MainScheduler.instance)
 			.subscribe(onNext: { (cellInfo) in
-				self.attributesCache=cellInfo.map { (index,size,y) in
+				let newCache:[UICollectionViewLayoutAttributes]=cellInfo.map { (index,size,y) in
 					let origin=CGPoint(x:(self.collectionView?.contentInset.left ?? 0) + self.spacings.horizontalBorder, y:y)
 					let frame=CGRect(origin: origin, size: size)
 					let attr=UICollectionViewLayoutAttributes(forCellWith: IndexPath(item: index, section: 0))
 					attr.frame=frame
 					return attr
 				}
+				self.attributesCache=newCache
 				self.invalidateLayout()
 			}).addDisposableTo(🗑)
 	}
@@ -151,5 +152,8 @@ open class DynamicCollectionViewLayout: UICollectionViewLayout
 		let subset=attributesCache[0..<min(count,attributesCache.count)]
 		let ret=subset.filter{ $0.frame.intersects(rect)	}
 		return ret
+	}
+	open override func layoutAttributesForItem(at indexPath: IndexPath) -> UICollectionViewLayoutAttributes? {
+		return attributesCache[indexPath.row]
 	}
 }

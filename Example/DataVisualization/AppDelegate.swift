@@ -16,47 +16,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
-        // Override point for customization after application launch.
-		
-		
-		
-		
-		
-//		
-//		
-//		
-//		
-//		let obs=Observable<Int>.interval(0.5, scheduler: MainScheduler.instance).take(5)
-//		
-//		let obs2=Observable<Int>.interval(2,scheduler: MainScheduler.instance).take(6)
-//		
-//		obs2.map{ _ in
-//			obs
-//			}
-//			.flatMap {$0}
-//			.subscribe{ print($0) }
-//		
-//		
-//		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
 		
         return true
     }

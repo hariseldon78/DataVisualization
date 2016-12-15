@@ -84,7 +84,6 @@ open class AutoSingleLevelCollectionViewManager<
 			.shareReplayLatestWhileConnected()
 	}
 	open let 🗑=DisposeBag()
-	open var dataBindDisposeBag=DisposeBag()
 	open let viewModel:DataViewModel
 	open var vc:UIViewController!
 	var cellSizesCache=[IndexPath:CGSize]()
@@ -127,15 +126,18 @@ open class AutoSingleLevelCollectionViewManager<
 		registerDataCell(nib)
 		bindData()
 		
-//		if let Cached=Data.self as? Cached.Type
-//		{
-//			setupRefreshControl{ atEnd in
-//				Cached.invalidateCache()
-//				(self.collectionView.collectionViewLayout as! DynamicCollectionViewLayout).attributesCache=[UICollectionViewLayoutAttributes]()
-//				self.dataBindDisposeBag=DisposeBag() // butto via la vecchia subscription
-//				self.bindData().subscribe(onNext: atEnd) // rifaccio la subscription
-//			}
-//		}
+		if let Cached=Data.self as? Cached.Type
+		{
+			setupRefreshControl{ atEnd in
+				Cached.invalidateCache()
+				self.dataExtractor.refresh()
+				self.data
+					.map {_ in return ()}
+					.take(1)
+					.subscribe(onNext:atEnd)
+					.addDisposableTo(self.🗑)
+			}
+		}
 		
 		collectionView.delegate=nil
 		collectionView.rx.setDelegate(self)
@@ -159,7 +161,7 @@ open class AutoSingleLevelCollectionViewManager<
 				cell.setNeedsUpdateConstraints()
 				cell.updateConstraintsIfNeeded()
 				
-		}.addDisposableTo(dataBindDisposeBag)
+		}.addDisposableTo(🗑)
 		
 		handleEmpty()
 		return data.map{_ in return ()}
@@ -175,7 +177,7 @@ open class AutoSingleLevelCollectionViewManager<
 				} else {
 					self.collectionView.backgroundView=nil
 				}
-		}) .addDisposableTo(dataBindDisposeBag)
+		}) .addDisposableTo(🗑)
 	}
 	
 	open func setupOnSelect(_ onSelect:OnSelectBehaviour<Data>)
