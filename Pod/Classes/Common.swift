@@ -34,7 +34,7 @@ extension ControllerWithTableView where Self:Disposer
 			invalidateCacheAndReBindData() {
 				rc.endRefreshing()
 			}
-			}).addDisposableTo(disposeBag)
+			}).addDisposableTo(🗑)
 	}
 	
 	func registerDataCell(_ nib: Either<UINib, UIView.Type>)

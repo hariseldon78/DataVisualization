@@ -196,41 +196,47 @@ public protocol ApiResolver {
 public protocol DataExtractor {
 	associatedtype DataType
 	func data()->Observable<[DataType]>
+	func refresh()
 }
 
 open class DataExtractorBase<_DataType>:DataExtractor{
 	public typealias DataType=_DataType
 	var viewForActivityIndicator:UIView?
-	open func data()->Observable<[DataType]> {fatalError("Base class, don't use me")}
+	final public func data()->Observable<[DataType]> {
+		return refresher.output.shareReplayLatestWhileConnected()
+	}
+	var refresher:Refresher<[DataType]>! // must be inited by subclasses
+//	init(source:@escaping ()->Observable<[DataType]>) {
+//		refresher=Refresher(source: source)
+//	}
+	init() {}
+	final public func refresh() {
+		refresher.refresh()
+	}
 }
 
 open class StaticExtractor<_DataType>:DataExtractorBase<_DataType> {
-	let source:Observable<[DataType]>
-	
-	public init(source:Observable<[_DataType]>){
-		self.source=source
-	}
-	open override func data()->Observable<[DataType]>
-	{
-		return source.shareReplayLatestWhileConnected()
+	public init(source:@autoclosure @escaping ()->Observable<[_DataType]>){
+		super.init()
+		refresher=Refresher(source: source)
+		refresh()
 	}
 }
 
 open class ApiExtractor<_DataType>:DataExtractorBase<_DataType> where _DataType:WithApi {
-	let apiParams:[String:Any]?
+//	let apiParams:[String:Any]?
 	
 	public init(apiParams: [String : Any]?=nil)
 	{
-		self.apiParams=apiParams
-	}
-	
-	open override func data()->Observable<[DataType]>
-	{
-		return  DataType.api(viewForActivityIndicator, params: apiParams)
-			.subscribeOn(backgroundScheduler)
-			.map {$0}
-			.shareReplayLatestWhileConnected()
-			.observeOn(MainScheduler.instance)
+		super.init()
+		refresher=Refresher {
+			DataType.api(super.viewForActivityIndicator, params: apiParams)
+				.subscribeOn(backgroundScheduler)
+				.map {$0}
+				.shareReplayLatestWhileConnected()
+				.observeOn(MainScheduler.instance)
+		}
+		refresh()
 	}
 }
 

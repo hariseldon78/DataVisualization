@@ -60,3 +60,24 @@ extension UIViewController
 		}
 	}
 }
+
+public class Refresher<T>{
+	public init(source:@escaping ()->Observable<T>) {
+		self.source=source
+		sourceContainer=Variable(Observable<T>.never())
+		output=sourceContainer.asObservable().switchLatest()
+		refreshTrigger.subscribe(onNext: { _ in
+			self.sourceContainer.value=source()
+		}).addDisposableTo(🗑)
+	}
+	public func refresh() {
+		refreshTrigger.onNext()
+	}
+	public let output:Observable<T>
+	
+	let source:()->Observable<T>
+	let 🗑=DisposeBag()
+	let refreshTrigger=PublishSubject<Void>() // could be public if needed
+	let sourceContainer:Variable<Observable<T>>
+	
+}

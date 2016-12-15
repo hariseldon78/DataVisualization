@@ -150,7 +150,7 @@ open class AutoSectionedTableViewManager<
 	TableViewDelegateCommon,
 	ControllerWithTableView
 {
-	open let disposeBag=DisposeBag()
+	open let 🗑=DisposeBag()
 	open var dataBindDisposeBag=DisposeBag()
 	public typealias Element=_Element
 	public typealias ElementViewModel=_ElementViewModel
@@ -232,7 +232,7 @@ open class AutoSectionedTableViewManager<
 					self.tableView.selectRow(at: index, animated: false, scrollPosition: UITableViewScrollPosition.none)
 					self.tableView(self.tableView, didSelectRowAt: index)
 				}
-			}).addDisposableTo(disposeBag)
+			}).addDisposableTo(🗑)
 		
 	}
 	open func refreshData(atEnd:@escaping ()->()) {
@@ -254,7 +254,7 @@ open class AutoSectionedTableViewManager<
 		sections.asDriver().asObservable()
 			.observeOn(MainScheduler.instance)
 			.bindTo(tableView.rx.items(dataSource:dataSource))
-			.addDisposableTo(disposeBag)
+			.addDisposableTo(🗑)
 	}
 	@discardableResult func bindData()->Observable<Void>
 	{
@@ -417,7 +417,7 @@ open class AutoSectionedTableViewManager<
 			default:
 				dest.detailManager.object=self.clickedDataObj
 			}
-		}).addDisposableTo(disposeBag)
+		}).addDisposableTo(🗑)
 	}
 }
 

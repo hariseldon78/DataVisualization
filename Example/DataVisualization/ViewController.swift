@@ -49,7 +49,7 @@ class NoApiViewController:UIViewController
 		super.viewDidLoad()
 		tvManager=AutoSingleLevelTableViewManager(
 			viewModel: StaticData.defaultViewModel(),
-			dataExtractor: StaticExtractor(source:Observable.just(staticList)))
+			dataExtractor: StaticExtractor(source:Observable.just(self.staticList)))
 		tvManager.setupTableView(tableView,vc:self)
 	}
 }

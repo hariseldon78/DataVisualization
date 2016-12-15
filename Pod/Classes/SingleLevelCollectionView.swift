@@ -36,7 +36,7 @@ extension ControllerWithCollectionView where Self:Disposer
 			invalidateCacheAndReBindData() {
 				rc.endRefreshing()
 			}
-			}).addDisposableTo(disposeBag)
+			}).addDisposableTo(🗑)
 	}
 	
 	func registerDataCell(_ nib: Either<UINib, UIView.Type>)
@@ -83,7 +83,7 @@ open class AutoSingleLevelCollectionViewManager<
 			.subscribeOn(MainScheduler.instance)
 			.shareReplayLatestWhileConnected()
 	}
-	open let disposeBag=DisposeBag()
+	open let 🗑=DisposeBag()
 	open var dataBindDisposeBag=DisposeBag()
 	open let viewModel:DataViewModel
 	open var vc:UIViewController!
@@ -122,8 +122,8 @@ open class AutoSingleLevelCollectionViewManager<
 		collectionView.collectionViewLayout=DynamicCollectionViewLayout(cellSizes:cellSizes.asDriver(onErrorJustReturn:[CGSize.zero]),spacings:DataViewModel.spacings)
 		viewModel.cellResizeEvents.onNext()
 		
-		viewModel.cellResizeEvents.subscribe(onNext: { self.collectionView.collectionViewLayout.invalidateLayout()	}).addDisposableTo(disposeBag)
-		data.subscribe(onNext: {_ in self.collectionView.collectionViewLayout.invalidateLayout() }).addDisposableTo(disposeBag)
+		viewModel.cellResizeEvents.subscribe(onNext: { self.collectionView.collectionViewLayout.invalidateLayout()	}).addDisposableTo(🗑)
+		data.subscribe(onNext: {_ in self.collectionView.collectionViewLayout.invalidateLayout() }).addDisposableTo(🗑)
 		registerDataCell(nib)
 		bindData()
 		
@@ -148,7 +148,7 @@ open class AutoSingleLevelCollectionViewManager<
 				collectionView.indexPathsForSelectedItems?.forEach{ (indexPath) in
 					collectionView.deselectItem(at: indexPath, animated: true)
 				}
-		}).addDisposableTo(disposeBag)
+		}).addDisposableTo(🗑)
 	}
 
 	@discardableResult func bindData()->Observable<Void> {
@@ -193,7 +193,7 @@ open class AutoSingleLevelCollectionViewManager<
 						else {return}
 					dest.detailManager.object=self.clickedObj
 				}
-				}).addDisposableTo(disposeBag)
+				}).addDisposableTo(🗑)
 		}
 		switch onSelect
 		{

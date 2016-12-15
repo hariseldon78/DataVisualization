@@ -175,7 +175,7 @@ extension Searchable
 		searchBar.rx_cancel.subscribe(onNext:{ _ in
 			searchBar.text=""
 			searchBar.resignFirstResponder()
-		}).addDisposableTo(self.disposeBag)
+		}).addDisposableTo(self.🗑)
 		searchBar.returnKeyType=UIReturnKeyType.search
 		
 
@@ -235,7 +235,7 @@ extension Searchable
 					self.searchController.searchBar.text=""
 					self.vc.navigationItem.titleView=nil
 				}
-			}).addDisposableTo(self.disposeBag)
+			}).addDisposableTo(self.🗑)
 			buttons.append(searchButton)
 			self.vc.navigationItem.rightBarButtonItems=buttons
 			self.vc.definesPresentationContext=true
@@ -258,7 +258,7 @@ extension Searchable
 					self.searchController.searchBar.removeFromSuperview()
 				}
 			}
-		}).addDisposableTo(disposeBag)
+		}).addDisposableTo(🗑)
 	}
 	
 	var isSearching:Bool {

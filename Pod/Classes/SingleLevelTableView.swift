@@ -12,7 +12,7 @@ import RxCocoa
 import Cartography
 
 public protocol Disposer {
-	var disposeBag:DisposeBag {get}
+	var 🗑:DisposeBag {get}
 }
 
 
@@ -82,8 +82,7 @@ open class AutoSingleLevelTableViewManager<
 	open var data:Observable<[Data]> {
 		return dataExtractor.data()
 	}
-	open let disposeBag=DisposeBag()
-	open var dataBindDisposeBag=DisposeBag()
+	open let 🗑=DisposeBag()
 	open let viewModel:DataViewModel
 	open var vc:UIViewController!
 	open var tableView:UITableView!
@@ -117,10 +116,18 @@ open class AutoSingleLevelTableViewManager<
 		{
 			setupRefreshControl{ atEnd in
 				Cached.invalidateCache()
-				self.dataBindDisposeBag=DisposeBag() // butto via la vecchia subscription
-				self.bindData()				// rifaccio la subscription
-					.subscribe(onNext: atEnd)
-					.addDisposableTo(self.dataBindDisposeBag)
+//				self.dataBindDisposeBag=DisposeBag() // butto via la vecchia subscription
+//				self.bindData()				// rifaccio la subscription
+//					.subscribe(onNext: atEnd)
+//					.addDisposableTo(self.dataBindDisposeBag)
+				self.dataExtractor
+					.refresh()
+				
+				self.data
+					.map {_ in return ()}
+					.take(1)
+					.subscribe(onNext:atEnd)
+					.addDisposableTo(self.🗑)
 			}
 		}
 		
@@ -136,7 +143,7 @@ open class AutoSingleLevelTableViewManager<
 		tableView
 			.rx.modelSelected(Data.self)
 			.subscribe(onNext:(didSelectObj))
-			.addDisposableTo(disposeBag)
+			.addDisposableTo(🗑)
 		
 		tableView
 			.rx.itemAccessoryButtonTapped
@@ -145,7 +152,7 @@ open class AutoSingleLevelTableViewManager<
 					tableView.selectRow(at: index, animated: false, scrollPosition: UITableViewScrollPosition.none)
 					didSelectObj(obj)
 				}
-		}).addDisposableTo(disposeBag)
+		}).addDisposableTo(🗑)
 		
 	}
 	
@@ -162,7 +169,7 @@ open class AutoSingleLevelTableViewManager<
 					dec(cell)
 				})
 			}
-			.addDisposableTo(dataBindDisposeBag)
+			.addDisposableTo(🗑)
 		
 		handleEmpty(data:data)
 		
@@ -187,7 +194,7 @@ open class AutoSingleLevelTableViewManager<
 				{
 					self.tableView.backgroundView=nil
 				}
-			}).addDisposableTo(dataBindDisposeBag)
+			}).addDisposableTo(🗑)
 		
 	}
 	open var cellDecorators:[CellDecorator]=[]
@@ -207,7 +214,7 @@ open class AutoSingleLevelTableViewManager<
 						else {return}
 					dest.detailManager.object=self.clickedObj
 				}
-				}).addDisposableTo(disposeBag)
+				}).addDisposableTo(🗑)
 		}
 		switch accessory
 		{
@@ -305,7 +312,7 @@ open class AutoSearchableSingleLevelTableViewManager<
 				default:
 					self.tableView.backgroundView=nil
 				}
-			}).addDisposableTo(dataBindDisposeBag)
+			}).addDisposableTo(🗑)
 		
 	}
 }

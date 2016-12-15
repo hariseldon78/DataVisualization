@@ -40,12 +40,11 @@ extension Array {
 		}
 	}
 }
-struct Zip3Generator
-	<
-	A: IteratorProtocol,
-	B: IteratorProtocol,
-	C: IteratorProtocol
->: IteratorProtocol {
+struct Zip3Generator <
+		A: IteratorProtocol,
+		B: IteratorProtocol,
+		C: IteratorProtocol
+	>: IteratorProtocol {
 	
 	fileprivate var first: A
 	fileprivate var second: B
