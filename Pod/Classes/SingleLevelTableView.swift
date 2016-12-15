@@ -117,13 +117,17 @@ open class AutoSingleLevelTableViewManager<
 			setupRefreshControl{ atEnd in
 				Cached.invalidateCache()
 				
+				let tmp=self.dataExtractor.viewForActivityIndicator
 				self.dataExtractor
 					.refresh()
 				
 				self.data
 					.map {_ in return ()}
 					.take(1)
-					.subscribe(onNext:atEnd)
+					.subscribe(onNext:{
+						self.dataExtractor.viewForActivityIndicator=tmp
+						atEnd()
+					})
 					.addDisposableTo(self.🗑)
 			}
 		}

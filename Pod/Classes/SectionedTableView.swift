@@ -257,12 +257,17 @@ open class AutoSectionedTableViewManager<
 		{
 			Cacheable.invalidateCache()
 		}
+		let tmp=sectioner.viewForActivityIndicator
+		sectioner.viewForActivityIndicator=nil
 		sectioner.refresh()
 		
 		self.data
 			.map {_ in return ()}
 			.take(1)
-			.subscribe(onNext:atEnd)
+			.subscribe(onNext:{
+				self.sectioner.viewForActivityIndicator=tmp
+				atEnd()
+			})
 			.addDisposableTo(self.🗑)
 	}
 	var emptyList=false
