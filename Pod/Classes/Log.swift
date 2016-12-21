@@ -14,7 +14,7 @@ public enum LogLevel:Int
 	case info=1
 	case debug=2
 	case verbose=3
-	func toString()->String
+	public func toString()->String
 	{
 		switch self {
 		case .error:
@@ -27,11 +27,11 @@ public enum LogLevel:Int
 			return "verbose"
 		}
 	}
-	func atLeast(_ level:LogLevel)->Bool
+	public func atLeast(_ level:LogLevel)->Bool
 	{
 		return rawValue>=level.rawValue
 	}
-	func ifAtLeast(_ level:LogLevel,closure:()->())
+	public func ifAtLeast(_ level:LogLevel,closure:()->())
 	{
 		if atLeast(level)
 		{
