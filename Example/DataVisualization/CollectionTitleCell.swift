@@ -33,7 +33,7 @@ class CollectionTitleCell: UICollectionViewCell {
 	var resizeSink:PublishSubject<Void>?
     override func awakeFromNib() {
         super.awakeFromNib()
-		print("awakeFromNib")
+		log("awakeFromNib")
         // Initialization code
 		
 		Observable<Int>

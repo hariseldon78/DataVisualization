@@ -210,7 +210,7 @@ class SearchSectionedViewController:UIViewController {
 			.map{!$0.isEmpty}
 			.distinctUntilChanged()
 			.subscribe(onNext: {
-				print("showAll=\($0)")
+				log("showAll=\($0)")
 				self.tvManager.sectioner.showAll.value=$0
 			}).addDisposableTo(disposeBag)
 		
@@ -255,7 +255,7 @@ class SearchSectioned2ViewController:UIViewController {
 			.map{!$0.isEmpty}
 			.distinctUntilChanged()
 			.subscribe(onNext: {
-				print("showAll=\($0)")
+				log("showAll=\($0)")
 				self.tvManager.sectioner.showAll.value=$0
 			}).addDisposableTo(disposeBag)
 		
@@ -305,7 +305,7 @@ class SearchSectionedFunkyViewController:UIViewController {
 			.map{!$0.isEmpty}
 			.distinctUntilChanged()
 			.subscribe(onNext: {
-				print("showAll=\($0)")
+				log("showAll=\($0)")
 				tvManager.sectioner.showAll.value=$0
 			}).addDisposableTo(disposeBag)
 		

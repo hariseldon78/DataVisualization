@@ -8,6 +8,25 @@
 
 import UIKit
 import RxSwift
+import DataVisualization
+
+let globalLog=LogManager()
+
+public func log(_ message:String,_ tags:[String]) {
+	globalLog.log(message,tags)
+}
+
+public func log(_ message:String,_ level:LogLevel) {
+	globalLog.log(message,level)
+}
+
+public func log(_ message:String,tags:[String]=[String](),level:LogLevel = .debug) {
+	globalLog.log(message,tags,level)
+}
+
+public func log(_ message:String,_ tags:[String],_ level:LogLevel) {
+	globalLog.log(message,tags,level)
+}
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -16,7 +35,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
-		
+		log("application started",.info)
         return true
     }
 

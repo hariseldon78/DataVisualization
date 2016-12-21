@@ -142,7 +142,7 @@ struct Worker: WithCachedApi
 				])
 		}
 		
-		
+		log("generater array: \(array)",["data"])
 		return Observable.create({ (observer) -> Disposable in
 			assert(Thread.current != Thread.main)
 			Thread.sleep(forTimeInterval: 2)
