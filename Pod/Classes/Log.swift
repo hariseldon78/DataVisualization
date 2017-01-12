@@ -18,13 +18,13 @@ public enum LogLevel:Int
 	{
 		switch self {
 		case .error:
-			return "error"
+			return "E"
 		case .info:
-			return "info"
+			return "I"
 		case .debug:
-			return "debug"
+			return "D"
 		case .verbose:
-			return "verbose"
+			return "V"
 		}
 	}
 	public func atLeast(_ level:LogLevel)->Bool
@@ -162,8 +162,8 @@ public struct LogEntry {
 	
 	public static var toString:(LogEntry, Int)->String={ e,lineLength in
 		let tags=e.tags.joined(separator:",")
-		let multilineString=e.level.toString().toMultilineField(8) +
-			"\(tags)".toMultilineField(10) +
+		let multilineString=e.level.toString().toMultilineField(2) +
+			"\(tags)".toMultilineField(16) +
 			e.message.toMultilineField(lineLength-18)
 		return multilineString.toString()
 	}
@@ -172,8 +172,13 @@ public struct LogEntry {
 public class LogManager {
 	public init(){}
 	public var entries=[LogEntry]()
+	
 	public var consoleFilter:(LogEntry)->Bool = {_ in return true}
 	public var consoleLineLength=140
+	
+	public typealias OnLogAction=(LogEntry)->Void
+	public var onLogActions=[OnLogAction]()
+
 	public func log(_ message:String,_ tags:[String]) {
 		log(message,tags,.debug)
 	}
@@ -192,6 +197,7 @@ public class LogManager {
 		if consoleFilter(entry) {
 			print(LogEntry.toString(entry,consoleLineLength))
 		}
+		onLogActions.forEach { $0(entry) }
 	}
 	
 	
