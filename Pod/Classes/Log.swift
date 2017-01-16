@@ -38,7 +38,27 @@ public enum LogLevel:Int
 			closure()
 		}
 	}
+	
+}
 
+public typealias Splitter<T> = (/*previous:*/T,/*current:*/T)->Bool
+
+extension Collection  {
+	public func split(by splitter:Splitter<Self.Iterator.Element>) -> [Self.SubSequence]
+	{
+		var subSequences=Array<Self.SubSequence>()
+		var it=startIndex
+		var tokenStart=it
+		while it != endIndex {
+			let prev=self[it]
+			it=index(after: it)
+			if it==endIndex || splitter(prev,self[it]) {
+				subSequences.append(self[tokenStart..<it])
+				tokenStart=it
+			}
+		}
+		return subSequences
+	}
 }
 
 extension String {
@@ -46,10 +66,27 @@ extension String {
 		return padding(toLength: length-1, withPad: " ", startingAt: 0)+separator
 	}
 	
-	func toMultilineField(_ length:Int,separator:String=" ")->MultilineString
+	func toMultilineField(_ length:Int,separator:String=" ",wrapMode:WrapMode = .wordWrap)->MultilineString
 	{
-		return MultilineSingleString(string:self,length:length,separator:separator)
+		return MultilineSingleString(string:self,length:length,separator:separator,wrapMode:wrapMode)
 	}
+	func split(length:Int)->[String] {
+		var cursor=startIndex
+		var ret=[String]()
+		repeat {
+			if let rangeEnd=index(cursor,offsetBy:length,limitedBy:endIndex) {
+				ret.append(substring(with: cursor..<rangeEnd))
+				cursor=rangeEnd
+			} else {
+				if cursor != endIndex {
+					ret.append(substring(from: cursor))
+				}
+				return ret
+			}
+		} while true
+		
+	}
+	
 }
 
 
@@ -64,28 +101,84 @@ extension MultilineString {
 		return toLines().joined(separator: "\n")
 	}
 }
+
+enum WrapMode {
+	case noWrap
+	case wordWrap
+	case camelCaseWrap
+	
+	func tokenize(s:String)->[String]
+	{
+		switch self {
+		case .noWrap:
+			if true {
+				let tokens=s.unicodeScalars.split(by: {
+					(prev,curr) in
+					return
+					prev=="\n"
+				}).map {String($0)}
+				return tokens
+			}
+		case .wordWrap:
+			if true {
+				let splitter:Splitter<UnicodeScalar>={
+					(prev:UnicodeScalar,curr:UnicodeScalar) in
+					return
+					(prev==" " && curr != " ") ||
+						prev=="\n" ||
+						prev==","
+				}
+				let tokens:[String]=s.unicodeScalars.split(by: splitter).map {String($0)}
+				return tokens
+			}
+		case .camelCaseWrap:
+			if true {
+				let splitter:Splitter<UnicodeScalar>={
+					(prev:UnicodeScalar,curr:UnicodeScalar) in
+					return
+					(prev==" " && curr != " ") ||
+						prev=="\n" ||
+						prev=="," ||
+						(CharacterSet.lowercaseLetters.contains(prev) && CharacterSet.uppercaseLetters.contains(curr))
+				}
+				let tokens:[String]=s.unicodeScalars.split(by: splitter).map {String($0)}
+				return tokens
+			}
+		}
+	}
+}
+
 struct MultilineSingleString:MultilineString {
 	let source:String
 	let length:Int
 	let separator:String
-	init(string:String,length:Int,separator:String=" "){
+	let wrapMode:WrapMode
+	init(string:String,length:Int,separator:String=" ",wrapMode:WrapMode = .wordWrap){
 		source=string
 		self.length=length
 		self.separator=separator
+		self.wrapMode=wrapMode
 	}
 	
 	func toLines()->[String] {
-		var cursor=source.startIndex
+		//		var cursor=source.startIndex
 		var ret=[String]()
-		repeat {
-			if let rangeEnd=source.index(cursor,offsetBy:length-1,limitedBy:source.endIndex) {
-				ret.append(source.substring(with: cursor..<rangeEnd)+separator)
-				cursor=rangeEnd
+		var tokens=wrapMode
+			.tokenize(s: source)
+			.map {$0.replacingOccurrences(of: "\n", with: "")}
+			.flatMap {$0.split(length:length-1)}
+		var s=""
+		for token in tokens {
+			let tokL=token.characters.count
+			if s.characters.count+tokL<=length-1 {
+				s=s+token
 			} else {
-				ret.append(source.substring(from: cursor).toField(length,separator:separator))
-				return ret
+				ret.append(s.toField(length,separator:separator))
+				s=token
 			}
-		} while true
+		}
+		ret.append(s.toField(length,separator:separator))
+		return ret
 	}
 }
 
@@ -150,7 +243,7 @@ struct AggregateMultilineString:MultilineString {
 					}
 					return lines
 			})
-			.map { $0.joined() }
+				.map { $0.joined() }
 	}
 }
 
@@ -163,7 +256,7 @@ public struct LogEntry {
 	public static var toString:(LogEntry, Int)->String={ e,lineLength in
 		let tags=e.tags.joined(separator:",")
 		let multilineString=e.level.toString().toMultilineField(2) +
-			"\(tags)".toMultilineField(16) +
+			"\(tags)".toMultilineField(16,wrapMode:.camelCaseWrap) +
 			e.message.toMultilineField(lineLength-18)
 		return multilineString.toString()
 	}
@@ -178,7 +271,7 @@ public class LogManager {
 	
 	public typealias OnLogAction=(LogEntry)->Void
 	public var onLogActions=[OnLogAction]()
-
+	
 	public func log(_ message:String,_ tags:[String]) {
 		log(message,tags,.debug)
 	}
@@ -186,7 +279,7 @@ public class LogManager {
 	public func log(_ message:String,_ level:LogLevel) {
 		log(message,[String](),level)
 	}
-
+	
 	public func log(_ message:String,tags:[String]=[String](),level:LogLevel = .debug) {
 		log(message,tags,level)
 	}

@@ -142,7 +142,7 @@ struct Worker: WithCachedApi
 				])
 		}
 		
-		log("generater array: \(array)",["data"])
+		log("generater array: \(array)",["data","veryLongCamelcasedTag","a","lot","of","other","tags","andthisunbreakablenotcamelcasedtag","and\nthis\nselfwrapping\ntag"])
 		return Observable.create({ (observer) -> Disposable in
 			assert(Thread.current != Thread.main)
 			Thread.sleep(forTimeInterval: 2)
