@@ -107,8 +107,15 @@ enum WrapMode {
 	case wordWrap
 	case camelCaseWrap
 	
-	func tokenize(s:String)->[String]
+	/// return "rows of tokens"
+	func tokenize(s:String)->[[String]]
 	{
+		let splitter:Splitter<UnicodeScalar>={return $0.0=="\n"}
+		let rows=s.unicodeScalars.split(by: splitter).map{String($0)}
+		return rows.map(tokenizeRow)
+	}
+	
+	func tokenizeRow(s:String)->[String] {
 		switch self {
 		case .noWrap:
 			if true {
@@ -163,21 +170,25 @@ struct MultilineSingleString:MultilineString {
 	func toLines()->[String] {
 		//		var cursor=source.startIndex
 		var ret=[String]()
-		var tokens=wrapMode
+		var rowsOfTokens=wrapMode
 			.tokenize(s: source)
-			.map {$0.replacingOccurrences(of: "\n", with: "")}
-			.flatMap {$0.split(length:length-1)}
+			.map{
+				$0.map {$0.replacingOccurrences(of: "\n", with: "")}
+					.flatMap {$0.split(length:length-1)}}
+
+		for row in rowsOfTokens {
 		var s=""
-		for token in tokens {
-			let tokL=token.characters.count
-			if s.characters.count+tokL<=length-1 {
-				s=s+token
-			} else {
-				ret.append(s.toField(length,separator:separator))
-				s=token
+			for token in row {
+				let tokL=token.characters.count
+				if s.characters.count+tokL<=length-1 {
+					s=s+token
+				} else {
+					ret.append(s.toField(length,separator:separator))
+					s=token
+				}
 			}
+			ret.append(s.toField(length,separator:separator))
 		}
-		ret.append(s.toField(length,separator:separator))
 		return ret
 	}
 }
