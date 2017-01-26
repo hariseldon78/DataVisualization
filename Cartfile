@@ -1,1 +1,3 @@
 github "ReactiveX/RxSwift" ~> 3.0
+github "robb/Cartography" "master"
+github "RxSwiftCommunity/RxDataSources" "master"

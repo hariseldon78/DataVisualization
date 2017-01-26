@@ -18,6 +18,7 @@
 		FB2E892E1D19F5B200883E3A /* CollectionTitleCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB2E892C1D19F5B200883E3A /* CollectionTitleCell.swift */; };
 		FB2E892F1D19F5B200883E3A /* CollectionTitleCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = FB2E892D1D19F5B200883E3A /* CollectionTitleCell.xib */; };
 		FB300EB01C3DFDEF00DC6AE5 /* NibVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = FB300EAE1C3DFDEE00DC6AE5 /* NibVC.xib */; };
+		FB884F721E397F08005A84D8 /* Cartfile in Resources */ = {isa = PBXBuildFile; fileRef = FB884F711E397F08005A84D8 /* Cartfile */; };
 		FBBB78C61D6E57BB0065A33C /* CacheTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBBB78C41D6E57B60065A33C /* CacheTests.swift */; };
 		FBBE179A1C307FE3005E1E5C /* FunkyCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBBE17981C307FE3005E1E5C /* FunkyCell.swift */; };
 		FBBE179B1C307FE3005E1E5C /* FunkyCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = FBBE17991C307FE3005E1E5C /* FunkyCell.xib */; };
@@ -66,6 +67,7 @@
 		FB3A2CF31C5F7AB000222592 /* dv-screenshot-sea-sec.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "dv-screenshot-sea-sec.png"; sourceTree = "<group>"; };
 		FB3A2CF41C5F7AB000222592 /* dv-screenshot-sec.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "dv-screenshot-sec.png"; sourceTree = "<group>"; };
 		FB3A2CF51C5F7AB000222592 /* dv-screenshot-static.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "dv-screenshot-static.png"; sourceTree = "<group>"; };
+		FB884F711E397F08005A84D8 /* Cartfile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = Cartfile; path = ../Cartfile; sourceTree = "<group>"; };
 		FBB768FE1C49356B00FC1816 /* rxSwiftExperiments.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; name = rxSwiftExperiments.playground; path = DataVisualization/rxSwiftExperiments.playground; sourceTree = "<group>"; };
 		FBBB78C41D6E57B60065A33C /* CacheTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CacheTests.swift; sourceTree = "<group>"; };
 		FBBE17981C307FE3005E1E5C /* FunkyCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FunkyCell.swift; sourceTree = "<group>"; };
@@ -102,6 +104,7 @@
 		607FACC71AFB9204008FA782 = {
 			isa = PBXGroup;
 			children = (
+				FB884F711E397F08005A84D8 /* Cartfile */,
 				FB3A2CF61C5F7AB500222592 /* screenshots */,
 				FBFDB21E1C57ADCA006BD12D /* LICENSE */,
 				FBFDB21F1C57ADCA006BD12D /* README.md */,
@@ -307,6 +310,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FB884F721E397F08005A84D8 /* Cartfile in Resources */,
 				FBC024E31C304C2A00F4700D /* TitleCell.xib in Resources */,
 				607FACDB1AFB9204008FA782 /* Main.storyboard in Resources */,
 				FBBE179B1C307FE3005E1E5C /* FunkyCell.xib in Resources */,
