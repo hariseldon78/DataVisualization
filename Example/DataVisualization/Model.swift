@@ -22,6 +22,7 @@ extension Array{
 		}
 	}
 }
+
 struct Worker: WithCachedApi
 {
 	typealias DefaultViewModel=ConcreteViewModel<Worker,TitleCell>
@@ -49,31 +50,36 @@ struct Worker: WithCachedApi
 	
 	let id:UInt
 	let name:String
+	let sex:String
 	let salary:Double
 	let departmentId:UInt
 	static func api(_ viewForActivityIndicator: UIView?,params:[String:Any]?=nil) -> Observable<[Worker]> {
 		var array=[
 			[
-				"id":0,
-				"name":"Gianni",
-				"salary":1000.0,
+				"id":9,
+				"name":"Emma",
+				"sex":"f",
+				"salary":1130.0,
 				"departmentId":0
 			],
 			[
 				"id":1,
 				"name":"Luigi",
+				"sex":"m",
 				"salary":1200.0,
 				"departmentId":0
 			],
 			[
-				"id":2,
-				"name":"Arturo",
-				"salary":1800.0,
-				"departmentId":1
+				"id":6,
+				"name":"Berta",
+				"sex":"f",
+				"salary":1130.0,
+				"departmentId":0
 			],
 			[
 				"id":3,
 				"name":"Gianfranco",
+				"sex":"m",
 				"salary":1100.0,
 				"departmentId":0
 			]
@@ -83,6 +89,7 @@ struct Worker: WithCachedApi
 			array.append([
 				"id":4,
 				"name":"Carletta",
+				"sex":"f",
 				"salary":1700.0,
 				"departmentId":1
 				])
@@ -90,42 +97,49 @@ struct Worker: WithCachedApi
 		array.maybeAppend([
 			"id":5,
 			"name":"Adele",
+			"sex":"f",
 			"salary":1130.0,
 			"departmentId":0
 			])
 		array.maybeAppend([
-			"id":6,
-			"name":"Berta",
-			"salary":1130.0,
-			"departmentId":0
+			"id":2,
+			"name":"Arturo",
+			"sex":"m",
+			"salary":1800.0,
+			"departmentId":1
 			])
 		array.maybeAppend([
 			"id":7,
 			"name":"Carla",
+			"sex":"f",
 			"salary":1130.0,
 			"departmentId":0
 			])
 		array.maybeAppend([
 			"id":8,
 			"name":"Diana",
+			"sex":"f",
 			"salary":1130.0,
 			"departmentId":0
 			])
 		array.maybeAppend([
-			"id":9,
-			"name":"Emma",
-			"salary":1130.0,
+			"id":0,
+			"name":"Gianni",
+			"sex":"m",
+			"salary":1000.0,
 			"departmentId":0
 			])
 		array.maybeAppend([
 			"id":10,
 			"name":"Fausta",
+			"sex":"f",
 			"salary":1130.0,
 			"departmentId":0
 			])
 		array.maybeAppend([
 			"id":11,
 			"name":"Ilaria",
+			"sex":"f",
 			"salary":1130.0,
 			"departmentId":0
 			])
@@ -150,11 +164,12 @@ struct Worker: WithCachedApi
 				.map{ w->Worker in
 					guard let id:Int=w["id"] as? Int,
 						let name:String=w["name"] as? String,
+						let sex:String=w["sex"] as? String,
 						let salary:Double=w["salary"] as? Double,
 						let dep:Int=w["departmentId"] as? Int
 						else {fatalError()}
 
-					return Worker(id: UInt(id) , name: name, salary: salary, departmentId: UInt(dep))
+					return Worker(id: UInt(id) , name: name, sex:sex, salary: salary, departmentId: UInt(dep))
 			}
 			observer.onNext(data)
 			observer.onCompleted()

@@ -36,6 +36,40 @@ class PlainViewController:UIViewController
 	}
 }
 
+class ConditionalViewController:UIViewController
+{
+	@IBOutlet weak var tableView: UITableView!
+	
+	var tvManager:AutoSearchableSingleLevelTableViewManager<Worker,Worker.DefaultViewModel>!
+	let dataExtractor=ApiExtractor<Worker>(apiParams:["name":"ApiParams" as AnyObject,"salary":Double(4000.0) as AnyObject,"department":UInt(8) as AnyObject])
+	override func viewDidLoad() {
+		super.viewDidLoad()
+		tvManager=AutoSearchableSingleLevelTableViewManager(
+			viewModel: Worker.defaultViewModel(),
+			filteringClosure: { (d:Worker, s:String) -> Bool in
+				return d.name.localizedUppercase.contains(s.localizedUppercase)
+		},
+			dataExtractor: dataExtractor)
+		tvManager.setupTableView(tableView,vc:self)
+		tvManager.setupOnSelect(
+			.conditional({ data in
+				if data.sex=="m" {
+					return (
+						style: .detail,
+						behaviour:	.segue(
+							name: "detailMale",
+							presentation: .push))
+				} else {
+					return (
+						style: .info,
+						behaviour:	.segue(
+							name: "detailFemale",
+							presentation: .push))
+				}
+			}))
+	}
+}
+
 struct StaticData{
 	let s:String
 	typealias DefaultViewModel=ConcreteViewModel<StaticData,TitleCell>
