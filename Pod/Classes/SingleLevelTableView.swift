@@ -30,25 +30,43 @@ public protocol AutoSingleLevelTableView:AutoSingleLevelDataView {
 	func setupTableView(_ tableView:UITableView,vc:UIViewController)
 }
 
-public typealias CellDecorator=(_ cell:UITableViewCell)->()
+public typealias CellDecorator<DataType>=(_ cell:UITableViewCell, _ data:DataType)->()
 
 public enum PresentationMode
 {
 	case push
-//	case Popover(movableAnchor:UIView?)
+	//	case Popover(movableAnchor:UIView?)
 }
 public enum AccessoryStyle
 {
 	case info
 	case detail
 	case none
+	func asUIKitType() -> UITableViewCellAccessoryType {
+		switch self {
+		case .info:
+			return .detailButton
+		case .detail:
+			return .disclosureIndicator
+		case .none:
+			return .none
+		}
+	}
 }
 
 public enum OnSelectBehaviour<DataType>
 {
 	case segue(name:String,presentation:PresentationMode)
 	case action(action:(_ d:DataType)->())
+	case none
 }
+
+public enum SelectionStyle<DataType> {
+	case allTheSame(style:AccessoryStyle,behaviour:OnSelectBehaviour<DataType>)
+	// provide a PURE closure
+	case conditional((DataType)->(style:AccessoryStyle,behaviour:OnSelectBehaviour<DataType>))
+}
+
 protocol TableViewDelegateCommon: UITableViewDelegate{
 	func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCellEditingStyle
 }
@@ -88,7 +106,10 @@ open class AutoSingleLevelTableViewManager<
 	open var tableView:UITableView!
 	open var dataExtractor:DataExtractorBase<Data>
 	
+
 	var onClick:((_ row:Data)->())?=nil
+	// roba inizializzata alla selezione
+	var detailSegue:String?
 	var clickedObj:Data?
 	
 	public required init(viewModel:DataViewModel,dataExtractor:DataExtractorBase<Data>){
@@ -167,7 +188,7 @@ open class AutoSingleLevelTableViewManager<
 				cell.setNeedsUpdateConstraints()
 				cell.updateConstraintsIfNeeded()
 				self.cellDecorators.forEach({ dec in
-					dec(cell)
+					dec(cell,item)
 				})
 			}
 			.addDisposableTo(🗑)
@@ -198,51 +219,79 @@ open class AutoSingleLevelTableViewManager<
 			}).addDisposableTo(🗑)
 		
 	}
-	open var cellDecorators:[CellDecorator]=[]
+	open var cellDecorators:[CellDecorator<Data>]=[]
 	
-	open func setupOnSelect(_ accessory:AccessoryStyle,_ onSelect:OnSelectBehaviour<Data>)
+	open func setupOnSelect(_ style:SelectionStyle<Data>)
 	{
 		func prepareSegue(_ segue:String,presentation:PresentationMode)
 		{
-			let detailSegue=segue
-			onClick={ _ in self.vc.performSegue(withIdentifier: segue, sender: nil) }
+			detailSegue=segue
+			onClick={ _ in
+				self.vc.performSegue(withIdentifier: segue, sender: nil)
+			}
 			vc.rx_prepareForSegue.subscribe(onNext: { (segue,_) in
 				guard let destVC=segue.destination as? UIViewController,
 					let identifier=segue.identifier else {return}
 				
-				if identifier==detailSegue {
+				if identifier==self.detailSegue {
 					guard var dest=segue.destination as? DetailView
 						else {return}
 					dest.detailManager.object=self.clickedObj
 				}
 				}).addDisposableTo(🗑)
 		}
-		switch accessory
-		{
-		case .detail:
-			let dec:CellDecorator={ (cell:UITableViewCell) in
-				cell.accessoryType=UITableViewCellAccessoryType.disclosureIndicator
+		
+		switch style {
+		case .allTheSame(let accessory, let behaviour):
+			let dec:CellDecorator={ (cell:UITableViewCell,_:Data) in
+				cell.accessoryType=accessory.asUIKitType()
 			}
 			cellDecorators.append(dec)
-		case .info:
-			let dec:CellDecorator={ (cell:UITableViewCell) in
-				cell.accessoryType=UITableViewCellAccessoryType.detailButton
+			switch behaviour
+			{
+			case .segue(let name,let presentation):
+				prepareSegue(name,presentation: presentation)
+				
+			case .action(let closure):
+				self.onClick=closure
+			case .none:
+				_=0
 			}
-			cellDecorators.append(dec)
-		case .none:
-			_=0
-		}
-		switch onSelect
-		{
-		case .segue(let name,let presentation):
-			prepareSegue(name,presentation: presentation)
 			
-		case .action(let closure):
-			self.onClick=closure
+		case .conditional(let f):
+			let dec:CellDecorator={ (cell:UITableViewCell,data:Data) in
+				let (accessory,_)=f(data)
+				cell.accessoryType=accessory.asUIKitType()
+			}
+			cellDecorators.append(dec)
+
+			onClick={data in
+				let (_,behaviour)=f(data)
+				
+				switch behaviour
+				{
+				case .segue(let name,let presentation):
+					self.detailSegue=name
+					self.vc.performSegue(withIdentifier: name, sender: nil)
+					self.vc.rx_prepareForSegue.subscribe(onNext: { (segue,_) in
+						guard let destVC=segue.destination as? UIViewController,
+							let identifier=segue.identifier else {return}
+						
+						if identifier==self.detailSegue {
+							guard var dest=segue.destination as? DetailView
+								else {return}
+							dest.detailManager.object=self.clickedObj
+						}
+					}).addDisposableTo(self.🗑)
+					
+				case .action(let closure):
+					closure(data)
+				case .none:
+					_=0
+				}
+			}
 		}
 	}
-	
-	
 }
 
 open class AutoSearchableSingleLevelTableViewManager<

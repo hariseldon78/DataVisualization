@@ -208,6 +208,8 @@ open class AutoSingleLevelCollectionViewManager<
 			
 		case .action(let closure):
 			self.onClick=closure
+		case .none:
+			_=0
 		}
 	}
 	

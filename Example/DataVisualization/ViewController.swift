@@ -27,7 +27,12 @@ class PlainViewController:UIViewController
 		},
 			dataExtractor: dataExtractor)
 		tvManager.setupTableView(tableView,vc:self)
-		tvManager.setupOnSelect(.detail,.segue(name:"detail",presentation:.push))
+		tvManager.setupOnSelect(
+			.allTheSame(
+				style: .detail,
+				behaviour:	.segue(
+					name: "detail",
+					presentation: .push)))
 	}
 }
 
@@ -94,7 +99,12 @@ class StaticViewController:UIViewController
 	override func viewDidLoad() {
 		super.viewDidLoad()
 		tvManager.setupTableView(tableView,vc:self)
-		tvManager.setupOnSelect(.info,.segue(name:"detail",presentation:.push))
+		tvManager.setupOnSelect(
+			.allTheSame(
+				style: .info,
+				behaviour:	.segue(
+					name: "detail",
+					presentation: .push)))
 	}
 	override func viewDidAppear(_ animated: Bool) {
 		super.viewDidAppear(animated)
@@ -130,11 +140,15 @@ class PlainNoDetViewController:UIViewController
 	override func viewDidLoad() {
 		super.viewDidLoad()
 		tvManager.setupTableView(tableView,vc:self)
-		tvManager.setupOnSelect(.detail,.action(action: { (d:Worker) -> () in
-			dump(d)
-			let vc=NoStoryboardViewController()
-			self.present(vc, animated: true, completion: nil)
-		}))
+		tvManager.setupOnSelect(
+			.allTheSame(
+				style: .detail,
+				behaviour:	.action(
+					action: { (d:Worker) -> () in
+						dump(d)
+						let vc=NoStoryboardViewController()
+						self.present(vc, animated: true, completion: nil)
+				})))
 	}
 }
 class FunkyViewController:UIViewController {
@@ -148,7 +162,12 @@ class FunkyViewController:UIViewController {
 	override func viewDidLoad() {
 		super.viewDidLoad()
 		tvManager.setupTableView(tableView,vc:self)
-		tvManager.setupOnSelect(.detail,.segue(name:"detail",presentation:.push))
+		tvManager.setupOnSelect(
+			.allTheSame(
+				style: .detail,
+				behaviour:	.segue(
+					name: "detail",
+					presentation: .push)))
 	}
 	
 }

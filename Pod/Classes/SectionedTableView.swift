@@ -234,7 +234,7 @@ open class AutoSectionedTableViewManager<
 			cell.setNeedsUpdateConstraints()
 			cell.updateConstraintsIfNeeded()
 			self.cellDecorators.forEach({ dec in
-				dec(cell)
+				dec(cell,item)
 			})
 			return cell
 		}
@@ -351,7 +351,7 @@ open class AutoSectionedTableViewManager<
 		
 	}
 	
-	open var cellDecorators:[CellDecorator]=[]
+	open var cellDecorators:[CellDecorator<Element>]=[]
 	
 	var dataDetailSegue:String?=nil
 	var dataDetailSectionSegue:String?=nil
@@ -379,12 +379,12 @@ open class AutoSectionedTableViewManager<
 		switch accessory
 		{
 		case .detail:
-			let dec:CellDecorator={ (cell:UITableViewCell) in
+			let dec:CellDecorator<Element>={ (cell:UITableViewCell,_:Element) in
 				cell.accessoryType=UITableViewCellAccessoryType.disclosureIndicator
 			}
 			cellDecorators.append(dec)
 		case .info:
-			let dec:CellDecorator={ (cell:UITableViewCell) in
+			let dec:CellDecorator<Element>={ (cell:UITableViewCell,_:Element) in
 				cell.accessoryType=UITableViewCellAccessoryType.detailButton
 			}
 			cellDecorators.append(dec)
@@ -423,6 +423,8 @@ open class AutoSectionedTableViewManager<
 			
 		case .action(let closure):
 			self.onSectionClick=closure
+		case .none:
+			_=0
 		}
 	}
 	var listeningForSegue=false
