@@ -261,7 +261,7 @@ open class AutoSectionedTableViewManager<
 		sectioner.viewForActivityIndicator=nil
 		sectioner.refresh()
 		
-		self.data
+		data
 			.map {_ in return ()}
 			.take(1)
 			.subscribe(onNext:{

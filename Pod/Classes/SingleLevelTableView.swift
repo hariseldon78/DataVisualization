@@ -135,22 +135,7 @@ open class AutoSingleLevelTableViewManager<
 		
 		if let Cached=Data.self as? Cached.Type
 		{
-			setupRefreshControl{ atEnd in
-				Cached.invalidateCache()
-				
-				let tmp=self.dataExtractor.viewForActivityIndicator
-				self.dataExtractor
-					.refresh()
-				
-				self.data
-					.map {_ in return ()}
-					.take(1)
-					.subscribe(onNext:{
-						self.dataExtractor.viewForActivityIndicator=tmp
-						atEnd()
-					})
-					.addDisposableTo(self.🗑)
-			}
+			setupRefreshControl(refreshData)
 		}
 		
 		func didSelectObj(_ obj:Data)
@@ -177,7 +162,25 @@ open class AutoSingleLevelTableViewManager<
 		}).addDisposableTo(🗑)
 		
 	}
-	
+	open func refreshData(atEnd:@escaping ()->()) {
+		guard let Cached=Data.self as? Cached.Type else {return}
+
+		Cached.invalidateCache()
+		
+		let tmp=dataExtractor.viewForActivityIndicator
+		dataExtractor
+			.refresh()
+		
+		data
+			.map {_ in return ()}
+			.take(1)
+			.subscribe(onNext:{
+				self.dataExtractor.viewForActivityIndicator=tmp
+				atEnd()
+			})
+			.addDisposableTo(self.🗑)
+		
+	}
 	@discardableResult func bindData()->Observable<Void> {
 		let data=self.data.shareReplayLatestWhileConnected()
 
