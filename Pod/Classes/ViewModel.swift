@@ -15,9 +15,9 @@ public enum ProgressType {
 }
 
 public struct ProgressContext {
-	let viewController:UIViewController?
-	let view:UIView?
-	let type:ProgressType
+	public let viewController:UIViewController?
+	public let view:UIView?
+	public let type:ProgressType
 }
 
 public enum Either<T1,T2>
