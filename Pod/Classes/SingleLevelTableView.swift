@@ -105,7 +105,7 @@ open class AutoSingleLevelTableViewManager<
 	open var vc:UIViewController!
 	open var tableView:UITableView!
 	open var dataExtractor:DataExtractorBase<Data>
-	
+	var progressType:ProgressType = .indeterminate
 
 	var onClick:((_ row:Data)->())?=nil
 	// roba inizializzata alla selezione
@@ -124,7 +124,7 @@ open class AutoSingleLevelTableViewManager<
 		
 		self.vc=vc
 		self.tableView=tableView
-		self.dataExtractor.viewForActivityIndicator=tableView
+		self.dataExtractor.progressContext=ProgressContext(viewController: vc, view: tableView, type: progressType)
 		
 		tableView.delegate=nil
 		tableView.rx.setDelegate(self)
@@ -167,7 +167,7 @@ open class AutoSingleLevelTableViewManager<
 
 		Cached.invalidateCache()
 		
-		let tmp=dataExtractor.viewForActivityIndicator
+//		let tmp=dataExtractor.viewForActivityIndicator
 		dataExtractor
 			.refresh()
 		
@@ -175,7 +175,7 @@ open class AutoSingleLevelTableViewManager<
 			.map {_ in return ()}
 			.take(1)
 			.subscribe(onNext:{
-				self.dataExtractor.viewForActivityIndicator=tmp
+//				self.dataExtractor.viewForActivityIndicator=tmp
 				atEnd()
 			})
 			.addDisposableTo(self.🗑)

@@ -14,7 +14,7 @@ import RxDataSources
 public protocol Sectioner
 {
 	//	init(viewForActivityIndicator:UIView?)
-	var viewForActivityIndicator:UIView? {get set}
+	var progressContext:ProgressContext? {get set}
 	associatedtype Data
 	associatedtype Section
 	var sections:Observable<[(Section,[Data])]> {get}
@@ -22,7 +22,7 @@ public protocol Sectioner
 }
 
 open class RefreshableSectioner<Section,Data>:Sectioner {
-	open var viewForActivityIndicator: UIView?=nil
+	open var progressContext:ProgressContext?=nil
 
 	public typealias SectionAndData=(Section,[Data])
 	open func _sections()->Observable<[SectionAndData]>{ fatalError("implement me") }
@@ -105,9 +105,9 @@ open class CollapsableSectioner<
 		original.refresh()
 	}
 	
-	open var viewForActivityIndicator: UIView? {
-		get {return original.viewForActivityIndicator}
-		set(x) {original.viewForActivityIndicator=x}
+	open var progressContext:ProgressContext? {
+		get {return original.progressContext}
+		set(x) {original.progressContext=x}
 	}
 	
 	
@@ -192,7 +192,7 @@ open class AutoSectionedTableViewManager<
 	open var sectioner:SectionerType
 	var vc:UIViewController!
 	var tableView:UITableView!
-	
+	var progressType:ProgressType = .indeterminate
 	
 	
 	public init(
@@ -215,7 +215,7 @@ open class AutoSectionedTableViewManager<
 		
 		self.vc=vc
 		self.tableView=tableView
-		sectioner.viewForActivityIndicator=self.tableView
+		sectioner.progressContext=ProgressContext(viewController: vc, view: tableView, type: progressType)
 		
 		tableView.rx.setDelegate(self)
 		registerDataCell(dataNib)
@@ -257,15 +257,15 @@ open class AutoSectionedTableViewManager<
 		{
 			Cacheable.invalidateCache()
 		}
-		let tmp=sectioner.viewForActivityIndicator
-		sectioner.viewForActivityIndicator=nil
-		sectioner.refresh()
+//		let tmp=sectioner.viewForActivityIndicator
+//		sectioner.viewForActivityIndicator=nil
+//		sectioner.refresh()
 		
 		data
 			.map {_ in return ()}
 			.take(1)
 			.subscribe(onNext:{
-				self.sectioner.viewForActivityIndicator=tmp
+//				self.sectioner.viewForActivityIndicator=tmp
 				atEnd()
 			})
 			.addDisposableTo(self.🗑)

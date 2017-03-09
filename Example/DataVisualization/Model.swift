@@ -53,7 +53,7 @@ struct Worker: WithCachedApi
 	let sex:String
 	let salary:Double
 	let departmentId:UInt
-	static func api(_ viewForActivityIndicator: UIView?,params:[String:Any]?=nil) -> Observable<[Worker]> {
+	static func api(_ progressContext:ProgressContext?,params:[String:Any]?=nil) -> Observable<[Worker]> {
 		var array=[
 			[
 				"id":9,
@@ -215,17 +215,11 @@ func +<T>(array:[T],element:T)->[T]
 
 class WorkerSectioner:RefreshableSectioner<Department,Worker>,Cached
 {
-	var _viewForActivityIndicator=Variable<UIView?>(nil)
-	
 	override func _sections() -> Observable<[SectionAndData]> {
 		// FIXME: this pattern is very wrong: it refetches data just to display the activity indicator in the correct place
-		return _viewForActivityIndicator.asObservable()
-			.observeOn(OperationQueueScheduler(operationQueue:OperationQueue()))
-			.map{ (v) in
-				Data.api(v)
-			}
+		return 	Data.api(progressContext)
 			.subscribeOn(OperationQueueScheduler(operationQueue:OperationQueue()))
-			.flatMap { $0 }
+//			.flatMap { $0 }
 			.map { (w:[Worker]) in
 				let ret=w
 					.map{ $0.departmentId }
@@ -239,7 +233,6 @@ class WorkerSectioner:RefreshableSectioner<Department,Worker>,Cached
 		}
 	}
 	
-	override var viewForActivityIndicator: UIView? {didSet{_viewForActivityIndicator.value=viewForActivityIndicator}}
 	
 //	func resubscribe() {
 //		_refresher.value+=1

@@ -10,6 +10,16 @@ import Foundation
 import RxSwift
 import RxCocoa
 
+public enum ProgressType {
+	case indeterminate
+}
+
+public struct ProgressContext {
+	let viewController:UIViewController?
+	let view:UIView?
+	let type:ProgressType
+}
+
 public enum Either<T1,T2>
 {
 	case first(T1)
@@ -151,48 +161,15 @@ open class ConcreteSectionViewModel<Section,Element,Cell:UIView>:BaseConcreteVie
 }
 
 public protocol WithApi {
-	static func api(_ viewForActivityIndicator:UIView?,params:[String:Any]?)->Observable<[Self]>
+	static func api(_ progressContext:ProgressContext?,params:[String:Any]?)->Observable<[Self]>
 }
 public protocol ApiResolver {
 	associatedtype DataType
-	func apiOrSource(_ source:Observable<[DataType]>?,viewForActivityIndicator: UIView?, params: [String : AnyObject]?) -> Observable<[DataType]>
+	func apiOrSource(_ source:Observable<[DataType]>?,progressContext:ProgressContext?, params: [String : AnyObject]?) -> Observable<[DataType]>
 	var typeHasApi:Bool {get}
 	
 }
 
-//public extension ApiResolver where DataType:WithApi {
-//	func apiOrSource(source:Observable<[DataType]>?,viewForActivityIndicator: UIView?, params: [String : AnyObject]?) -> Observable<[DataType]>
-//	{
-//		print("ApiResolver where DataType:WithApi")
-//		if let source=source {
-//			return source.shareReplayLatestWhileConnected()
-//		} else {
-//			return DataType.api(viewForActivityIndicator, params: params).subscribeOn(backgroundScheduler)
-//				.map {$0}
-//				.shareReplayLatestWhileConnected()
-//				.observeOn(MainScheduler.instance)
-//		}
-//	}
-//	var typeHasApi:Bool {return true}
-//}
-//
-//public extension ApiResolver {
-//	func apiOrSource(source:Observable<[DataType]>?,viewForActivityIndicator: UIView?, params: [String : AnyObject]?) -> Observable<[DataType]> {
-//		print("ApiResolver")
-//		if let source=source {
-//			return source.shareReplayLatestWhileConnected()
-////		} else if DataType.self is WithApi {
-////			return (DataType.self as! WithApi).api(viewForActivityIndicator, params: params).subscribeOn(backgroundScheduler)
-////				.map {$0}
-////				.shareReplayLatestWhileConnected()
-////				.observeOn(MainScheduler.instance)
-//		} else {
-//			fatalError("no api to extract data from, so you must provide a source")
-//		}
-//	}
-//	
-//	var typeHasApi:Bool {return false}
-//}
 public protocol DataExtractor {
 	associatedtype DataType
 	func data()->Observable<[DataType]>
@@ -201,7 +178,7 @@ public protocol DataExtractor {
 
 open class DataExtractorBase<_DataType>:DataExtractor{
 	public typealias DataType=_DataType
-	var viewForActivityIndicator:UIView?
+	var progressContext:ProgressContext?
 	final public func data()->Observable<[DataType]> {
 		return refresher.output.shareReplayLatestWhileConnected()
 	}
@@ -229,7 +206,7 @@ open class ApiExtractor<_DataType>:DataExtractorBase<_DataType> where _DataType:
 	{
 		super.init()
 		refresher=Refresher {
-			DataType.api(super.viewForActivityIndicator, params: apiParams)
+			DataType.api(super.progressContext, params: apiParams)
 				.subscribeOn(backgroundScheduler)
 				.map {$0}
 				.shareReplayLatestWhileConnected()

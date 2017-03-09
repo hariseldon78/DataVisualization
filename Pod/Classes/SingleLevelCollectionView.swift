@@ -87,6 +87,7 @@ open class AutoSingleLevelCollectionViewManager<
 	open let viewModel:DataViewModel
 	open var vc:UIViewController!
 	var cellSizesCache=[IndexPath:CGSize]()
+	var progressType:ProgressType = .indeterminate
 	
 	var onClick:((_ row:Data)->())?=nil
 	var clickedObj:Data?
@@ -105,7 +106,7 @@ open class AutoSingleLevelCollectionViewManager<
 		
 		self.vc=vc
 		self.collectionView=collectionView
-		self.dataExtractor.viewForActivityIndicator=collectionView
+		self.dataExtractor.progressContext=ProgressContext(viewController: vc, view: collectionView, type: progressType)
 		let dataOrResize=Driver.combineLatest(data.asDriver(onErrorJustReturn: [DataType]()),viewModel.cellResizeEvents.asDriver(onErrorJustReturn: ()),resultSelector:{ $0.0 })
 		let cellSizes=dataOrResize.map{ (elements)->[CGSize] in
 			return Array(zip(IteratorSequence(IntGenerator()),elements)).map {
@@ -130,13 +131,13 @@ open class AutoSingleLevelCollectionViewManager<
 		{
 			setupRefreshControl{ atEnd in
 				Cached.invalidateCache()
-				let tmp=self.dataExtractor.viewForActivityIndicator
+//				let tmp=self.dataExtractor.viewForActivityIndicator
 				self.dataExtractor.refresh()
 				self.data
 					.map {_ in return ()}
 					.take(1)
 					.subscribe(onNext:{
-						self.dataExtractor.viewForActivityIndicator=tmp
+//						self.dataExtractor.viewForActivityIndicator=tmp
 						atEnd()
 					})
 					.addDisposableTo(self.🗑)
