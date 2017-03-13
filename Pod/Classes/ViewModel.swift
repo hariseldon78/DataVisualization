@@ -183,7 +183,7 @@ public protocol DataExtractor {
 
 open class DataExtractorBase<_DataType>:DataExtractor{
 	public typealias DataType=_DataType
-	var progressContext:ProgressContext?
+	public var progressContext:ProgressContext?
 	final public func data()->Observable<[DataType]> {
 		return refresher.output.shareReplayLatestWhileConnected()
 	}
