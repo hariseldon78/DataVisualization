@@ -178,7 +178,7 @@ public protocol ApiResolver {
 public protocol DataExtractor {
 	associatedtype DataType
 	func data()->Observable<[DataType]>
-	func refresh()
+	func refresh(hideProgress:Bool)
 }
 
 open class DataExtractorBase<_DataType>:DataExtractor{
@@ -196,8 +196,16 @@ open class DataExtractorBase<_DataType>:DataExtractor{
 	init(progressContext:ProgressContext?=nil) {
 		self.progressContext=progressContext
 	}
-	final public func refresh() {
-		refresher.refresh()
+	final public func refresh(hideProgress:Bool=false) {
+		if hideProgress {
+			print("hiding progress: \(Date())")
+			let tmp=progressContext
+			progressContext=nil
+			refresher.refresh()
+			progressContext=tmp
+		} else {
+			refresher.refresh()
+		}
 	}
 }
 

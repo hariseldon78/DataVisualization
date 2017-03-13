@@ -131,13 +131,12 @@ open class AutoSingleLevelCollectionViewManager<
 		{
 			setupRefreshControl{ atEnd in
 				Cached.invalidateCache()
-//				let tmp=self.dataExtractor.viewForActivityIndicator
-				self.dataExtractor.refresh()
+				
+				self.dataExtractor.refresh(hideProgress:true)
 				self.data
 					.map {_ in return ()}
 					.take(1)
 					.subscribe(onNext:{
-//						self.dataExtractor.viewForActivityIndicator=tmp
 						atEnd()
 					})
 					.addDisposableTo(self.🗑)
