@@ -71,7 +71,8 @@ public class Refresher<T>{
 		}).addDisposableTo(🗑)
 	}
 	public func refresh() {
-		refreshTrigger.onNext()
+		// whithout async the progress bars don't work...
+		DispatchQueue.main.async {self.refreshTrigger.onNext()}
 	}
 	public let output:Observable<T>
 	
