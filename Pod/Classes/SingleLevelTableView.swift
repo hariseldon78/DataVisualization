@@ -124,7 +124,7 @@ open class AutoSingleLevelTableViewManager<
 		
 		self.vc=vc
 		self.tableView=tableView
-		self.dataExtractor.progressContext=ProgressContext(viewController: vc, view: tableView, type: progressType)
+		self.dataExtractor.progressContext=self.dataExtractor.progressContext ?? ProgressContext(viewController: vc, view: tableView, type: progressType)
 		
 		tableView.delegate=nil
 		tableView.rx.setDelegate(self)

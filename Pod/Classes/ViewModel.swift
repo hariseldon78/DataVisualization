@@ -188,11 +188,14 @@ open class DataExtractorBase<_DataType>:DataExtractor{
 		return refresher.output.shareReplayLatestWhileConnected()
 	}
 	var refresher:Refresher<[DataType]>!=nil // must be inited by subclasses
-	init(source:@escaping ()->Observable<[DataType]>) {
+	init(source:@escaping ()->Observable<[DataType]>,progressContext:ProgressContext?=nil) {
+		self.progressContext=progressContext
 		refresher=Refresher(source: source)
 		refresh()
 	}
-	init() {}
+	init(progressContext:ProgressContext?=nil) {
+		self.progressContext=progressContext
+	}
 	final public func refresh() {
 		refresher.refresh()
 	}
@@ -207,9 +210,9 @@ open class StaticExtractor<_DataType>:DataExtractorBase<_DataType> {
 open class ApiExtractor<_DataType>:DataExtractorBase<_DataType> where _DataType:WithApi {
 //	let apiParams:[String:Any]?
 	
-	public init(apiParams: [String : Any]?=nil)
+	public init(apiParams: [String : Any]?=nil,progressContext:ProgressContext?=nil)
 	{
-		super.init()
+		super.init(progressContext:progressContext)
 		refresher=Refresher {
 			DataType.api(super.progressContext, params: apiParams)
 				.subscribeOn(backgroundScheduler)
