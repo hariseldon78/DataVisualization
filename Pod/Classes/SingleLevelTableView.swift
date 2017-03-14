@@ -105,7 +105,6 @@ open class AutoSingleLevelTableViewManager<
 	open var vc:UIViewController!
 	open var tableView:UITableView!
 	open var dataExtractor:DataExtractorBase<Data>
-	var progressType:ProgressType = .indeterminate
 
 	var onClick:((_ row:Data)->())?=nil
 	// roba inizializzata alla selezione
@@ -124,7 +123,7 @@ open class AutoSingleLevelTableViewManager<
 		
 		self.vc=vc
 		self.tableView=tableView
-		self.dataExtractor.progressContext=self.dataExtractor.progressContext ?? ProgressContext(viewController: vc, view: tableView, type: progressType)
+		self.dataExtractor.progressType=self.dataExtractor.progressType ?? .indeterminate(viewController: vc)
 		
 		tableView.delegate=nil
 		tableView.rx.setDelegate(self)

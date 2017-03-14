@@ -80,14 +80,13 @@ open class AutoSingleLevelCollectionViewManager<
 	open var data:Observable<[Data]> {
 		return dataExtractor.data()
 			.observeOn(MainScheduler.instance)
-			.subscribeOn(MainScheduler.instance)
+//			.subscribeOn(MainScheduler.instance)
 			.shareReplayLatestWhileConnected()
 	}
 	open let 🗑=DisposeBag()
 	open let viewModel:DataViewModel
 	open var vc:UIViewController!
 	var cellSizesCache=[IndexPath:CGSize]()
-	var progressType:ProgressType = .indeterminate
 	
 	var onClick:((_ row:Data)->())?=nil
 	var clickedObj:Data?
@@ -106,7 +105,7 @@ open class AutoSingleLevelCollectionViewManager<
 		
 		self.vc=vc
 		self.collectionView=collectionView
-		self.dataExtractor.progressContext=self.dataExtractor.progressContext ?? ProgressContext(viewController: vc, view: collectionView, type: progressType)
+		self.dataExtractor.progressType=self.dataExtractor.progressType ?? .indeterminate(viewController: vc)
 		let dataOrResize=Driver.combineLatest(data.asDriver(onErrorJustReturn: [DataType]()),viewModel.cellResizeEvents.asDriver(onErrorJustReturn: ()),resultSelector:{ $0.0 })
 		let cellSizes=dataOrResize.map{ (elements)->[CGSize] in
 			return Array(zip(IteratorSequence(IntGenerator()),elements)).map {

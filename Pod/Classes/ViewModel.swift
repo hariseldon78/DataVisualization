@@ -10,19 +10,17 @@ import Foundation
 import RxSwift
 import RxCocoa
 
-public enum ProgressType {
-	case indeterminate
+public protocol ProgressController {
+	func start()
+	func setCompletion(_:CGFloat)
+	func finish()
+	func cancel()
 }
 
-public struct ProgressContext {
-	public let viewController:UIViewController?
-	public let view:UIView?
-	public let type:ProgressType
-	public init(viewController:UIViewController?, view:UIView?, type:ProgressType) {
-		self.viewController=viewController
-		self.view=view
-		self.type=type
-	}
+public enum ProgressType {
+	case none
+	case indeterminate(viewController:UIViewController)
+	case determinate(step:ProgressController)
 }
 
 public enum Either<T1,T2>
@@ -166,11 +164,11 @@ open class ConcreteSectionViewModel<Section,Element,Cell:UIView>:BaseConcreteVie
 }
 
 public protocol WithApi {
-	static func api(_ progressContext:ProgressContext?,params:[String:Any]?)->Observable<[Self]>
+	static func api(_ ProgressType:ProgressType?,params:[String:Any]?)->Observable<[Self]>
 }
 public protocol ApiResolver {
 	associatedtype DataType
-	func apiOrSource(_ source:Observable<[DataType]>?,progressContext:ProgressContext?, params: [String : AnyObject]?) -> Observable<[DataType]>
+	func apiOrSource(_ source:Observable<[DataType]>?,ProgressType:ProgressType?, params: [String : AnyObject]?) -> Observable<[DataType]>
 	var typeHasApi:Bool {get}
 	
 }
@@ -183,26 +181,26 @@ public protocol DataExtractor {
 
 open class DataExtractorBase<_DataType>:DataExtractor{
 	public typealias DataType=_DataType
-	public var progressContext:ProgressContext?
+	public var progressType:ProgressType?
 	final public func data()->Observable<[DataType]> {
 		return refresher.output.shareReplayLatestWhileConnected()
 	}
 	var refresher:Refresher<[DataType]>!=nil // must be inited by subclasses
-	init(source:@escaping ()->Observable<[DataType]>,progressContext:ProgressContext?=nil) {
-		self.progressContext=progressContext
+	init(source:@escaping ()->Observable<[DataType]>,progressType:ProgressType?=nil) {
+		self.progressType=progressType
 		refresher=Refresher(source: source)
 		refresh()
 	}
-	init(progressContext:ProgressContext?=nil) {
-		self.progressContext=progressContext
+	init(progressType:ProgressType?=nil) {
+		self.progressType=progressType
 	}
 	final public func refresh(hideProgress:Bool=false) {
 		if hideProgress {
 			print("hiding progress: \(Date())")
-			let tmp=progressContext
-			progressContext=nil
+			let tmp=progressType
+			progressType=nil
 			refresher.refresh()
-			progressContext=tmp
+			progressType=tmp
 		} else {
 			refresher.refresh()
 		}
@@ -218,11 +216,11 @@ open class StaticExtractor<_DataType>:DataExtractorBase<_DataType> {
 open class ApiExtractor<_DataType>:DataExtractorBase<_DataType> where _DataType:WithApi {
 //	let apiParams:[String:Any]?
 	
-	public init(apiParams: [String : Any]?=nil,progressContext:ProgressContext?=nil)
+	public init(apiParams: [String : Any]?=nil,progressType:ProgressType?=nil)
 	{
-		super.init(progressContext:progressContext)
+		super.init(progressType:progressType)
 		refresher=Refresher {
-			DataType.api(super.progressContext, params: apiParams)
+			DataType.api(super.progressType, params: apiParams)
 				.subscribeOn(backgroundScheduler)
 				.map {$0}
 				.shareReplayLatestWhileConnected()

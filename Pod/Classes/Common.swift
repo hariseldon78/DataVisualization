@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import RxSwift
 
 protocol ControllerWithTableView
 {
@@ -16,7 +17,12 @@ protocol ControllerWithTableView
 	func registerDataCell(_ nib: Either<UINib, UIView.Type>)
 	func registerSectionCell(_ sectionNib: Either<UINib, UIView.Type>)
 }
-
+public let DataRetrieveQueue:OperationQueue={
+	let opQ=OperationQueue()
+	opQ.qualityOfService = .userInitiated
+	return opQ
+}()
+public let DataRetrieveScheduler=OperationQueueScheduler(operationQueue: DataRetrieveQueue)
 extension ControllerWithTableView where Self:Disposer
 {
 	func setupRefreshControl(_ invalidateCacheAndReBindData:@escaping (/*atEnd:*/@escaping ()->())->())

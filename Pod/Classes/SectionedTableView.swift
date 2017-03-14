@@ -14,7 +14,7 @@ import RxDataSources
 public protocol Sectioner
 {
 	//	init(viewForActivityIndicator:UIView?)
-	var progressContext:ProgressContext? {get set}
+	var progressType:ProgressType? {get set}
 	associatedtype Data
 	associatedtype Section
 	var sections:Observable<[(Section,[Data])]> {get}
@@ -22,7 +22,7 @@ public protocol Sectioner
 }
 
 open class RefreshableSectioner<Section,Data>:Sectioner {
-	open var progressContext:ProgressContext?=nil
+	open var progressType:ProgressType?=nil
 
 	public typealias SectionAndData=(Section,[Data])
 	open func _sections()->Observable<[SectionAndData]>{ fatalError("implement me") }
@@ -105,9 +105,9 @@ open class CollapsableSectioner<
 		original.refresh()
 	}
 	
-	open var progressContext:ProgressContext? {
-		get {return original.progressContext}
-		set(x) {original.progressContext=x}
+	open var progressType:ProgressType? {
+		get {return original.progressType}
+		set(x) {original.progressType=x}
 	}
 	
 	
@@ -192,7 +192,6 @@ open class AutoSectionedTableViewManager<
 	open var sectioner:SectionerType
 	var vc:UIViewController!
 	var tableView:UITableView!
-	var progressType:ProgressType = .indeterminate
 	
 	
 	public init(
@@ -215,7 +214,7 @@ open class AutoSectionedTableViewManager<
 		
 		self.vc=vc
 		self.tableView=tableView
-		sectioner.progressContext=ProgressContext(viewController: vc, view: tableView, type: progressType)
+		sectioner.progressType = .indeterminate(viewController:vc)
 		
 		tableView.rx.setDelegate(self)
 		registerDataCell(dataNib)
