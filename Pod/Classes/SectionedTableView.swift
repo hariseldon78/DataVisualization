@@ -215,7 +215,7 @@ open class AutoSectionedTableViewManager<
 		self.vc=vc
 		self.tableView=tableView
 		sectioner.progressType = .indeterminate(viewController:vc)
-		
+
 		tableView.rx.setDelegate(self)
 		registerDataCell(dataNib)
 		registerSectionCell(sectionNib)
@@ -285,7 +285,7 @@ open class AutoSectionedTableViewManager<
 	{
 		let dataLoader=data
 			.debug("data")
-			.subscribeOn(backgroundScheduler)
+//			.subscribeOn(backgroundScheduler)
 			.debug("backgroundScheduler")
 			.shareReplayLatestWhileConnected()
 		
