@@ -12,7 +12,7 @@ import RxCocoa
 
 public protocol ProgressController {
 	func start()
-	func setCompletion(_:CGFloat)
+	func setCompletion(_:CGFloat,eta:TimeInterval)
 	func finish()
 	func cancel()
 }
