@@ -34,6 +34,7 @@ public protocol BaseViewModel {
 	var cellNib:Either<UINib,UIView.Type>?  {get}
 	var viewForEmptyList:UIView? {get}
 	var viewForEmptySearch:UIView? {get}
+	var viewForDataError:UIView? {get}
 }
 
 
@@ -74,6 +75,7 @@ public enum EmptyBehaviour {
 		case .labelWithString(let s):
 			let lab=UILabel()
 			lab.text=NSLocalizedString(s, comment: "")
+			lab.numberOfLines=0
 			lab.textAlignment = .center
 			return lab
 		case .customView(let v):
@@ -93,6 +95,9 @@ open class BaseConcreteViewModel<_Data,_Cell:UIView,_ClosureType>
 	
 	open var emptySearchBehaviour=EmptyBehaviour.labelWithString(s: "Nessun elemento corrisponde alla ricerca")
 	open var viewForEmptySearch:UIView? { return emptySearchBehaviour.getView() }
+	
+	open var dataErrorBehaviour=EmptyBehaviour.labelWithString(s: "C'è stato un errore nella ricezione dei dati, si prega di controllare le connessioni di rete e riprovare")
+	open var viewForDataError:UIView? { return dataErrorBehaviour.getView() }
 	
 	public typealias Data=_Data
 		var cellFactoryClosure:ClosureType

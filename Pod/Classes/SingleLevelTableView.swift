@@ -207,14 +207,18 @@ open class AutoSingleLevelTableViewManager<
 				array.isEmpty
 			}
 			.observeOn(MainScheduler.instance)
-			.subscribe(onNext: { empty in
-				if empty {
-					self.tableView.backgroundView=self.viewModel.viewForEmptyList
-				}
-				else
-				{
-					self.tableView.backgroundView=nil
-				}
+			.subscribe(
+				onNext: { empty in
+					if empty {
+						self.tableView.backgroundView=self.viewModel.viewForEmptyList
+					}
+					else
+					{
+						self.tableView.backgroundView=nil
+					}
+			},
+				onError:{ _ in
+					self.tableView.backgroundView=self.viewModel.viewForDataError
 			}).addDisposableTo(🗑)
 		
 	}

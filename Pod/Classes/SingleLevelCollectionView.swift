@@ -173,13 +173,17 @@ open class AutoSingleLevelCollectionViewManager<
 	{
 		data
 			.map { $0.isEmpty }
-			.subscribe(onNext:{ empty in
-				if empty {
-					self.collectionView.backgroundView=self.viewModel.viewForEmptyList
-				} else {
-					self.collectionView.backgroundView=nil
-				}
-		}) .addDisposableTo(🗑)
+			.subscribe(
+				onNext:{ empty in
+					if empty {
+						self.collectionView.backgroundView=self.viewModel.viewForEmptyList
+					} else {
+						self.collectionView.backgroundView=nil
+					}
+			},
+				onError:{ _ in
+					self.collectionView.backgroundView=self.viewModel.viewForDataError
+			}) .addDisposableTo(🗑)
 	}
 	
 	open func setupOnSelect(_ onSelect:OnSelectBehaviour<Data>)
