@@ -105,7 +105,6 @@ open class AutoSingleLevelCollectionViewManager<
 		
 		self.vc=vc
 		self.collectionView=collectionView
-		self.dataExtractor.progressType=self.dataExtractor.progressType ?? .indeterminate(viewController: vc)
 		let dataOrResize=Driver.combineLatest(data.asDriver(onErrorJustReturn: [DataType]()),viewModel.cellResizeEvents.asDriver(onErrorJustReturn: ()),resultSelector:{ $0.0 })
 		let cellSizes=dataOrResize.map{ (elements)->[CGSize] in
 			return Array(zip(IteratorSequence(IntGenerator()),elements)).map {

@@ -123,7 +123,6 @@ open class AutoSingleLevelTableViewManager<
 		
 		self.vc=vc
 		self.tableView=tableView
-		self.dataExtractor.progressType=self.dataExtractor.progressType ?? .indeterminate(viewController: vc)
 		
 		tableView.delegate=nil
 		tableView.rx.setDelegate(self)

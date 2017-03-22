@@ -164,11 +164,11 @@ open class ConcreteSectionViewModel<Section,Element,Cell:UIView>:BaseConcreteVie
 }
 
 public protocol WithApi {
-	static func api(_ ProgressType:ProgressType?,params:[String:Any]?)->Observable<[Self]>
+	static func api(_ progress:ProgressController?,params:[String:Any]?)->Observable<[Self]>
 }
 public protocol ApiResolver {
 	associatedtype DataType
-	func apiOrSource(_ source:Observable<[DataType]>?,ProgressType:ProgressType?, params: [String : AnyObject]?) -> Observable<[DataType]>
+	func apiOrSource(_ source:Observable<[DataType]>?,progress:ProgressController?, params: [String : AnyObject]?) -> Observable<[DataType]>
 	var typeHasApi:Bool {get}
 	
 }
@@ -181,26 +181,26 @@ public protocol DataExtractor {
 
 open class DataExtractorBase<_DataType>:DataExtractor{
 	public typealias DataType=_DataType
-	public var progressType:ProgressType?
+	public var progress:ProgressController?
 	final public func data()->Observable<[DataType]> {
 		return refresher.output.shareReplayLatestWhileConnected()
 	}
 	var refresher:Refresher<[DataType]>!=nil // must be inited by subclasses
-	init(source:@escaping ()->Observable<[DataType]>,progressType:ProgressType?=nil) {
-		self.progressType=progressType
+	init(source:@escaping ()->Observable<[DataType]>,progress:ProgressController?=nil) {
+		self.progress=progress
 		refresher=Refresher(source: source)
 		refresh()
 	}
-	init(progressType:ProgressType?=nil) {
-		self.progressType=progressType
+	init(progress:ProgressController?=nil) {
+		self.progress=progress
 	}
 	final public func refresh(hideProgress:Bool=false) {
 		if hideProgress {
 			print("hiding progress: \(Date())")
-			let tmp=progressType
-			progressType=nil
+			let tmp=progress
+			progress=nil
 			refresher.refresh()
-			progressType=tmp
+			progress=tmp
 		} else {
 			refresher.refresh()
 		}
@@ -216,11 +216,11 @@ open class StaticExtractor<_DataType>:DataExtractorBase<_DataType> {
 open class ApiExtractor<_DataType>:DataExtractorBase<_DataType> where _DataType:WithApi {
 //	let apiParams:[String:Any]?
 	
-	public init(apiParams: [String : Any]?=nil,progressType:ProgressType?=nil)
+	public init(apiParams: [String : Any]?=nil,progress:ProgressController?=nil)
 	{
-		super.init(progressType:progressType)
+		super.init(progress:progress)
 		refresher=Refresher {
-			DataType.api(super.progressType, params: apiParams)
+			DataType.api(super.progress, params: apiParams)
 				.subscribeOn(backgroundScheduler)
 				.map {$0}
 				.shareReplayLatestWhileConnected()
