@@ -10,6 +10,18 @@ import Foundation
 import RxSwift
 import RxCocoa
 
+public protocol GenericProgressBar {
+	func setIsIndeterminate(_ indeterminate:Bool)
+	func setProgress(_ progress:CGFloat,animated:Bool)
+	func show()
+	func hide()
+	func cancel()
+}
+public enum ProgressBarLocation {
+	case inNavBar(vc:UIViewController)
+	case inProgressBar(pb:GenericProgressBar)
+}
+
 public protocol ProgressController {
 	func start()
 	func setCompletion(_:CGFloat,eta:TimeInterval)
@@ -19,7 +31,7 @@ public protocol ProgressController {
 
 public enum ProgressType {
 	case none
-	case indeterminate(viewController:UIViewController)
+	case indeterminate(pbl:ProgressBarLocation)
 	case determinate(step:ProgressController)
 }
 
