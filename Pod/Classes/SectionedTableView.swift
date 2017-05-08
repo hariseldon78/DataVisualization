@@ -470,7 +470,7 @@ open class AutoSearchableSectionedTableViewManager<
 	_Sectioner>,
 	Searchable
 {
-	open var searchController:UISearchController!
+	open var searchController:CustomSearchController!
 	open override func setupTableView(_ tableView:UITableView,vc:UIViewController)
 	{
 		self.vc=vc
@@ -481,7 +481,7 @@ open class AutoSearchableSectionedTableViewManager<
 	public typealias DataFilteringClosure=(_ d:Element,_ s:String)->Bool
 	public typealias SectionFilteringClosure=(_ d:Section,_ s:String)->Bool
 	open var search:Observable<String> {
-		return searchController.searchBar.rx_textOrCancel.asObservable()
+		return Observable.of(searchController.searchBar.rx_textOrCancel.asObservable(),searchController.searchProgrammatically).merge()
 	}
 	open var allData:Observable<[SectionAndData]> {
 		return sectioner.sections.subscribeOn(backgroundScheduler).shareReplayLatestWhileConnected()

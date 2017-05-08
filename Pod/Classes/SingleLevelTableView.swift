@@ -307,12 +307,12 @@ open class AutoSearchableSingleLevelTableViewManager<
 	: AutoSingleLevelTableViewManager<DataType,DataViewModel>,
 	Searchable
 {
-	open var searchController:UISearchController!
+	open var searchController:CustomSearchController!
 	public typealias FilteringClosure=(_ d:DataType,_ s:String)->Bool
 	open var filteringClosure:FilteringClosure
 	let searchStyle:SearchControllerStyle
 	open var search:Observable<String> {
-		return searchController.searchBar.rx_textOrCancel.asObservable()
+		return Observable.of(searchController.searchBar.rx_textOrCancel.asObservable(),searchController.searchProgrammatically).merge()
 	}
 	open override var data:Observable<[Data]> {
 		let allData=super.data

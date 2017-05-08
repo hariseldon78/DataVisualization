@@ -154,7 +154,7 @@
 						CreatedOnToolsVersion = 8.3;
 						DevelopmentTeam = 2E6Z387T4V;
 						LastSwiftMigration = 0830;
-						ProvisioningStyle = Automatic;
+						ProvisioningStyle = Manual;
 					};
 				};
 			};
@@ -314,6 +314,7 @@
 				CARTHAGE_DIR = "$(PROJECT_DIR)/../../../../Municipium-App-iOS/Municipium/Carthage";
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = 2E6Z387T4V;
 				DYLIB_COMPATIBILITY_VERSION = 1;
@@ -329,6 +330,7 @@
 				ONLY_ACTIVE_ARCH = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = com.fishdevlab.DataVisualization;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 3.0;
@@ -341,6 +343,7 @@
 				CARTHAGE_DIR = "$(PROJECT_DIR)/../../../../Municipium-App-iOS/Municipium/Carthage";
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
 				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = 2E6Z387T4V;
 				DYLIB_COMPATIBILITY_VERSION = 1;
@@ -356,6 +359,7 @@
 				ONLY_ACTIVE_ARCH = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = com.fishdevlab.DataVisualization;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 3.0;
 			};
@@ -414,6 +418,7 @@
 				CARTHAGE_DIR = "$(PROJECT_DIR)/../../../../Municipium-App-iOS/Municipium/Carthage";
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = 2E6Z387T4V;
 				DYLIB_COMPATIBILITY_VERSION = 1;
@@ -429,6 +434,7 @@
 				ONLY_ACTIVE_ARCH = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = com.fishdevlab.DataVisualization;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 3.0;
 			};
@@ -494,6 +500,7 @@
 				CARTHAGE_DIR = "$(PROJECT_DIR)/../../../../Municipium-App-iOS/Municipium/Carthage";
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = 2E6Z387T4V;
 				DYLIB_COMPATIBILITY_VERSION = 1;
@@ -509,6 +516,7 @@
 				ONLY_ACTIVE_ARCH = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = com.fishdevlab.DataVisualization;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 3.0;
@@ -575,6 +583,7 @@
 				CARTHAGE_DIR = "$(PROJECT_DIR)/../../../../Municipium-App-iOS/Municipium/Carthage";
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = 2E6Z387T4V;
 				DYLIB_COMPATIBILITY_VERSION = 1;
@@ -590,6 +599,7 @@
 				ONLY_ACTIVE_ARCH = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = com.fishdevlab.DataVisualization;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 3.0;

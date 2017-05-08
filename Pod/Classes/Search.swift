@@ -21,13 +21,15 @@ public struct SearchControllerStyle {
 	var position:SearchControllerPosition
 	var showCancelButton:CancelButtonStyle
 	var searchBarLayout:UISearchBarStyle
+	var searchProgrammatically:Observable<String>?
 	public typealias ConfigClosure=(UISearchBar,UISearchController)->Void
 	var config:ConfigClosure?
-	public init(position:SearchControllerPosition = .searchBarInTableHeader, showCancelButton:CancelButtonStyle = .showWhileEditing, searchBarLayout:UISearchBarStyle = .prominent, config:ConfigClosure? = nil) {
+	public init(position:SearchControllerPosition = .searchBarInTableHeader, showCancelButton:CancelButtonStyle = .showWhileEditing, searchBarLayout:UISearchBarStyle = .prominent, config:ConfigClosure? = nil,searchProgrammatically:Observable<String>?=nil) {
 		self.position=position
 		self.showCancelButton=showCancelButton
 		self.searchBarLayout=searchBarLayout
 		self.config=config
+		self.searchProgrammatically=searchProgrammatically
 	}
 }
 
@@ -43,7 +45,7 @@ public enum SearchControllerPosition
 // non dovrebbe essere pubblico
 protocol Searchable:class,ControllerWithTableView,Disposer
 {
-	var searchController:UISearchController! {get set}
+	var searchController:CustomSearchController! {get set}
 	func setupSearchController(_ style:SearchControllerStyle)
 }
 extension UIImage {
@@ -106,7 +108,7 @@ final class BugFixedSearchBar:UISearchBar {
 	}
 	var cancelButtonStyle=CancelButtonStyle.showWhileEditing
 }
-class CustomSearchController: UISearchController {
+public class CustomSearchController: UISearchController {
 	
 	lazy var _searchBar: UISearchBar = {
 		[unowned self] in
@@ -115,18 +117,19 @@ class CustomSearchController: UISearchController {
 		}()
 	var externalSearchBar:UISearchBar?
 	let 🗑=DisposeBag()
-	override var searchBar: UISearchBar {
+	override public var searchBar: UISearchBar {
 		get {
 			return externalSearchBar ?? _searchBar
 		}
 	}
+	var searchProgrammatically=Observable.just("")
 	override init(searchResultsController: UIViewController?) {
 		super.init(searchResultsController: searchResultsController)
 	}
 	override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
 		super.init(nibName:nibNameOrNil,bundle:nibBundleOrNil)
 	}
-	required override init?(coder aDecoder: NSCoder) {
+	required public init?(coder aDecoder: NSCoder) {
 		super.init(coder: aDecoder)
 	}
 	
@@ -167,7 +170,9 @@ extension Searchable
 			}
 			sc.searchBar.searchBarStyle=style.searchBarLayout
 			sc.showCancelButton(showIt: style.showCancelButton)
-
+			if let sp=style.searchProgrammatically {
+				sc.searchProgrammatically=sp
+			}
 			return sc
 			
 			}())
