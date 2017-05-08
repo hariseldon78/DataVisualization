@@ -172,6 +172,9 @@ extension Searchable
 			sc.showCancelButton(showIt: style.showCancelButton)
 			if let sp=style.searchProgrammatically {
 				sc.searchProgrammatically=sp
+				sp.asObservable().shareReplay(1).subscribe(onNext:{ [weak sc] in
+					sc?.searchBar.text=$0
+				})
 			}
 			return sc
 			
