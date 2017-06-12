@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		FB30F1E51EEED8B2006C4730 /* Cartography.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FB30F1E11EEED8B2006C4730 /* Cartography.framework */; };
+		FB30F1E61EEED8B2006C4730 /* RxCocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FB30F1E21EEED8B2006C4730 /* RxCocoa.framework */; };
+		FB30F1E71EEED8B2006C4730 /* RxDataSources.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FB30F1E31EEED8B2006C4730 /* RxDataSources.framework */; };
+		FB30F1E81EEED8B2006C4730 /* RxSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FB30F1E41EEED8B2006C4730 /* RxSwift.framework */; };
 		FB970D791E8C13CD00C0032B /* DataVisualization.h in Headers */ = {isa = PBXBuildFile; fileRef = FB970D771E8C13CD00C0032B /* DataVisualization.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		FB970D8A1E8C145200C0032B /* CollectionViewLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB970D7F1E8C145200C0032B /* CollectionViewLayout.swift */; };
 		FB970D8B1E8C145200C0032B /* Common.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB970D801E8C145200C0032B /* Common.swift */; };
@@ -19,13 +23,13 @@
 		FB970D921E8C145200C0032B /* SingleLevelCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB970D871E8C145200C0032B /* SingleLevelCollectionView.swift */; };
 		FB970D931E8C145200C0032B /* SingleLevelTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB970D881E8C145200C0032B /* SingleLevelTableView.swift */; };
 		FB970D941E8C145200C0032B /* ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB970D891E8C145200C0032B /* ViewModel.swift */; };
-		FB970DB61E8C16F400C0032B /* Cartography.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FB970DB21E8C16F400C0032B /* Cartography.framework */; };
-		FB970DB71E8C16F400C0032B /* RxCocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FB970DB31E8C16F400C0032B /* RxCocoa.framework */; };
-		FB970DB81E8C16F400C0032B /* RxDataSources.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FB970DB41E8C16F400C0032B /* RxDataSources.framework */; };
-		FB970DB91E8C16F400C0032B /* RxSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FB970DB51E8C16F400C0032B /* RxSwift.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		FB30F1E11EEED8B2006C4730 /* Cartography.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cartography.framework; path = ../../../../../Carthage/Build/iOS/Cartography.framework; sourceTree = "<group>"; };
+		FB30F1E21EEED8B2006C4730 /* RxCocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RxCocoa.framework; path = ../../../../../Carthage/Build/iOS/RxCocoa.framework; sourceTree = "<group>"; };
+		FB30F1E31EEED8B2006C4730 /* RxDataSources.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RxDataSources.framework; path = ../../../../../Carthage/Build/iOS/RxDataSources.framework; sourceTree = "<group>"; };
+		FB30F1E41EEED8B2006C4730 /* RxSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RxSwift.framework; path = ../../../../../Carthage/Build/iOS/RxSwift.framework; sourceTree = "<group>"; };
 		FB970D741E8C13CD00C0032B /* DataVisualization.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = DataVisualization.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		FB970D771E8C13CD00C0032B /* DataVisualization.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DataVisualization.h; sourceTree = "<group>"; };
 		FB970D781E8C13CD00C0032B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -51,10 +55,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				FB970DB61E8C16F400C0032B /* Cartography.framework in Frameworks */,
-				FB970DB71E8C16F400C0032B /* RxCocoa.framework in Frameworks */,
-				FB970DB81E8C16F400C0032B /* RxDataSources.framework in Frameworks */,
-				FB970DB91E8C16F400C0032B /* RxSwift.framework in Frameworks */,
+				FB30F1E51EEED8B2006C4730 /* Cartography.framework in Frameworks */,
+				FB30F1E61EEED8B2006C4730 /* RxCocoa.framework in Frameworks */,
+				FB30F1E71EEED8B2006C4730 /* RxDataSources.framework in Frameworks */,
+				FB30F1E81EEED8B2006C4730 /* RxSwift.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -101,6 +105,10 @@
 		FB970DB11E8C16F200C0032B /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				FB30F1E11EEED8B2006C4730 /* Cartography.framework */,
+				FB30F1E21EEED8B2006C4730 /* RxCocoa.framework */,
+				FB30F1E31EEED8B2006C4730 /* RxDataSources.framework */,
+				FB30F1E41EEED8B2006C4730 /* RxSwift.framework */,
 				FB970DB21E8C16F400C0032B /* Cartography.framework */,
 				FB970DB31E8C16F400C0032B /* RxCocoa.framework */,
 				FB970DB41E8C16F400C0032B /* RxDataSources.framework */,
@@ -311,7 +319,7 @@
 		FB970D7D1E8C13CD00C0032B /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CARTHAGE_DIR = "$(PROJECT_DIR)/../../../../Municipium-App-iOS/Municipium/Carthage";
+				CARTHAGE_DIR = "$(PROJECT_DIR)/../../../../../Carthage";
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
@@ -340,7 +348,7 @@
 		FB970D7E1E8C13CD00C0032B /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CARTHAGE_DIR = "$(PROJECT_DIR)/../../../../Municipium-App-iOS/Municipium/Carthage";
+				CARTHAGE_DIR = "$(PROJECT_DIR)/../../../../../Carthage";
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
@@ -415,7 +423,7 @@
 		FB970DC11E8C32F600C0032B /* tests */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CARTHAGE_DIR = "$(PROJECT_DIR)/../../../../Municipium-App-iOS/Municipium/Carthage";
+				CARTHAGE_DIR = "$(PROJECT_DIR)/../../../../../Carthage";
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
@@ -497,7 +505,7 @@
 		FB970DC31E8C330000C0032B /* testsDebug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CARTHAGE_DIR = "$(PROJECT_DIR)/../../../../Municipium-App-iOS/Municipium/Carthage";
+				CARTHAGE_DIR = "$(PROJECT_DIR)/../../../../../Carthage";
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
@@ -580,7 +588,7 @@
 		FB970DC51E8C330F00C0032B /* impersonation */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CARTHAGE_DIR = "$(PROJECT_DIR)/../../../../Municipium-App-iOS/Municipium/Carthage";
+				CARTHAGE_DIR = "$(PROJECT_DIR)/../../../../../Carthage";
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
