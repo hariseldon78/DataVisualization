@@ -40,7 +40,7 @@ extension ControllerWithTableView where Self:Disposer
 			invalidateCacheAndReBindData() {
 				rc.endRefreshing()
 			}
-			}).addDisposableTo(🗑)
+		}).addDisposableTo(🗑)
 	}
 	
 	func registerDataCell(_ nib: Either<UINib, UIView.Type>)
@@ -76,7 +76,15 @@ extension ControllerWithTableView where Self:Disposer
 	}
 }
 
-struct PrepareSegueHelper<Data>
-{
+protocol PeekPoppable {
 	
 }
+extension PeekPoppable {
+	func enablePeekPop(vc:UIViewController,view:UIView,delegate:UIViewControllerPreviewingDelegate) {
+		if vc.traitCollection.forceTouchCapability == .available {
+			vc.registerForPreviewing(with: delegate, sourceView: view)
+		}
+	}
+	
+}
+

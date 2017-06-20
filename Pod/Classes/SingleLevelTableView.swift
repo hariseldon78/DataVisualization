@@ -86,15 +86,17 @@ let popoverPresentationControllerDelegate=PopoverPresentationControllerDelegate(
 
 open class AutoSingleLevelTableViewManager<
 	DataType,
-	DataViewModel
-	where
-	DataViewModel:ViewModel,
-	DataViewModel.Data==DataType>
-	
+	DataViewModel>
 	:	NSObject,
 	AutoSingleLevelTableView,
 	TableViewDelegateCommon,
-	ControllerWithTableView
+	ControllerWithTableView,
+	PeekPoppable,
+	UIViewControllerPreviewingDelegate
+	where
+	DataViewModel:ViewModel,
+	DataViewModel.Data==DataType
+
 {
 	public typealias Data=DataType
 	open var data:Observable<[Data]> {
@@ -108,8 +110,8 @@ open class AutoSingleLevelTableViewManager<
 
 	var onClick:((_ row:Data)->())?=nil
 	// roba inizializzata alla selezione
-	var detailSegue:String?
 	var clickedObj:Data?
+	var detailSegue:String?
 	
 	public required init(viewModel:DataViewModel,dataExtractor:DataExtractorBase<Data>){
 		self.viewModel=viewModel
@@ -158,7 +160,8 @@ open class AutoSingleLevelTableViewManager<
 					didSelectObj(obj)
 				}
 		}).addDisposableTo(🗑)
-		
+
+		enablePeekPop(vc:vc,view:tableView,delegate:self)
 	}
 	open func refreshData(atEnd:@escaping ()->()) {
 		guard let Cached=Data.self as? Cached.Type else {return}
@@ -295,6 +298,53 @@ open class AutoSingleLevelTableViewManager<
 			}
 		}
 	}
+	
+	// Peek and pop +
+	
+	var onPeek:((Observable<Data>)->(UIViewController?))?=nil
+	
+	public func setupPeekPop(onPeek:@escaping (Observable<Data>)->(UIViewController?))
+	{
+		self.onPeek=onPeek
+	}
+	public func setupPeekPopDetail(getVc:@escaping ()->UIViewController?)
+	{
+		setupPeekPop{ (data:Observable<Data>) in
+			guard let dv=getVc(), var dvc=dv as? DetailView else {return nil}
+			data.subscribe(onNext: { d in
+				DispatchQueue.main.async {
+					dvc.detailManager.object=d
+				}
+			}).addDisposableTo(self.🗑)
+			
+			return UINavigationController(rootViewController:dv)
+		}
+		
+	}
+	public func previewingContext(_ previewingContext: UIViewControllerPreviewing, viewControllerForLocation location: CGPoint) -> UIViewController? {
+		guard let onPeek=onPeek else {return nil}
+		print("peek")
+		if let i=tableView.indexPathForRow(at: location) {
+			if let cell=tableView.cellForRow(at: i)  {
+				previewingContext.sourceRect=cell.frame
+			}
+			if let obj:Data = try? tableView.rx.model(at: i) {
+				self.clickedObj=obj
+				return onPeek(Observable.just(obj))
+			}
+		}
+		return nil
+	}
+	
+	public func previewingContext(_ previewingContext: UIViewControllerPreviewing, commit viewControllerToCommit: UIViewController) {
+		print("pop")
+		if let obj=clickedObj {
+			onClick?(obj)
+		}
+		
+	}
+	
+
 }
 
 open class AutoSearchableSingleLevelTableViewManager<

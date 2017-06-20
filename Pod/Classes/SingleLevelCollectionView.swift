@@ -63,15 +63,16 @@ public protocol AutoSingleLevelCollectionView:AutoSingleLevelDataView {
 
 open class AutoSingleLevelCollectionViewManager<
 	DataType,
-	DataViewModelType
-	where
-	DataViewModelType:CollectionViewModel,
-	DataViewModelType.Data==DataType>
-	
+	DataViewModelType>
 	:	NSObject,
 	AutoSingleLevelCollectionView,
 	CollectionViewDelegate,
-	ControllerWithCollectionView
+	ControllerWithCollectionView,
+	PeekPoppable,
+	UIViewControllerPreviewingDelegate
+	where
+	DataViewModelType:CollectionViewModel,
+	DataViewModelType.Data==DataType
 {
 	open var collectionView: UICollectionView!
 	open var dataExtractor:DataExtractorBase<Data>
@@ -82,6 +83,7 @@ open class AutoSingleLevelCollectionViewManager<
 			.observeOn(MainScheduler.instance)
 //			.subscribeOn(MainScheduler.instance)
 			.shareReplayLatestWhileConnected()
+			.debug("SingleLevelCollectionView.data",trimOutput: false)
 	}
 	open let 🗑=DisposeBag()
 	open let viewModel:DataViewModel
@@ -153,8 +155,10 @@ open class AutoSingleLevelCollectionViewManager<
 					collectionView.deselectItem(at: indexPath, animated: true)
 				}
 		}).addDisposableTo(🗑)
+		
+		enablePeekPop(vc:vc,view:collectionView,delegate:self)
 	}
-
+	
 	@discardableResult func bindData()->Observable<Void> {
 		data
 			.bindTo(collectionView.rx.items(cellIdentifier:"cell")) {
@@ -185,7 +189,7 @@ open class AutoSingleLevelCollectionViewManager<
 					self.collectionView.backgroundView=self.viewModel.viewForDataError
 			}) .addDisposableTo(🗑)
 	}
-	
+
 	open func setupOnSelect(_ onSelect:OnSelectBehaviour<Data>)
 	{
 		func prepareSegue(_ segue:String,presentation:PresentationMode)
@@ -193,9 +197,7 @@ open class AutoSingleLevelCollectionViewManager<
 			let detailSegue=segue
 			onClick={ _ in self.vc.performSegue(withIdentifier: segue, sender: nil) }
 			vc.rx_prepareForSegue.subscribe(onNext: { (segue,_) in
-				guard let destVC=segue.destination as? UIViewController,
-					let identifier=segue.identifier else {return}
-				
+				guard let identifier=segue.identifier else {return}
 				if identifier==detailSegue {
 					guard var dest=segue.destination as? DetailView
 						else {return}
@@ -214,5 +216,51 @@ open class AutoSingleLevelCollectionViewManager<
 			_=0
 		}
 	}
+	
+	// Peek and pop +
+	
+	var onPeek:((Observable<Data>)->(UIViewController?))?=nil
+
+	public func setupPeekPop(onPeek:@escaping (Observable<Data>)->(UIViewController?))
+	{
+		self.onPeek=onPeek
+	}
+	public func setupPeekPopDetail(getVc:@escaping ()->UIViewController?)
+	{
+		setupPeekPop{ (data:Observable<Data>) in
+			guard let dv=getVc(), var dvc=dv as? DetailView else {return nil}
+			data.subscribe(onNext: { d in
+				DispatchQueue.main.async {
+					dvc.detailManager.object=d
+				}
+			}).addDisposableTo(self.🗑)
+			
+			return UINavigationController(rootViewController:dv)
+		}
+
+	}
+	public func previewingContext(_ previewingContext: UIViewControllerPreviewing, viewControllerForLocation location: CGPoint) -> UIViewController? {
+		guard let onPeek=onPeek else {return nil}
+		print("peek")
+		if let i=collectionView.indexPathForItem(at: location) {
+			if let cell=collectionView.cellForItem(at: i) {
+				previewingContext.sourceRect=cell.frame
+			}
+			if let obj:Data = try? collectionView.rx.model(at: i) {
+				self.clickedObj=obj
+				return onPeek(Observable.just(obj))
+			}
+		}
+		return nil
+	}
+	
+	public func previewingContext(_ previewingContext: UIViewControllerPreviewing, commit viewControllerToCommit: UIViewController) {
+		print("pop")
+		if let obj=clickedObj {
+			onClick?(obj)
+		}
+		
+	}
+
 	
 }
