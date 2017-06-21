@@ -68,8 +68,7 @@ open class AutoSingleLevelCollectionViewManager<
 	AutoSingleLevelCollectionView,
 	CollectionViewDelegate,
 	ControllerWithCollectionView,
-	PeekPoppable,
-	UIViewControllerPreviewingDelegate
+	PeekPoppable
 	where
 	DataViewModelType:CollectionViewModel,
 	DataViewModelType.Data==DataType
@@ -156,7 +155,7 @@ open class AutoSingleLevelCollectionViewManager<
 				}
 		}).addDisposableTo(🗑)
 		
-		enablePeekPop(vc:vc,view:collectionView,delegate:self)
+		enablePeekPop(vc:vc,aggregateView:collectionView)
 	}
 	
 	@discardableResult func bindData()->Observable<Void> {
@@ -219,30 +218,7 @@ open class AutoSingleLevelCollectionViewManager<
 	
 	// Peek and pop +
 	
-	var onPeek:((Observable<Data>)->(UIViewController?))?=nil
-
-	public func previewingContext(_ previewingContext: UIViewControllerPreviewing, viewControllerForLocation location: CGPoint) -> UIViewController? {
-		guard let onPeek=onPeek else {return nil}
-		print("peek")
-		if let i=collectionView.indexPathForItem(at: location) {
-			if let cell=collectionView.cellForItem(at: i) {
-				previewingContext.sourceRect=cell.frame
-			}
-			if let obj:Data = try? collectionView.rx.model(at: i) {
-				self.clickedObj=obj
-				return onPeek(Observable.just(obj))
-			}
-		}
-		return nil
-	}
-	
-	public func previewingContext(_ previewingContext: UIViewControllerPreviewing, commit viewControllerToCommit: UIViewController) {
-		print("pop")
-		if let obj=clickedObj {
-			onClick?(obj)
-		}
-		
-	}
+	var delegate:PeekPoppableDelegate!
 
 	
 }

@@ -77,29 +77,30 @@ extension ControllerWithTableView where Self:Disposer
 }
 
 protocol AggregateView {
-	func indexPath(at: CGPoint)->IndexPath
-	func cell(at: IndexPath)->UIView
-	func model(at: IndexPath)->Any // I know, I know..
+	func indexPath(at: CGPoint)->IndexPath?
+	func cell(at: IndexPath)->UIView?
+	func model(at: IndexPath)->Any? // I know, I know..
 }
 
 protocol PeekPoppable:class {
 	associatedtype Data
-	var onPeek:((Observable<Data>)->(UIViewController?))? {get set}
 	var 🗑:DisposeBag {get}
 	var clickedObj:Data? {get set}
 	var onClick:((_ row:Data)->())? {get}
-	var delegate:PeekPopDelegate<Self> {get set}
+	var delegate:PeekPoppableDelegate!/*PeekPopDelegate<Self,Data>!*/ {get set}
 	
 }
-
-class PeekPopDelegate<Manager>:NSObject,UIViewControllerPreviewingDelegate where Manager:PeekPoppable{
+protocol PeekPoppableDelegate: class,UIViewControllerPreviewingDelegate{
+	var _onPeek:Any? {get set}
+}
+class PeekPopDelegate<Manager,Data>:NSObject,UIViewControllerPreviewingDelegate,PeekPoppableDelegate where Manager:PeekPoppable, Manager.Data==Data{
 	let manager:Manager
+	var _onPeek:Any?
+	var onPeek:((Observable<Data>)->(UIViewController?))? {return _onPeek as! ((Observable<Data>)->(UIViewController?))?}
 	let aggregateView:AggregateView
-	let elementFrameAtLocation:(CGPoint)->CGRect
-	init(manager:Manager,aggregateView:AggregateView,elementFrameAtLocation:@escaping (CGPoint)->CGRect){
+	init(manager:Manager,aggregateView:AggregateView){
 		self.manager=manager
 		self.aggregateView=aggregateView
-		self.elementFrameAtLocation=elementFrameAtLocation
 	}
 	public func previewingContext(_ previewingContext: UIViewControllerPreviewing, viewControllerForLocation location: CGPoint) -> UIViewController? {
 		guard let onPeek=onPeek else {return nil}
@@ -107,7 +108,7 @@ class PeekPopDelegate<Manager>:NSObject,UIViewControllerPreviewingDelegate where
 			if let cell=aggregateView.cell(at: i)  {
 				previewingContext.sourceRect=cell.frame
 			}
-			if let obj:Data = try? aggregateView.model(at: i) {
+			if let model=aggregateView.model(at: i), let obj:Data = model as? Data {
 				manager.clickedObj=obj
 				return onPeek(Observable.just(obj))
 			}
@@ -125,19 +126,20 @@ class PeekPopDelegate<Manager>:NSObject,UIViewControllerPreviewingDelegate where
 	
 }
 extension PeekPoppable {
-	func enablePeekPop(vc:UIViewController,view:UIView,delegate:UIViewControllerPreviewingDelegate) {
+	func enablePeekPop(vc:UIViewController,aggregateView:AggregateView) {
+		self.delegate=PeekPopDelegate(manager: self, aggregateView: aggregateView)
 		if vc.traitCollection.forceTouchCapability == .available {
-			vc.registerForPreviewing(with: delegate, sourceView: view)
+			vc.registerForPreviewing(with: delegate, sourceView: aggregateView as! UIView)
 		}
 	}
-	
 	public func setupPeekPop(onPeek:@escaping (Observable<Data>)->(UIViewController?))
 	{
-		self.onPeek=onPeek
+		self.delegate._onPeek=onPeek
 	}
+	
 	public func setupPeekPopDetail(getVc:@escaping ()->UIViewController?)
 	{
-		setupPeekPop{ (data:Observable<Data>) in
+		self.setupPeekPop{ (data:Observable<Data>) in
 			guard let dv=getVc(), var dvc=dv as? DetailView else {return nil}
 			data.subscribe(onNext: { d in
 				DispatchQueue.main.async {
@@ -153,31 +155,31 @@ extension PeekPoppable {
 }
 
 extension UITableView:AggregateView {
-	func indexPath(at point: CGPoint)->IndexPath
+	func indexPath(at point: CGPoint)->IndexPath?
 	{
 		return indexPathForRow(at: point)
 	}
-	func cell(at index: IndexPath)->UIView
+	func cell(at index: IndexPath)->UIView?
 	{
 		return cellForRow(at: index)
 	}
-	func model(at index: IndexPath)->Any
+	func model(at index: IndexPath)->Any?
 	{
-		return rx.model(at: index)
+		return try? rx.model(at: index)
 	}
 }
 extension UICollectionView:AggregateView {
-	func indexPath(at point: CGPoint)->IndexPath
+	func indexPath(at point: CGPoint)->IndexPath?
 	{
 		return indexPathForItem(at: point)
 	}
-	func cell(at index: IndexPath)->UIView
+	func cell(at index: IndexPath)->UIView?
 	{
 		return cellForItem(at: index)
 	}
-	func model(at index: IndexPath)->Any
+	func model(at index: IndexPath)->Any?
 	{
-		return rx.model(at: index)
+		return try? rx.model(at: index)
 	}
 }
 

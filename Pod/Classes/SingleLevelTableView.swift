@@ -78,7 +78,8 @@ extension TableViewDelegateCommon{
 }
 class PopoverPresentationControllerDelegate:NSObject,UIPopoverPresentationControllerDelegate
 {
-	func adaptivePresentationStyle(for controller: UIPresentationController!) -> UIModalPresentationStyle {
+	func adaptivePresentationStyle(for controller: UIPresentationController
+		) -> UIModalPresentationStyle {
 		return .none
 	}
 }
@@ -91,8 +92,7 @@ open class AutoSingleLevelTableViewManager<
 	AutoSingleLevelTableView,
 	TableViewDelegateCommon,
 	ControllerWithTableView,
-	PeekPoppable,
-	UIViewControllerPreviewingDelegate
+	PeekPoppable
 	where
 	DataViewModel:ViewModel,
 	DataViewModel.Data==DataType
@@ -128,7 +128,7 @@ open class AutoSingleLevelTableViewManager<
 		self.tableView=tableView
 		
 		tableView.delegate=nil
-		tableView.rx.setDelegate(self)
+		_=tableView.rx.setDelegate(self)
 		
 		registerDataCell(nib)
 		setupRowSize()
@@ -162,7 +162,7 @@ open class AutoSingleLevelTableViewManager<
 				}
 		}).addDisposableTo(🗑)
 
-		enablePeekPop(vc:vc,view:tableView,delegate:self)
+		enablePeekPop(vc:vc,aggregateView: tableView)
 	}
 	open func refreshData(atEnd:@escaping ()->()) {
 		guard let Cached=Data.self as? Cached.Type else {return}
@@ -302,30 +302,30 @@ open class AutoSingleLevelTableViewManager<
 	
 	// Peek and pop +
 	
-	var onPeek: ((Observable<Data>) -> (UIViewController?))?
+	var delegate:PeekPoppableDelegate!
 	
-	public func previewingContext(_ previewingContext: UIViewControllerPreviewing, viewControllerForLocation location: CGPoint) -> UIViewController? {
-		guard let onPeek=onPeek else {return nil}
-		print("peek")
-		if let i=tableView.indexPathForRow(at: location) {
-			if let cell=tableView.cellForRow(at: i)  {
-				previewingContext.sourceRect=cell.frame
-			}
-			if let obj:Data = try? tableView.rx.model(at: i) {
-				self.clickedObj=obj
-				return onPeek(Observable.just(obj))
-			}
-		}
-		return nil
-	}
-	
-	public func previewingContext(_ previewingContext: UIViewControllerPreviewing, commit viewControllerToCommit: UIViewController) {
-		print("pop")
-		if let obj=clickedObj {
-			onClick?(obj)
-		}
-		
-	}
+//	public func previewingContext(_ previewingContext: UIViewControllerPreviewing, viewControllerForLocation location: CGPoint) -> UIViewController? {
+//		guard let onPeek=onPeek else {return nil}
+//		print("peek")
+//		if let i=tableView.indexPathForRow(at: location) {
+//			if let cell=tableView.cellForRow(at: i)  {
+//				previewingContext.sourceRect=cell.frame
+//			}
+//			if let obj:Data = try? tableView.rx.model(at: i) {
+//				self.clickedObj=obj
+//				return onPeek(Observable.just(obj))
+//			}
+//		}
+//		return nil
+//	}
+//	
+//	public func previewingContext(_ previewingContext: UIViewControllerPreviewing, commit viewControllerToCommit: UIViewController) {
+//		print("pop")
+//		if let obj=clickedObj {
+//			onClick?(obj)
+//		}
+//		
+//	}
 	
 
 }
