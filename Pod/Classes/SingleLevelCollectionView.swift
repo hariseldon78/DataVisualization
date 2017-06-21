@@ -221,24 +221,6 @@ open class AutoSingleLevelCollectionViewManager<
 	
 	var onPeek:((Observable<Data>)->(UIViewController?))?=nil
 
-	public func setupPeekPop(onPeek:@escaping (Observable<Data>)->(UIViewController?))
-	{
-		self.onPeek=onPeek
-	}
-	public func setupPeekPopDetail(getVc:@escaping ()->UIViewController?)
-	{
-		setupPeekPop{ (data:Observable<Data>) in
-			guard let dv=getVc(), var dvc=dv as? DetailView else {return nil}
-			data.subscribe(onNext: { d in
-				DispatchQueue.main.async {
-					dvc.detailManager.object=d
-				}
-			}).addDisposableTo(self.🗑)
-			
-			return UINavigationController(rootViewController:dv)
-		}
-
-	}
 	public func previewingContext(_ previewingContext: UIViewControllerPreviewing, viewControllerForLocation location: CGPoint) -> UIViewController? {
 		guard let onPeek=onPeek else {return nil}
 		print("peek")

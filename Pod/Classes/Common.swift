@@ -76,7 +76,52 @@ extension ControllerWithTableView where Self:Disposer
 	}
 }
 
-protocol PeekPoppable {
+protocol AggregateView {
+	func indexPath(at: CGPoint)->IndexPath
+	func cell(at: IndexPath)->UIView
+	func model(at: IndexPath)->Any // I know, I know..
+}
+
+protocol PeekPoppable:class {
+	associatedtype Data
+	var onPeek:((Observable<Data>)->(UIViewController?))? {get set}
+	var 🗑:DisposeBag {get}
+	var clickedObj:Data? {get set}
+	var onClick:((_ row:Data)->())? {get}
+	var delegate:PeekPopDelegate<Self> {get set}
+	
+}
+
+class PeekPopDelegate<Manager>:NSObject,UIViewControllerPreviewingDelegate where Manager:PeekPoppable{
+	let manager:Manager
+	let aggregateView:AggregateView
+	let elementFrameAtLocation:(CGPoint)->CGRect
+	init(manager:Manager,aggregateView:AggregateView,elementFrameAtLocation:@escaping (CGPoint)->CGRect){
+		self.manager=manager
+		self.aggregateView=aggregateView
+		self.elementFrameAtLocation=elementFrameAtLocation
+	}
+	public func previewingContext(_ previewingContext: UIViewControllerPreviewing, viewControllerForLocation location: CGPoint) -> UIViewController? {
+		guard let onPeek=onPeek else {return nil}
+		if let i=aggregateView.indexPath(at: location) {
+			if let cell=aggregateView.cell(at: i)  {
+				previewingContext.sourceRect=cell.frame
+			}
+			if let obj:Data = try? aggregateView.model(at: i) {
+				manager.clickedObj=obj
+				return onPeek(Observable.just(obj))
+			}
+		}
+		return nil
+	}
+	
+	public func previewingContext(_ previewingContext: UIViewControllerPreviewing, commit viewControllerToCommit: UIViewController) {
+		if let obj=manager.clickedObj {
+			manager.onClick?(obj)
+		}
+		
+	}
+
 	
 }
 extension PeekPoppable {
@@ -86,5 +131,53 @@ extension PeekPoppable {
 		}
 	}
 	
+	public func setupPeekPop(onPeek:@escaping (Observable<Data>)->(UIViewController?))
+	{
+		self.onPeek=onPeek
+	}
+	public func setupPeekPopDetail(getVc:@escaping ()->UIViewController?)
+	{
+		setupPeekPop{ (data:Observable<Data>) in
+			guard let dv=getVc(), var dvc=dv as? DetailView else {return nil}
+			data.subscribe(onNext: { d in
+				DispatchQueue.main.async {
+					dvc.detailManager.object=d
+				}
+			}).addDisposableTo(self.🗑)
+			
+			return UINavigationController(rootViewController:dv)
+		}
+		
+	}
+
+}
+
+extension UITableView:AggregateView {
+	func indexPath(at point: CGPoint)->IndexPath
+	{
+		return indexPathForRow(at: point)
+	}
+	func cell(at index: IndexPath)->UIView
+	{
+		return cellForRow(at: index)
+	}
+	func model(at index: IndexPath)->Any
+	{
+		return rx.model(at: index)
+	}
+}
+extension UICollectionView:AggregateView {
+	func indexPath(at point: CGPoint)->IndexPath
+	{
+		return indexPathForItem(at: point)
+	}
+	func cell(at index: IndexPath)->UIView
+	{
+		return cellForItem(at: index)
+	}
+	func model(at index: IndexPath)->Any
+	{
+		return rx.model(at: index)
+	}
 }
 
