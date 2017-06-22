@@ -216,9 +216,5 @@ open class AutoSingleLevelCollectionViewManager<
 		}
 	}
 	
-	// Peek and pop +
-	
-	var delegate:PeekPoppableDelegate!
-
-	
+	var ppDelegate:PeekPoppableDelegate!
 }

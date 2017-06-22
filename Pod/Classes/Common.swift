@@ -87,7 +87,7 @@ protocol PeekPoppable:class {
 	var 🗑:DisposeBag {get}
 	var clickedObj:Data? {get set}
 	var onClick:((_ row:Data)->())? {get}
-	var delegate:PeekPoppableDelegate!/*PeekPopDelegate<Self,Data>!*/ {get set}
+	var ppDelegate:PeekPoppableDelegate!/*PeekPopDelegate<Self,Data>!*/ {get set}
 	
 }
 protocol PeekPoppableDelegate: class,UIViewControllerPreviewingDelegate{
@@ -127,14 +127,14 @@ class PeekPopDelegate<Manager,Data>:NSObject,UIViewControllerPreviewingDelegate,
 }
 extension PeekPoppable {
 	func enablePeekPop(vc:UIViewController,aggregateView:AggregateView) {
-		self.delegate=PeekPopDelegate(manager: self, aggregateView: aggregateView)
+		self.ppDelegate=PeekPopDelegate(manager: self, aggregateView: aggregateView)
 		if vc.traitCollection.forceTouchCapability == .available {
-			vc.registerForPreviewing(with: delegate, sourceView: aggregateView as! UIView)
+			vc.registerForPreviewing(with: ppDelegate, sourceView: aggregateView as! UIView)
 		}
 	}
 	public func setupPeekPop(onPeek:@escaping (Observable<Data>)->(UIViewController?))
 	{
-		self.delegate._onPeek=onPeek
+		self.ppDelegate._onPeek=onPeek
 	}
 	
 	public func setupPeekPopDetail(getVc:@escaping ()->UIViewController?)

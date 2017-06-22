@@ -153,6 +153,13 @@ open class AutoSectionedTableViewManager<
 	_Section,
 	_SectionViewModel,
 	_Sectioner
+	>
+	
+	:	NSObject,
+	AutoSectionedTableView,
+	TableViewDelegateCommon,
+	ControllerWithTableView,
+	PeekPoppable
 	where
 	_ElementViewModel:ViewModel,
 	_ElementViewModel.Data==_Element,
@@ -161,14 +168,13 @@ open class AutoSectionedTableViewManager<
 	_SectionViewModel.Element==_Element,
 	_Sectioner:Sectioner,
 	_Sectioner.Data==_Element,
-	_Sectioner.Section==_Section>
-	
-	:	NSObject,
-	AutoSectionedTableView,
-	TableViewDelegateCommon,
-	ControllerWithTableView
+	_Sectioner.Section==_Section
 {
+	
 	open let 🗑=DisposeBag()
+	// needed for peek and pop
+	public typealias Data=_Element
+
 	public typealias Element=_Element
 	public typealias ElementViewModel=_ElementViewModel
 	public typealias Section=_Section
@@ -248,7 +254,7 @@ open class AutoSectionedTableViewManager<
 					self.tableView(self.tableView, didSelectRowAt: index)
 				}
 			}).addDisposableTo(🗑)
-		
+		enablePeekPop(vc:vc,aggregateView: tableView)
 	}
 	open func refreshData(atEnd:@escaping ()->()) {
 		if let Cacheable=SectionerType.self as? Cached.Type
@@ -445,6 +451,12 @@ open class AutoSectionedTableViewManager<
 			}
 		}).addDisposableTo(🗑)
 	}
+	
+	// peek and pop
+	var clickedObj: _Element? {didSet{clickedDataObj=clickedObj}}
+	var onClick: ((_Element) -> ())? {return {e in return self.onDataClick?(e,IndexPath())}}
+
+	var ppDelegate:PeekPoppableDelegate!
 }
 
 open class AutoSearchableSectionedTableViewManager<

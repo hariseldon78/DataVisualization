@@ -300,45 +300,19 @@ open class AutoSingleLevelTableViewManager<
 		}
 	}
 	
-	// Peek and pop +
-	
-	var delegate:PeekPoppableDelegate!
-	
-//	public func previewingContext(_ previewingContext: UIViewControllerPreviewing, viewControllerForLocation location: CGPoint) -> UIViewController? {
-//		guard let onPeek=onPeek else {return nil}
-//		print("peek")
-//		if let i=tableView.indexPathForRow(at: location) {
-//			if let cell=tableView.cellForRow(at: i)  {
-//				previewingContext.sourceRect=cell.frame
-//			}
-//			if let obj:Data = try? tableView.rx.model(at: i) {
-//				self.clickedObj=obj
-//				return onPeek(Observable.just(obj))
-//			}
-//		}
-//		return nil
-//	}
-//	
-//	public func previewingContext(_ previewingContext: UIViewControllerPreviewing, commit viewControllerToCommit: UIViewController) {
-//		print("pop")
-//		if let obj=clickedObj {
-//			onClick?(obj)
-//		}
-//		
-//	}
-	
-
+	var ppDelegate:PeekPoppableDelegate!
 }
 
 open class AutoSearchableSingleLevelTableViewManager<
 	DataType,
 	DataViewModel
-	where
-	DataViewModel:ViewModel,
-	DataViewModel.Data==DataType>
+>
 	
 	: AutoSingleLevelTableViewManager<DataType,DataViewModel>,
 	Searchable
+	where
+	DataViewModel:ViewModel,
+	DataViewModel.Data==DataType
 {
 	open var searchController:CustomSearchController!
 	public typealias FilteringClosure=(_ d:DataType,_ s:String)->Bool
